@@ -43,22 +43,6 @@ export default function RegisterPage() {
 
     return (
         <div className="min-h-screen flex flex-col justify-between bg-white text-black font-sans">
-            {/* Header Logo */}
-            <header className="w-full p-6 md:p-8 flex items-center">
-                <Link
-                    href="/"
-                    className="text-xl font-bold tracking-tight hover:opacity-80 transition-opacity flex items-center gap-2"
-                >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10"/>
-                        <circle cx="12" cy="12" r="4"/>
-                        <line x1="21.17" y1="8" x2="12" y2="8"/>
-                        <line x1="3.95" y1="6.06" x2="8.54" y2="14"/>
-                        <line x1="10.88" y1="21.94" x2="15.46" y2="14"/>
-                    </svg>
-                    JOIN.IA
-                </Link>
-            </header>
 
             {/* Main Content */}
             <main className="flex-grow flex flex-col items-center justify-center px-6 w-full py-8">
@@ -219,31 +203,6 @@ export default function RegisterPage() {
                     </div>
                 </div>
             </main>
-
-            {/* Footer */}
-            <footer className="w-full">
-                <div className="text-center text-xs text-gray-500 mb-8 px-4">
-                    <p>
-                        By creating an account, you agree to our{' '}
-                        <a href="#" className="underline hover:text-gray-800">Terms of Use</a>
-                        {' '}and{' '}
-                        <a href="#" className="underline hover:text-gray-800">Privacy policy</a>
-                    </p>
-                </div>
-                <div className="bg-[#2D2D2D] w-full py-6 px-6 md:px-8">
-                    <div className="flex items-center justify-between max-w-7xl mx-auto text-white">
-                        <div className="flex items-center gap-2 font-bold text-lg">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="bg-white text-black p-0.5 rounded-full">
-                                <circle cx="12" cy="12" r="10"/>
-                            </svg>
-                            JOIN.IA
-                        </div>
-                        <div className="text-sm text-gray-400">
-                            curated by <span className="text-white font-bold ml-1">Mobbin</span>
-                        </div>
-                    </div>
-                </div>
-            </footer>
         </div>
     );
 }
