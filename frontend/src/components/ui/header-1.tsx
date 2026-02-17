@@ -12,22 +12,9 @@ export function Header() {
     const scrolled = useScroll(10);
 
     const links = [
-        {
-            label: 'Servicios',
-            href: '#servicios',
-        },
-        {
-            label: 'Agentes',
-            href: '#productos',
-        },
-        {
-            label: 'Proceso',
-            href: '#proceso',
-        },
-        {
-            label: 'Contacto',
-            href: '#contacto',
-        }
+        { label: 'Producto', href: '#plataforma' },
+        { label: 'Features', href: '#pipeline' },
+        { label: 'Historia', href: '/historia' },
     ];
 
     React.useEffect(() => {
@@ -42,27 +29,132 @@ export function Header() {
     }, [open]);
 
     return (
-        <header
-            className={cn('fixed top-0 z-50 w-full border-b border-transparent transition-all duration-300', {
-                'bg-background/95 supports-[backdrop-filter]:bg-background/50 border-border backdrop-blur-lg':
-                    scrolled,
-                'bg-transparent': !scrolled
-            })}
-        >
-            <nav className="mx-auto flex h-20 w-full container items-center justify-between px-4">
-                <Link href="/" className="logo text-white">
+        <>
+        <style>{`
+            .header-bar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 50;
+                display: flex;
+                justify-content: center;
+                padding: 1rem 1.5rem;
+                transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .header-bar.scrolled {
+                padding: 0.5rem 1.5rem;
+            }
+            .header-inner {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+                max-width: 860px;
+                padding: 0.65rem 1.5rem;
+                background: rgba(10, 10, 10, 0.92);
+                -webkit-backdrop-filter: blur(16px);
+                backdrop-filter: blur(16px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 12px;
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .header-bar.scrolled .header-inner {
+                max-width: 760px;
+                padding: 0.5rem 1.25rem;
+            }
+            .header-logo {
+                font-size: 1rem;
+                font-weight: 700;
+                color: #fff;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                transition: font-size 0.3s ease;
+            }
+            .header-bar.scrolled .header-logo {
+                font-size: 0.9rem;
+            }
+            .header-dot-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(3, 1fr);
+                gap: 2.5px;
+            }
+            .header-dot-grid span {
+                width: 3px;
+                height: 3px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.5);
+            }
+            .header-nav {
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
+            }
+            .header-nav-link {
+                font-size: 0.85rem;
+                font-weight: 500;
+                color: rgba(255, 255, 255, 0.6);
+                text-decoration: none;
+                padding: 0.4rem 0.85rem;
+                border-radius: 6px;
+                transition: color 0.2s ease, background 0.2s ease;
+            }
+            .header-nav-link:hover {
+                color: #fff;
+                background: rgba(255, 255, 255, 0.06);
+            }
+            .header-cta {
+                font-size: 0.8rem;
+                font-weight: 600;
+                color: #fff;
+                text-decoration: none;
+                padding: 0.45rem 1rem;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 6px;
+                transition: all 0.2s ease;
+                white-space: nowrap;
+            }
+            .header-cta:hover {
+                background: rgba(255, 255, 255, 0.08);
+                border-color: rgba(255, 255, 255, 0.35);
+            }
+            @media (max-width: 768px) {
+                .header-nav, .header-cta { display: none; }
+            }
+        `}</style>
+        <div className={cn('header-bar', { scrolled })}>
+            <div className="header-inner">
+                <Link href="/" className="header-logo">
+                    <div className="header-dot-grid">
+                        {Array.from({ length: 9 }).map((_, i) => (
+                            <span key={i} />
+                        ))}
+                    </div>
                     JOIN.IA
                 </Link>
-                <div className="hidden items-center gap-8 md:flex">
-                    {links.map((link) => (
-                        <a key={link.label} className={cn(buttonVariants({ variant: 'ghost' }), "text-sm font-medium text-gray-300 hover:text-white transition-colors")} href={link.href}>
-                            {link.label}
-                        </a>
-                    ))}
-                    <Link href="/login" className={cn(buttonVariants({ variant: 'secondary' }), "px-6 py-2.5 bg-white hover:bg-gray-200 text-black text-xs font-bold tracking-wider rounded transition-all shadow-lg shadow-white/10")}>
-                        INICIAR SESIÓN
-                    </Link>
+
+                <div className="header-nav">
+                    {links.map((link) =>
+                        link.href.startsWith('/') ? (
+                            <Link key={link.label} href={link.href} className="header-nav-link">
+                                {link.label}
+                            </Link>
+                        ) : (
+                            <a key={link.label} href={link.href} className="header-nav-link">
+                                {link.label}
+                            </a>
+                        )
+                    )}
                 </div>
+
+                <Link href="/login" className="header-cta">
+                    Registrarme
+                </Link>
+
                 <Button
                     size="icon"
                     variant="outline"
@@ -71,13 +163,28 @@ export function Header() {
                     aria-expanded={open}
                     aria-controls="mobile-menu"
                     aria-label="Toggle menu"
+                    style={{ border: '1px solid rgba(255,255,255,0.2)', background: 'transparent' }}
                 >
                     <MenuToggleIcon open={open} className="size-5" duration={300} />
                 </Button>
-            </nav>
-            <MobileMenu open={open} className="flex flex-col justify-between gap-2">
-                <div className="grid gap-y-2">
-                    {links.map((link) => (
+            </div>
+        </div>
+        <MobileMenu open={open} className="flex flex-col justify-between gap-2">
+            <div className="grid gap-y-2">
+                {links.map((link) =>
+                    link.href.startsWith('/') ? (
+                        <Link
+                            key={link.label}
+                            className={buttonVariants({
+                                variant: 'ghost',
+                                className: 'justify-start text-white',
+                            })}
+                            href={link.href}
+                            onClick={() => setOpen(false)}
+                        >
+                            {link.label}
+                        </Link>
+                    ) : (
                         <a
                             key={link.label}
                             className={buttonVariants({
@@ -89,15 +196,16 @@ export function Header() {
                         >
                             {link.label}
                         </a>
-                    ))}
-                </div>
-                <div className="flex flex-col gap-2">
-                    <Link href="/login" className={cn(buttonVariants({ variant: 'secondary' }), "w-full bg-white text-black")}>
-                        INICIAR SESIÓN
-                    </Link>
-                </div>
-            </MobileMenu>
-        </header>
+                    )
+                )}
+            </div>
+            <div className="flex flex-col gap-2">
+                <Link href="/login" className={cn(buttonVariants({ variant: 'secondary' }), "w-full bg-white text-black")}>
+                    Registrarme
+                </Link>
+            </div>
+        </MobileMenu>
+        </>
     );
 }
 

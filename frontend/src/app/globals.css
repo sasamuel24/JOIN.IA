@@ -417,6 +417,235 @@ h6 {
   margin-bottom: var(--spacing-md);
 }
 
+/* Problems Section */
+.problems-section {
+  background-color: var(--bg-dark);
+  color: var(--text-white);
+  padding: var(--spacing-xl) 0;
+}
+
+.problems-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 750px;
+  margin: 0 auto;
+  gap: var(--spacing-md);
+}
+
+.problems-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-white);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50px;
+  padding: 0.5rem 1.25rem;
+  letter-spacing: 0.01em;
+}
+
+.problems-headline {
+  font-size: 3.2rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--text-white);
+  margin: 0;
+}
+
+.problems-subheadline {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.7;
+  max-width: 650px;
+}
+
+.problems-actions {
+  margin-top: var(--spacing-sm);
+}
+
+.problems-actions .btn-primary {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.9rem 2rem;
+  font-size: 1rem;
+  border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+  .problems-headline {
+    font-size: 2.2rem;
+  }
+
+  .problems-subheadline {
+    font-size: 1rem;
+  }
+}
+
+/* Pipeline Section */
+.pipeline-section {
+  background-color: var(--bg-white);
+}
+
+.pipeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-lg);
+  gap: var(--spacing-md);
+}
+
+.pipeline-header-left {
+  flex: 1;
+}
+
+.pipeline-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #a855f7;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.pipeline-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 0;
+  max-width: 600px;
+}
+
+.pipeline-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  max-width: 300px;
+  text-align: right;
+  margin-top: 1.5rem;
+}
+
+.pipeline-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+  padding-top: var(--spacing-lg);
+}
+
+.pipeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  cursor: pointer;
+  padding: var(--spacing-md);
+  border-radius: 12px;
+  transition: all var(--transition-medium);
+}
+
+.pipeline-step:hover {
+  background: var(--step-bg-hover, transparent);
+}
+
+/* Color variants */
+.step-purple { --step-color: #a855f7; --step-bg-hover: rgba(168, 85, 247, 0.04); }
+.step-blue { --step-color: #3b82f6; --step-bg-hover: rgba(59, 130, 246, 0.04); }
+.step-orange { --step-color: #f97316; --step-bg-hover: rgba(249, 115, 22, 0.04); }
+.step-dark { --step-color: #1e1e1e; --step-bg-hover: rgba(30, 30, 30, 0.04); }
+
+.step-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-md);
+  color: var(--text-main);
+  background: var(--bg-white);
+  transition: all var(--transition-medium);
+}
+
+.step-icon-active {
+  border-color: var(--step-color, #a855f7);
+  color: var(--step-color, #a855f7);
+  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
+}
+
+.pipeline-step:hover .step-icon {
+  border-color: var(--step-color);
+  color: var(--step-color);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--step-color) 15%, transparent);
+  transform: scale(1.05);
+}
+
+.pipeline-step:hover .step-number {
+  color: var(--step-color);
+}
+
+.pipeline-step:hover .step-title {
+  color: var(--step-color);
+}
+
+.step-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.step-number {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  transition: color var(--transition-medium);
+}
+
+.step-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--step-color, #a855f7);
+  background: color-mix(in srgb, var(--step-color, #a855f7) 10%, transparent);
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.step-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  transition: color var(--transition-medium);
+}
+
+.step-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .pipeline-header {
+    flex-direction: column;
+  }
+
+  .pipeline-subtitle {
+    text-align: left;
+    margin-top: 0;
+  }
+
+  .pipeline-title {
+    font-size: 1.8rem;
+  }
+
+  .pipeline-steps {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Fix for SVG icons */
 img,
 svg {
@@ -428,4 +657,89 @@ svg {
   width: 20px !important;
   height: 20px !important;
   min-width: 20px !important;
+}
+
+/* Testimonials Marquee */
+@keyframes marquee-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.marquee-track {
+  display: flex;
+  gap: 1.25rem;
+  width: max-content;
+  will-change: transform;
+}
+
+.marquee-track-left {
+  animation: marquee-left 35s linear infinite;
+}
+
+.marquee-track-right {
+  animation: marquee-right 35s linear infinite;
+}
+
+.marquee-container:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.testimonial-card {
+  flex-shrink: 0;
+  width: 340px;
+  background: var(--bg-neutral);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5rem;
+  transition: border-color 0.3s ease;
+}
+
+.testimonial-card:hover {
+  border-color: rgba(0,0,0,0.18);
+}
+
+.testimonial-quote {
+  font-size: 0.95rem;
+  color: var(--text-main);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.testimonial-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.testimonial-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.testimonial-role {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
 }
