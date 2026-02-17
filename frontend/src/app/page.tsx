@@ -131,7 +131,6 @@ function FAQSection() {
     </section>
   );
 }
-
 export default function Home() {
   return (
     <>
