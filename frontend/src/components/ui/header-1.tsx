@@ -10,41 +10,6 @@ import Link from 'next/link';
 export function Header() {
     const [open, setOpen] = React.useState(false);
     const scrolled = useScroll(10);
-    const [me, setMe] = React.useState<{ email: string; provider: string } | null>(null);
-
-    React.useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-        setMe(null);
-        return;
-    }
-
-    (async () => {
-        try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/me`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!res.ok) {
-            localStorage.removeItem("access_token");
-            setMe(null);
-            return;
-        }
-
-        const data = await res.json();
-        setMe({ email: data.email, provider: data.provider });
-        } catch {
-        setMe(null);
-        }
-    })();
-    }, []);
-
-        const logout = () => {
-            localStorage.removeItem("access_token");
-            setMe(null);
-            window.location.href = "/login";
-        };
-    
 
     const links = [
         { label: 'Producto', href: '#plataforma' },
@@ -171,35 +136,6 @@ export function Header() {
                     </div>
                     JOIN.IA
                 </Link>
-<<<<<<< HEAD
-                <div className="hidden items-center gap-8 md:flex">
-                    {links.map((link) => (
-                        <a key={link.label} className={cn(buttonVariants({ variant: 'ghost' }), "text-sm font-medium text-gray-300 hover:text-white transition-colors")} href={link.href}>
-                            {link.label}
-                        </a>
-                    ))}
-                    {me ? (
-                        <button
-                            type="button"
-                            onClick={logout}
-                            className={cn(
-                            buttonVariants({ variant: 'secondary' }),
-                            "px-6 py-2.5 bg-white hover:bg-gray-200 text-black text-xs font-bold tracking-wider rounded transition-all shadow-lg shadow-white/10 border border-black"
-                            )}
-                        >
-                            Logout
-                        </button>
-                        ) : (
-                        <Link
-                            href="/login"
-                            className={cn(
-                            buttonVariants({ variant: 'secondary' }),
-                            "px-6 py-2.5 bg-white hover:bg-gray-200 text-black text-xs font-bold tracking-wider rounded transition-all shadow-lg shadow-white/10 border border-black"
-                            )}
-                        >
-                            INICIAR SESIÓN
-                        </Link>
-=======
 
                 <div className="header-nav">
                     {links.map((link) =>
@@ -212,7 +148,6 @@ export function Header() {
                                 {link.label}
                             </a>
                         )
->>>>>>> eb5fc87c7ec66bb4d2794885171220a26561b62a
                     )}
                 </div>
 
@@ -261,40 +196,6 @@ export function Header() {
                         >
                             {link.label}
                         </a>
-<<<<<<< HEAD
-                    ))}
-                </div>
-                <div className="flex flex-col gap-2">
-                {me ? (
-                    <button
-                        type="button"
-                        onClick={() => {
-                        logout();
-                        setOpen(false);
-                        }}
-                        className={cn(
-                        buttonVariants({ variant: 'secondary' }),
-                        "w-full bg-white text-black border border-black"
-                        )}
-                    >
-                        Logout
-                    </button>
-                    ) : (
-                    <Link
-                        href="/login"
-                        onClick={() => setOpen(false)}
-                        className={cn(
-                        buttonVariants({ variant: 'secondary' }),
-                        "w-full bg-white text-black border border-black"
-                        )}
-                    >
-                        INICIAR SESIÓN
-                    </Link>
-                )}
-                </div>
-            </MobileMenu>
-        </header>
-=======
                     )
                 )}
             </div>
@@ -305,7 +206,6 @@ export function Header() {
             </div>
         </MobileMenu>
         </>
->>>>>>> eb5fc87c7ec66bb4d2794885171220a26561b62a
     );
 }
 
