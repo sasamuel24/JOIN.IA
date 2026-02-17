@@ -10,6 +10,41 @@ import Link from 'next/link';
 export function Header() {
     const [open, setOpen] = React.useState(false);
     const scrolled = useScroll(10);
+    const [me, setMe] = React.useState<{ email: string; provider: string } | null>(null);
+
+    React.useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+        setMe(null);
+        return;
+    }
+
+    (async () => {
+        try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!res.ok) {
+            localStorage.removeItem("access_token");
+            setMe(null);
+            return;
+        }
+
+        const data = await res.json();
+        setMe({ email: data.email, provider: data.provider });
+        } catch {
+        setMe(null);
+        }
+    })();
+    }, []);
+
+        const logout = () => {
+            localStorage.removeItem("access_token");
+            setMe(null);
+            window.location.href = "/login";
+        };
+    
 
     const links = [
         {
@@ -59,9 +94,28 @@ export function Header() {
                             {link.label}
                         </a>
                     ))}
-                    <Link href="/login" className={cn(buttonVariants({ variant: 'secondary' }), "px-6 py-2.5 bg-white hover:bg-gray-200 text-black text-xs font-bold tracking-wider rounded transition-all shadow-lg shadow-white/10")}>
-                        INICIAR SESIÓN
-                    </Link>
+                    {me ? (
+                        <button
+                            type="button"
+                            onClick={logout}
+                            className={cn(
+                            buttonVariants({ variant: 'secondary' }),
+                            "px-6 py-2.5 bg-white hover:bg-gray-200 text-black text-xs font-bold tracking-wider rounded transition-all shadow-lg shadow-white/10 border border-black"
+                            )}
+                        >
+                            Logout
+                        </button>
+                        ) : (
+                        <Link
+                            href="/login"
+                            className={cn(
+                            buttonVariants({ variant: 'secondary' }),
+                            "px-6 py-2.5 bg-white hover:bg-gray-200 text-black text-xs font-bold tracking-wider rounded transition-all shadow-lg shadow-white/10 border border-black"
+                            )}
+                        >
+                            INICIAR SESIÓN
+                        </Link>
+                    )}
                 </div>
                 <Button
                     size="icon"
@@ -92,9 +146,32 @@ export function Header() {
                     ))}
                 </div>
                 <div className="flex flex-col gap-2">
-                    <Link href="/login" className={cn(buttonVariants({ variant: 'secondary' }), "w-full bg-white text-black")}>
+                {me ? (
+                    <button
+                        type="button"
+                        onClick={() => {
+                        logout();
+                        setOpen(false);
+                        }}
+                        className={cn(
+                        buttonVariants({ variant: 'secondary' }),
+                        "w-full bg-white text-black border border-black"
+                        )}
+                    >
+                        Logout
+                    </button>
+                    ) : (
+                    <Link
+                        href="/login"
+                        onClick={() => setOpen(false)}
+                        className={cn(
+                        buttonVariants({ variant: 'secondary' }),
+                        "w-full bg-white text-black border border-black"
+                        )}
+                    >
                         INICIAR SESIÓN
                     </Link>
+                )}
                 </div>
             </MobileMenu>
         </header>

@@ -5,11 +5,13 @@ import WhatsappFloat from '@/components/WhatsappFloat';
 import { Typewriter } from '@/components/ui/Typewriter';
 import { FloatingPaths } from '@/components/ui/background-paths';
 import { Header } from '@/components/ui/header-1';
+import AuthStatus from "@/components/AuthStatus";
 
 export default function Home() {
   return (
     <>
       <Header />
+      <AuthStatus />
 
       <main>
         <section className="hero relative overflow-hidden">

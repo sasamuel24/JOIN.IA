@@ -13,22 +13,42 @@ export default function RegisterPage() {
     const [error, setError] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
+    e.preventDefault();
+    setError("");
 
-        if (formData.password !== formData.confirmPassword) {
-            setError('Passwords do not match');
-            return;
+    if (formData.password !== formData.confirmPassword) {
+        setError("Passwords do not match");
+        return;
+    }
+
+    if (formData.password.length < 6) {
+        setError("Password must be at least 6 characters");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            full_name: formData.fullName,
+        }),
+        });
+
+        if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data?.detail || "Register failed");
+        return;
         }
 
-        if (formData.password.length < 6) {
-            setError('Password must be at least 6 characters');
-            return;
-        }
-
-        // Redirect to home for now
-        window.location.href = '/';
+        window.location.href = "/login";
+    } catch (err) {
+        setError("Cannot connect to backend (is it running?)");
+    }
     };
+
 
     const handleGoogleSignup = () => {
         window.location.href = '/';
