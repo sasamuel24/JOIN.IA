@@ -1,21 +1,23 @@
-from pydantic import BaseModel, EmailStr
-from typing import Optional
-from datetime import datetime
+from sqlalchemy import Column, String, Boolean, DateTime
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.sql import func
+import uuid
 
+from app.core.db import engine
+from app.models.base import Base
 
-class UserBase(BaseModel):
-    email: EmailStr
-    username: str
-    is_active: Optional[bool] = True
+class User(Base):
+    __tablename__ = "users"
 
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    email = Column(String, unique=True, nullable=False, index=True)
+    full_name = Column(String, nullable=True)
 
-class UserCreate(UserBase):
-    password: str
+    hashed_password = Column(String, nullable=True)  # null para Google users
+    is_active = Column(Boolean, default=True)
+    is_verified = Column(Boolean, default=False)
 
+    provider = Column(String, default="local")  # local | google
+    provider_id = Column(String, nullable=True)  # id de Google
 
-class UserResponse(UserBase):
-    id: int
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

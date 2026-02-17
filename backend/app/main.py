@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api import routes
+from app.core.db import test_db_connection
 
 
 def create_application() -> FastAPI:
@@ -41,3 +42,8 @@ async def root():
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+@app.get("/health/db")
+def health_db():
+    test_db_connection()
+    return {"db": "ok"}
