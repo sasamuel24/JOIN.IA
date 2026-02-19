@@ -17,11 +17,14 @@ from app.schemas.auth import RegisterRequest
 from app.schemas.auth_login import LoginRequest
 from app.core.security import create_access_token
 
+<<<<<<< HEAD
 from datetime import datetime, timedelta, timezone
 from app.models.password_reset import PasswordResetToken
 from app.schemas.password_reset import ForgotPasswordRequest, ResetPasswordRequest
 from app.services.email_service import send_password_reset_email
 
+=======
+>>>>>>> f4b30d354a0c59c2244fb8572d586cc259c80352
 api_router = APIRouter()
 
 
@@ -216,6 +219,7 @@ async def google_callback(request: Request):
     params = urlencode({"token": token})
     return RedirectResponse(url=f"{frontend_callback}?{params}", status_code=302)
 
+<<<<<<< HEAD
 @api_router.post("/auth/forgot-password")
 def forgot_password(payload: ForgotPasswordRequest):
     """
@@ -285,4 +289,6 @@ def reset_password(payload: ResetPasswordRequest):
     finally:
         db.close()    
 
+=======
+>>>>>>> f4b30d354a0c59c2244fb8572d586cc259c80352
 
