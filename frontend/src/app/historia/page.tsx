@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { Header } from '@/components/ui/header-1';
-import WhatsappFloat from '@/components/WhatsappFloat';
 
 export default function HistoriaPage() {
   return (
@@ -10,6 +9,15 @@ export default function HistoriaPage() {
       <Header />
 
       <main style={{ background: '#fff', color: '#111' }}>
+        <style>{`
+          .historia-section-inner { padding: 0 2rem; max-width: 780px; margin: 0 auto; }
+          .creemos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+          .pillars-grid  { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 2.5rem; }
+          @media (max-width: 768px) {
+            .creemos-grid { grid-template-columns: 1fr; }
+            .pillars-grid  { grid-template-columns: 1fr; }
+          }
+        `}</style>
         {/* Hero */}
         <section style={{ paddingTop: '10rem', paddingBottom: '5rem' }}>
           <div style={{ maxWidth: '780px', margin: '0 auto', padding: '0 2rem' }}>
@@ -139,7 +147,7 @@ export default function HistoriaPage() {
             <h2 style={{ fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)', fontWeight: 700, lineHeight: 1.15, margin: '0 0 3rem 0', color: '#111' }}>
               Lo que creemos sobre operar bien
             </h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
+            <div className="creemos-grid">
               {/* Card 1 */}
               <div style={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <span style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', color: 'rgba(0,0,0,0.4)', textTransform: 'uppercase' }}>/01</span>
@@ -200,7 +208,7 @@ export default function HistoriaPage() {
             </div>
 
             {/* 3 Pillars */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem', marginTop: '2.5rem' }}>
+            <div className="pillars-grid">
               <div>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#111', margin: '0 0 0.5rem 0' }}>Menos manual</h3>
                 <p style={{ fontSize: '0.9rem', color: 'rgba(0,0,0,0.5)', lineHeight: 1.6, margin: 0 }}>
@@ -309,7 +317,6 @@ export default function HistoriaPage() {
         </div>
       </footer>
 
-      <WhatsappFloat />
     </>
   );
 }
