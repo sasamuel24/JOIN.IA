@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import WhatsappFloat from '@/components/WhatsappFloat';
 import { Typewriter } from '@/components/ui/Typewriter';
 import { FloatingPaths } from '@/components/ui/background-paths';
 import { Header } from '@/components/ui/header-1';
@@ -53,8 +52,12 @@ function FAQSection() {
         .faq-chevron { transition: transform 0.3s ease; }
         .faq-chevron.open { transform: rotate(180deg); }
         .faq-answer { overflow: hidden; transition: max-height 0.35s ease, opacity 0.3s ease; }
+        .faq-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 5rem; align-items: start; }
+        @media (max-width: 768px) {
+          .faq-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+        }
       `}</style>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: '5rem', alignItems: 'start' }}>
+      <div className="faq-grid" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
         {/* Left: Header */}
         <div>
           <span style={{
@@ -139,6 +142,22 @@ export default function Home() {
       <AuthStatus />
 
       <main>
+        <style>{`
+          .pipeline-cards-grid { grid-template-columns: repeat(3, 1fr); }
+          .plataforma-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+          .plataforma-dot-grid { display: grid; }
+          .contact-email-row { display: flex; }
+          .contact-email-row input { border-radius: 6px 0 0 6px; border-right: none; }
+          .contact-email-row a  { border-radius: 0 6px 6px 0; }
+          @media (max-width: 768px) {
+            .pipeline-cards-grid { grid-template-columns: 1fr; }
+            .plataforma-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+            .plataforma-dot-grid { display: none; }
+            .contact-email-row { flex-direction: column; gap: 0.75rem; }
+            .contact-email-row input { border-radius: 6px; border-right: 1px solid rgba(0,0,0,0.12) !important; width: 100%; }
+            .contact-email-row a  { border-radius: 6px; text-align: center; justify-content: center; width: 100%; }
+          }
+        `}</style>
         <section className="hero relative overflow-hidden">
           <div className="absolute inset-0 z-0 opacity-60 pointer-events-none">
             <FloatingPaths position={1} />
@@ -220,7 +239,7 @@ export default function Home() {
             </div>
 
             {/* 3 Cards Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
+            <div className="pipeline-cards-grid" style={{ display: 'grid', gap: '1.5rem', marginBottom: '3rem' }}>
               {/* Card 01 */}
               <div style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: '12px', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '420px' }}>
                 <div>
@@ -440,7 +459,7 @@ export default function Home() {
               animation: dot-float var(--dur, 3s) ease-in-out var(--delay, 0s) infinite;
             }
           `}</style>
-          <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center' }}>
+          <div className="plataforma-grid" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
             {/* Left: Content */}
             <div>
               <span style={{
@@ -504,7 +523,7 @@ export default function Home() {
             </div>
 
             {/* Right: Dynamic dot pattern */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(20, 1fr)', gridTemplateRows: 'repeat(16, 1fr)', gap: '12px', padding: '2rem', minHeight: '420px' }}>
+            <div className="plataforma-dot-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(20, 1fr)', gridTemplateRows: 'repeat(16, 1fr)', gap: '12px', padding: '2rem', minHeight: '420px' }}>
               {Array.from({ length: 320 }).map((_, idx) => {
                 const col = idx % 20;
                 const row = Math.floor(idx / 20);
@@ -537,7 +556,6 @@ export default function Home() {
           <p className="copyright">&copy; 2025 JOIN.IA. Todos los derechos reservados.</p>
         </div>
       </footer>
-      <WhatsappFloat />
     </>
   );
 }

@@ -1,32 +1,17 @@
 'use client';
 import React from 'react';
-import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { MenuToggleIcon } from '@/components/ui/menu-toggle-icon';
 import { useScroll } from '@/components/ui/use-scroll';
-import { createPortal } from 'react-dom';
 import Link from 'next/link';
 
 export function Header() {
-    const [open, setOpen] = React.useState(false);
     const scrolled = useScroll(10);
 
     const links = [
-        { label: 'Producto', href: '#plataforma' },
-        { label: 'Features', href: '#pipeline' },
+        { label: 'Producto', href: '/#plataforma' },
+        { label: 'Features', href: '/#pipeline' },
         { label: 'Historia', href: '/historia' },
     ];
-
-    React.useEffect(() => {
-        if (open) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-        return () => {
-            document.body.style.overflow = '';
-        };
-    }, [open]);
 
     return (
         <>
@@ -123,7 +108,39 @@ export function Header() {
                 border-color: rgba(255, 255, 255, 0.35);
             }
             @media (max-width: 768px) {
-                .header-nav, .header-cta { display: none; }
+                .header-bar {
+                    padding: 0.75rem 0.75rem;
+                }
+                .header-inner {
+                    padding: 0.5rem 0.9rem;
+                    gap: 0.25rem;
+                    border-radius: 10px;
+                }
+                .header-dot-grid {
+                    display: none;
+                }
+                .header-logo {
+                    font-size: 0.85rem;
+                    gap: 0.3rem;
+                    flex-shrink: 0;
+                }
+                .header-nav {
+                    display: flex;
+                    gap: 0;
+                    flex: 1;
+                    justify-content: center;
+                }
+                .header-nav-link {
+                    font-size: 0.72rem;
+                    padding: 0.35rem 0.45rem;
+                    letter-spacing: -0.01em;
+                }
+                .header-cta {
+                    font-size: 0.7rem;
+                    padding: 0.4rem 0.7rem;
+                    flex-shrink: 0;
+                    border-radius: 5px;
+                }
             }
         `}</style>
         <div className={cn('header-bar', { scrolled })}>
@@ -154,89 +171,9 @@ export function Header() {
                 <Link href="/login" className="header-cta">
                     Registrarme
                 </Link>
-
-                <Button
-                    size="icon"
-                    variant="outline"
-                    onClick={() => setOpen(!open)}
-                    className="md:hidden"
-                    aria-expanded={open}
-                    aria-controls="mobile-menu"
-                    aria-label="Toggle menu"
-                    style={{ border: '1px solid rgba(255,255,255,0.2)', background: 'transparent' }}
-                >
-                    <MenuToggleIcon open={open} className="size-5" duration={300} />
-                </Button>
             </div>
         </div>
-        <MobileMenu open={open} className="flex flex-col justify-between gap-2">
-            <div className="grid gap-y-2">
-                {links.map((link) =>
-                    link.href.startsWith('/') ? (
-                        <Link
-                            key={link.label}
-                            className={buttonVariants({
-                                variant: 'ghost',
-                                className: 'justify-start text-white',
-                            })}
-                            href={link.href}
-                            onClick={() => setOpen(false)}
-                        >
-                            {link.label}
-                        </Link>
-                    ) : (
-                        <a
-                            key={link.label}
-                            className={buttonVariants({
-                                variant: 'ghost',
-                                className: 'justify-start text-white',
-                            })}
-                            href={link.href}
-                            onClick={() => setOpen(false)}
-                        >
-                            {link.label}
-                        </a>
-                    )
-                )}
-            </div>
-            <div className="flex flex-col gap-2">
-                <Link href="/login" className={cn(buttonVariants({ variant: 'secondary' }), "w-full bg-white text-black")}>
-                    Registrarme
-                </Link>
-            </div>
-        </MobileMenu>
         </>
-    );
-}
-
-type MobileMenuProps = React.ComponentProps<'div'> & {
-    open: boolean;
-};
-
-function MobileMenu({ open, children, className, ...props }: MobileMenuProps) {
-    if (!open || typeof window === 'undefined') return null;
-
-    return createPortal(
-        <div
-            id="mobile-menu"
-            className={cn(
-                'bg-background/95 supports-[backdrop-filter]:bg-background/50 backdrop-blur-lg',
-                'fixed top-14 right-0 bottom-0 left-0 z-40 flex flex-col overflow-hidden border-y md:hidden',
-            )}
-        >
-            <div
-                data-slot={open ? 'open' : 'closed'}
-                className={cn(
-                    'data-[slot=open]:animate-in data-[slot=open]:zoom-in-97 ease-out',
-                    'size-full p-4',
-                    className,
-                )}
-                {...props}
-            >
-                {children}
-            </div>
-        </div>,
-        document.body,
     );
 }
 
