@@ -72,7 +72,7 @@ export function Header() {
                 width: 4px;
                 height: 4px;
                 border-radius: 50%;
-                background: #438B7D;
+                background: #00D4AA;
             }
             .header-nav {
                 display: flex;
@@ -89,8 +89,8 @@ export function Header() {
                 transition: color 0.2s ease, background 0.2s ease;
             }
             .header-nav-link:hover {
-                color: #fff;
-                background: rgba(255, 255, 255, 0.06);
+                color: #00D4AA;
+                background: rgba(0, 212, 170, 0.06);
             }
             .header-cta {
                 font-size: 0.8rem;
@@ -104,8 +104,9 @@ export function Header() {
                 white-space: nowrap;
             }
             .header-cta:hover {
-                background: rgba(255, 255, 255, 0.08);
-                border-color: rgba(255, 255, 255, 0.35);
+                background: rgba(0, 212, 170, 0.1);
+                border-color: #00D4AA;
+                color: #00D4AA;
             }
             @media (max-width: 768px) {
                 .header-bar {

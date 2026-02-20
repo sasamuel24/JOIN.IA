@@ -21,8 +21,8 @@ export default function ContactSection() {
           display: 'inline-block',
           fontSize: '0.8rem',
           fontWeight: 600,
-          color: '#111',
-          border: '1px solid rgba(0,0,0,0.2)',
+          color: '#00D4AA',
+          border: '1px solid rgba(0, 212, 170, 0.3)',
           borderRadius: '4px',
           padding: '0.35rem 0.75rem',
           letterSpacing: '0.02em',
@@ -66,12 +66,15 @@ export default function ContactSection() {
               fontSize: '0.9rem',
               fontWeight: 600,
               color: '#fff',
-              background: '#111',
-              border: '1px solid #111',
+              background: '#00D4AA',
+              border: '1px solid #00D4AA',
               borderRadius: '0 6px 6px 0',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
+              transition: 'all 0.3s ease',
             }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#00B892'; e.currentTarget.style.borderColor = '#00B892'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = '#00D4AA'; e.currentTarget.style.borderColor = '#00D4AA'; }}
           >
             Registrarme
           </button>

@@ -25,14 +25,14 @@ export default function HistoriaPage() {
               display: 'inline-block',
               fontSize: '0.8rem',
               fontWeight: 600,
-              color: '#111',
-              border: '1px solid rgba(0,0,0,0.2)',
+              color: '#00D4AA',
+              border: '1px solid rgba(0, 212, 170, 0.3)',
               borderRadius: '4px',
               padding: '0.35rem 0.75rem',
               letterSpacing: '0.02em',
               marginBottom: '2rem',
             }}>
-              Por qué estamos construyendo JOIN.IA
+              Por qu&eacute; estamos construyendo JOIN.IA
             </span>
             <h1 style={{ fontSize: 'clamp(2.2rem, 5vw, 3.6rem)', fontWeight: 700, lineHeight: 1.1, margin: '0 0 1.5rem 0', color: '#111' }}>
               El problema operativo que toda empresa conoce demasiado bien
@@ -42,7 +42,7 @@ export default function HistoriaPage() {
 
         {/* Divider */}
         <div style={{ maxWidth: '780px', margin: '0 auto', padding: '0 2rem' }}>
-          <div style={{ height: '1px', background: 'rgba(0,0,0,0.1)' }} />
+          <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(0, 212, 170, 0.25), transparent)' }} />
         </div>
 
         {/* Section 1 — Por qué el trabajo manual sigue ganando */}
@@ -69,7 +69,7 @@ export default function HistoriaPage() {
 
         {/* Divider */}
         <div style={{ maxWidth: '780px', margin: '0 auto', padding: '0 2rem' }}>
-          <div style={{ height: '1px', background: 'rgba(0,0,0,0.1)' }} />
+          <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(0, 212, 170, 0.25), transparent)' }} />
         </div>
 
         {/* Section 2 — El patrón que empecé a ver */}
@@ -102,7 +102,7 @@ export default function HistoriaPage() {
 
         {/* Divider */}
         <div style={{ maxWidth: '780px', margin: '0 auto', padding: '0 2rem' }}>
-          <div style={{ height: '1px', background: 'rgba(0,0,0,0.1)' }} />
+          <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(0, 212, 170, 0.25), transparent)' }} />
         </div>
 
         {/* Section 3 — Dónde se rompe el stack actual */}
@@ -119,7 +119,7 @@ export default function HistoriaPage() {
                 Tienes herramientas para comunicar (chat), para registrar (docs), para organizar (tableros), para medir (dashboards).
                 Pero en el día a día, la realidad es otra:
               </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingLeft: '1.5rem', borderLeft: '2px solid rgba(0,0,0,0.1)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingLeft: '1.5rem', borderLeft: '2px solid rgba(0, 212, 170, 0.4)' }}>
                 <p style={{ margin: 0 }}>La información vive en muchos lugares.</p>
                 <p style={{ margin: 0 }}>Las decisiones viven en conversaciones.</p>
                 <p style={{ margin: 0 }}>La ejecución vive en personas.</p>
@@ -138,7 +138,7 @@ export default function HistoriaPage() {
 
         {/* Divider */}
         <div style={{ maxWidth: '780px', margin: '0 auto', padding: '0 2rem' }}>
-          <div style={{ height: '1px', background: 'rgba(0,0,0,0.1)' }} />
+          <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(0, 212, 170, 0.25), transparent)' }} />
         </div>
 
         {/* Section 4 — Lo que creemos sobre operar bien */}
@@ -150,7 +150,7 @@ export default function HistoriaPage() {
             <div className="creemos-grid">
               {/* Card 1 */}
               <div style={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', color: 'rgba(0,0,0,0.4)', textTransform: 'uppercase' }}>/01</span>
+                <span style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', color: '#00D4AA', textTransform: 'uppercase' }}>/01</span>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#111', lineHeight: 1.3, margin: 0 }}>
                   La operación no debería depender de memoria humana
                 </h3>
@@ -160,7 +160,7 @@ export default function HistoriaPage() {
               </div>
               {/* Card 2 */}
               <div style={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', color: 'rgba(0,0,0,0.4)', textTransform: 'uppercase' }}>/02</span>
+                <span style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', color: '#00D4AA', textTransform: 'uppercase' }}>/02</span>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#111', lineHeight: 1.3, margin: 0 }}>
                   Convertir lo repetitivo en un sistema debería ser simple
                 </h3>
@@ -170,7 +170,7 @@ export default function HistoriaPage() {
               </div>
               {/* Card 3 */}
               <div style={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', color: 'rgba(0,0,0,0.4)', textTransform: 'uppercase' }}>/03</span>
+                <span style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', color: '#00D4AA', textTransform: 'uppercase' }}>/03</span>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#111', lineHeight: 1.3, margin: 0 }}>
                   Todos deberían ver la misma realidad
                 </h3>
@@ -184,7 +184,7 @@ export default function HistoriaPage() {
 
         {/* Divider */}
         <div style={{ maxWidth: '780px', margin: '0 auto', padding: '0 2rem' }}>
-          <div style={{ height: '1px', background: 'rgba(0,0,0,0.1)' }} />
+          <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(0, 212, 170, 0.25), transparent)' }} />
         </div>
 
         {/* Section 5 — Dónde encaja JOIN.IA */}
@@ -233,7 +233,7 @@ export default function HistoriaPage() {
 
         {/* Divider */}
         <div style={{ maxWidth: '780px', margin: '0 auto', padding: '0 2rem' }}>
-          <div style={{ height: '1px', background: 'rgba(0,0,0,0.1)' }} />
+          <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(0, 212, 170, 0.25), transparent)' }} />
         </div>
 
         {/* Section 6 — El futuro hacia el que estamos construyendo */}
@@ -267,7 +267,7 @@ export default function HistoriaPage() {
 
         {/* Divider */}
         <div style={{ maxWidth: '780px', margin: '0 auto', padding: '0 2rem' }}>
-          <div style={{ height: '1px', background: 'rgba(0,0,0,0.1)' }} />
+          <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(0, 212, 170, 0.25), transparent)' }} />
         </div>
 
         {/* Cierre / CTA */}
@@ -295,11 +295,13 @@ export default function HistoriaPage() {
                 fontSize: '0.95rem',
                 fontWeight: 600,
                 color: '#fff',
-                background: '#111',
+                background: '#00D4AA',
                 borderRadius: '8px',
                 textDecoration: 'none',
-                transition: 'background 0.2s ease',
+                transition: 'all 0.3s ease',
               }}
+              onMouseEnter={(e) => { (e.target as HTMLElement).style.background = '#00B892'; (e.target as HTMLElement).style.transform = 'translateY(-2px)'; (e.target as HTMLElement).style.boxShadow = '0 4px 20px rgba(0, 212, 170, 0.25)'; }}
+              onMouseLeave={(e) => { (e.target as HTMLElement).style.background = '#00D4AA'; (e.target as HTMLElement).style.transform = 'translateY(0)'; (e.target as HTMLElement).style.boxShadow = 'none'; }}
             >
               Crear cuenta / Registrarme
             </Link>
