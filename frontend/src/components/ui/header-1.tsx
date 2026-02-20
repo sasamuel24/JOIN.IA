@@ -9,7 +9,7 @@ export function Header() {
 
     const links = [
         { label: 'Producto', href: '/#plataforma' },
-        { label: 'Features', href: '/#pipeline' },
+        { label: 'Características', href: '/#pipeline' },
         { label: 'Historia', href: '/historia' },
     ];
 
