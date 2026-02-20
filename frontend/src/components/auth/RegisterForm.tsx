@@ -80,7 +80,7 @@ export default function RegisterForm({ onToggleMode }: RegisterFormProps) {
                     placeholder="Nombre completo"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-gray-300 focus:bg-white"
+                    className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-[#00D4AA] focus:bg-white focus:ring-1 focus:ring-[#00D4AA]/20"
                     required
                 />
 
@@ -89,7 +89,7 @@ export default function RegisterForm({ onToggleMode }: RegisterFormProps) {
                     placeholder="Correo electrónico"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-gray-300 focus:bg-white"
+                    className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-[#00D4AA] focus:bg-white focus:ring-1 focus:ring-[#00D4AA]/20"
                     required
                 />
 
@@ -98,7 +98,7 @@ export default function RegisterForm({ onToggleMode }: RegisterFormProps) {
                     placeholder="Contraseña"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-gray-300 focus:bg-white"
+                    className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-[#00D4AA] focus:bg-white focus:ring-1 focus:ring-[#00D4AA]/20"
                     required
                     minLength={6}
                 />
@@ -108,7 +108,7 @@ export default function RegisterForm({ onToggleMode }: RegisterFormProps) {
                     placeholder="Confirmar contraseña"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-gray-300 focus:bg-white"
+                    className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-[#00D4AA] focus:bg-white focus:ring-1 focus:ring-[#00D4AA]/20"
                     required
                 />
 
@@ -123,7 +123,7 @@ export default function RegisterForm({ onToggleMode }: RegisterFormProps) {
                 <button
                     type="button"
                     onClick={handleSubmit}
-                    className="w-full h-10 bg-gray-900 text-white rounded-lg hover:bg-black transition-all duration-200 font-semibold text-sm tracking-wide"
+                    className="w-full h-10 bg-gray-900 text-white rounded-lg hover:bg-[#00D4AA] transition-all duration-300 font-semibold text-sm tracking-wide"
                 >
                     Crear cuenta
                 </button>
@@ -150,13 +150,13 @@ export default function RegisterForm({ onToggleMode }: RegisterFormProps) {
             </div>
 
             <p className="text-sm text-gray-400">
-                ¿Ya tienes una cuenta?{' '}
+                &iquest;Ya tienes una cuenta?{' '}
                 <button
                     type="button"
                     onClick={onToggleMode}
-                    className="text-gray-900 font-bold hover:underline"
+                    className="text-[#00D4AA] font-bold hover:underline"
                 >
-                    Inicia sesión
+                    Inicia sesi&oacute;n
                 </button>
             </p>
 

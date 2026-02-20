@@ -61,7 +61,7 @@ export default function LoginForm({ onToggleMode }: LoginFormProps) {
                         placeholder="Correo electrónico"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-gray-300 focus:bg-white"
+                        className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-[#00D4AA] focus:bg-white focus:ring-1 focus:ring-[#00D4AA]/20"
                         required
                     />
 
@@ -70,7 +70,7 @@ export default function LoginForm({ onToggleMode }: LoginFormProps) {
                         placeholder="Contraseña"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-gray-300 focus:bg-white"
+                        className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-[#00D4AA] focus:bg-white focus:ring-1 focus:ring-[#00D4AA]/20"
                         required
                     />
 
@@ -93,9 +93,9 @@ export default function LoginForm({ onToggleMode }: LoginFormProps) {
                     <button
                         type="button"
                         onClick={handleSubmit}
-                        className="w-full h-10 bg-gray-900 text-white rounded-lg hover:bg-black transition-all duration-200 font-semibold text-sm tracking-wide"
+                        className="w-full h-10 bg-gray-900 text-white rounded-lg hover:bg-[#00D4AA] transition-all duration-300 font-semibold text-sm tracking-wide"
                     >
-                        Iniciar sesión
+                        Iniciar sesi&oacute;n
                     </button>
 
                     <div className="relative flex items-center gap-3 py-1">
@@ -124,9 +124,9 @@ export default function LoginForm({ onToggleMode }: LoginFormProps) {
                     <button
                         type="button"
                         onClick={onToggleMode}
-                        className="text-gray-900 font-bold hover:underline"
+                        className="text-[#00D4AA] font-bold hover:underline"
                     >
-                        Regístrate
+                        Reg&iacute;strate
                     </button>
                 </p>
 

@@ -2,11 +2,22 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { Typewriter } from '@/components/ui/Typewriter';
 import { FloatingPaths } from '@/components/ui/background-paths';
 import { Header } from '@/components/ui/header-1';
 import AuthStatus from "@/components/AuthStatus";
 import ContactSection from './ContactSection';
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' as const } },
+};
+
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.15 } },
+};
 
 const faqItems = [
   {
@@ -49,10 +60,12 @@ function FAQSection() {
   return (
     <section id="faq" style={{ padding: '7rem 0', background: '#fff' }}>
       <style>{`
-        .faq-chevron { transition: transform 0.3s ease; }
+        .faq-chevron { transition: transform 0.3s ease, stroke 0.3s ease; }
         .faq-chevron.open { transform: rotate(180deg); }
         .faq-answer { overflow: hidden; transition: max-height 0.35s ease, opacity 0.3s ease; }
         .faq-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 5rem; align-items: start; }
+        .faq-item { border-bottom: 1px solid rgba(0,0,0,0.1); transition: border-color 0.3s ease; }
+        .faq-item.active { border-bottom-color: rgba(0, 212, 170, 0.3); }
         @media (max-width: 768px) {
           .faq-grid { grid-template-columns: 1fr; gap: 2.5rem; }
         }
@@ -64,8 +77,8 @@ function FAQSection() {
             display: 'inline-block',
             fontSize: '0.8rem',
             fontWeight: 600,
-            color: '#111',
-            border: '1px solid rgba(0,0,0,0.2)',
+            color: '#00D4AA',
+            border: '1px solid rgba(0, 212, 170, 0.3)',
             borderRadius: '4px',
             padding: '0.35rem 0.75rem',
             letterSpacing: '0.02em',
@@ -77,7 +90,7 @@ function FAQSection() {
             Lo que necesitas saber
           </h2>
           <p style={{ fontSize: '1rem', color: 'rgba(0,0,0,0.55)', lineHeight: 1.7, margin: 0, maxWidth: '420px' }}>
-            Preguntas comunes sobre qué es JOIN.IA, cómo lo estamos construyendo y para quién está pensado.
+            Preguntas comunes sobre qu&eacute; es JOIN.IA, c&oacute;mo lo estamos construyendo y para qui&eacute;n est&aacute; pensado.
           </p>
         </div>
 
@@ -86,7 +99,7 @@ function FAQSection() {
           {faqItems.map((item, i) => {
             const isOpen = openIndex === i;
             return (
-              <div key={i} style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+              <div key={i} className={`faq-item${isOpen ? ' active' : ''}`}>
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : i)}
                   style={{
@@ -102,7 +115,7 @@ function FAQSection() {
                     gap: '1rem',
                   }}
                 >
-                  <span style={{ fontSize: '0.95rem', fontWeight: 600, color: '#111', lineHeight: 1.4 }}>
+                  <span style={{ fontSize: '0.95rem', fontWeight: 600, color: isOpen ? '#00D4AA' : '#111', lineHeight: 1.4, transition: 'color 0.3s ease' }}>
                     {item.q}
                   </span>
                   <svg
@@ -113,7 +126,7 @@ function FAQSection() {
                     fill="none"
                     style={{ flexShrink: 0 }}
                   >
-                    <path d="M6 9l6 6 6-6" stroke="#111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M6 9l6 6 6-6" stroke={isOpen ? '#00D4AA' : '#111'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </button>
                 <div
@@ -182,94 +195,116 @@ export default function Home() {
               />
             </p>
             <div className="hero-actions">
-              <a href="#contacto" className="btn btn-primary">Transformar mi empresa</a>
-              <a href="#vision" className="btn btn-secondary">Saber más</a>
+              <a href="#contacto" className="btn btn-primary" style={{ background: '#111', transition: 'all 0.3s ease' }}>Transformar mi empresa</a>
+              <a href="#vision" className="btn btn-secondary">Saber m&aacute;s</a>
             </div>
           </div>
         </section>
 
-        <section id="problemas" style={{ padding: '7rem 0', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <motion.section
+          id="problemas"
+          style={{ padding: '7rem 0', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={staggerContainer}
+        >
           <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', width: '100%' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '2rem', maxWidth: '750px', margin: '0 auto' }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: '#111', border: '1px solid rgba(0,0,0,0.2)', borderRadius: '50px', padding: '0.6rem 1.25rem', letterSpacing: '0.01em' }}>
-                Estamos construyendo el próximo estándar de operación con IA
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <motion.span variants={fadeInUp} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: '#111', border: '1px solid rgba(0, 212, 170, 0.3)', borderRadius: '50px', padding: '0.6rem 1.25rem', letterSpacing: '0.01em' }}>
+                Estamos construyendo el pr&oacute;ximo est&aacute;ndar de operaci&oacute;n con IA
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00D4AA" strokeWidth="2">
                   <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"></path>
                 </svg>
-              </span>
-              <h2 style={{ fontSize: 'clamp(2.2rem, 5vw, 3.8rem)', fontWeight: 700, color: '#111', lineHeight: 1.15, margin: 0 }}>
+              </motion.span>
+              <motion.h2 variants={fadeInUp} style={{ fontSize: 'clamp(2.2rem, 5vw, 3.8rem)', fontWeight: 700, color: '#111', lineHeight: 1.15, margin: 0 }}>
                 De &ldquo;hacerlo a mano&rdquo; a &ldquo;que se haga solo&rdquo;.
-              </h2>
-              <p style={{ fontSize: '1.1rem', color: 'rgba(0,0,0,0.5)', lineHeight: 1.7, maxWidth: '650px', margin: 0 }}>
-                JOIN.IA está naciendo para que las empresas dejen de depender de tareas repetitivas, seguimiento manual y operación dispersa—y pasen a un sistema donde la IA impulsa la ejecución.
-              </p>
-              <div style={{ marginTop: '0.5rem' }}>
-                <a href="#contacto" style={{ display: 'inline-block', padding: '0.75rem 1.5rem', fontSize: '0.875rem', fontWeight: 600, color: '#fff', backgroundColor: '#111', borderRadius: '6px', textDecoration: 'none' }}>
+              </motion.h2>
+              <motion.p variants={fadeInUp} style={{ fontSize: '1.1rem', color: 'rgba(0,0,0,0.5)', lineHeight: 1.7, maxWidth: '650px', margin: 0 }}>
+                JOIN.IA est&aacute; naciendo para que las empresas dejen de depender de tareas repetitivas, seguimiento manual y operaci&oacute;n dispersa—y pasen a un sistema donde la IA impulsa la ejecuci&oacute;n.
+              </motion.p>
+              <motion.div variants={fadeInUp} style={{ marginTop: '0.5rem' }}>
+                <a href="#contacto" className="btn btn-primary" style={{ display: 'inline-block', padding: '0.75rem 1.5rem', fontSize: '0.875rem', fontWeight: 600, color: '#fff', backgroundColor: '#111', borderRadius: '6px', textDecoration: 'none', transition: 'all 0.3s ease' }}>
                   Quiero acceso anticipado
                 </a>
-              </div>
+              </motion.div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
-        <section id="pipeline" style={{ padding: '7rem 0' }}>
+        <motion.section
+          id="pipeline"
+          style={{ padding: '7rem 0' }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+        >
           <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', width: '100%' }}>
             {/* Header: left-aligned */}
-            <div style={{ maxWidth: '600px', marginBottom: '4rem' }}>
+            <motion.div variants={fadeInUp} style={{ maxWidth: '600px', marginBottom: '4rem' }}>
               <span style={{
                 display: 'inline-block',
                 fontSize: '0.8rem',
                 fontWeight: 600,
-                color: '#111',
-                border: '1px solid rgba(0,0,0,0.2)',
+                color: '#00D4AA',
+                border: '1px solid rgba(0, 212, 170, 0.3)',
                 borderRadius: '4px',
                 padding: '0.35rem 0.75rem',
                 letterSpacing: '0.02em',
                 marginBottom: '1.5rem'
               }}>
-                Por qué JOIN.IA
+                Por qu&eacute; JOIN.IA
               </span>
               <h2 style={{ fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', fontWeight: 700, color: '#111', lineHeight: 1.1, margin: '0 0 1.5rem 0' }}>
                 Operar sin procesos manuales
               </h2>
               <p style={{ fontSize: '1rem', color: 'rgba(0,0,0,0.55)', lineHeight: 1.7, margin: 0 }}>
-                Hoy, eliminar lo manual se reduce a tres cosas: detectar lo repetitivo, convertirlo en un flujo claro, y asegurar que la ejecución pase siempre igual.
-                <br />JOIN.IA está naciendo para hacer eso simple.
+                Hoy, eliminar lo manual se reduce a tres cosas: detectar lo repetitivo, convertirlo en un flujo claro, y asegurar que la ejecuci&oacute;n pase siempre igual.
+                <br />JOIN.IA est&aacute; naciendo para hacer eso simple.
               </p>
-            </div>
+            </motion.div>
 
             {/* 3 Cards Grid */}
             <div className="pipeline-cards-grid" style={{ display: 'grid', gap: '1.5rem', marginBottom: '3rem' }}>
               {/* Card 01 */}
-              <div style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: '12px', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '420px' }}>
+              <motion.div
+                variants={fadeInUp}
+                whileHover={{ y: -6, boxShadow: '0 12px 30px rgba(0, 212, 170, 0.1)', borderColor: 'rgba(0, 212, 170, 0.25)' }}
+                style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: '12px', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '420px', transition: 'all 0.3s ease' }}
+              >
                 <div>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', color: 'rgba(0,0,0,0.45)', textTransform: 'uppercase' as const }}>/01 IDENTIFICACIÓN</span>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', color: '#00D4AA', textTransform: 'uppercase' as const }}>/01 IDENTIFICACI&Oacute;N</span>
                   <div style={{
                     margin: '1.5rem 0',
                     height: '160px',
-                    backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.15) 1.2px, transparent 1.2px)',
+                    backgroundImage: 'radial-gradient(circle, rgba(0, 212, 170, 0.2) 1.2px, transparent 1.2px)',
                     backgroundSize: '18px 18px',
                     borderRadius: '8px'
                   }} />
                 </div>
                 <div>
                   <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#111', marginBottom: '0.6rem', lineHeight: 1.3 }}>
-                    Descubre dónde se va el tiempo
+                    Descubre d&oacute;nde se va el tiempo
                   </h3>
                   <p style={{ fontSize: '0.9rem', color: 'rgba(0,0,0,0.5)', lineHeight: 1.6, margin: 0 }}>
-                    Identifica tareas repetitivas, puntos de fricción y &ldquo;trabajos invisibles&rdquo; que consumen horas. Para que mejores con datos, no con intuición.
+                    Identifica tareas repetitivas, puntos de fricci&oacute;n y &ldquo;trabajos invisibles&rdquo; que consumen horas. Para que mejores con datos, no con intuici&oacute;n.
                   </p>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Card 02 */}
-              <div style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: '12px', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '420px' }}>
+              <motion.div
+                variants={fadeInUp}
+                whileHover={{ y: -6, boxShadow: '0 12px 30px rgba(0, 212, 170, 0.1)', borderColor: 'rgba(0, 212, 170, 0.25)' }}
+                style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: '12px', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '420px', transition: 'all 0.3s ease' }}
+              >
                 <div>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', color: 'rgba(0,0,0,0.45)', textTransform: 'uppercase' as const }}>/02 AUTOMATIZACIÓN</span>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', color: '#00D4AA', textTransform: 'uppercase' as const }}>/02 AUTOMATIZACI&Oacute;N</span>
                   <div style={{
                     margin: '1.5rem 0',
                     height: '160px',
-                    backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.15) 1.2px, transparent 1.2px)',
+                    backgroundImage: 'radial-gradient(circle, rgba(0, 212, 170, 0.2) 1.2px, transparent 1.2px)',
                     backgroundSize: '18px 18px',
                     borderRadius: '8px'
                   }} />
@@ -282,32 +317,36 @@ export default function Home() {
                     Transforma procesos en pasos ejecutables para que el trabajo avance sin depender de perseguir personas, copiar/pegar o revisar mil veces.
                   </p>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Card 03 */}
-              <div style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: '12px', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '420px' }}>
+              <motion.div
+                variants={fadeInUp}
+                whileHover={{ y: -6, boxShadow: '0 12px 30px rgba(0, 212, 170, 0.1)', borderColor: 'rgba(0, 212, 170, 0.25)' }}
+                style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: '12px', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '420px', transition: 'all 0.3s ease' }}
+              >
                 <div>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', color: 'rgba(0,0,0,0.45)', textTransform: 'uppercase' as const }}>/03 VISIBILIDAD</span>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', color: '#00D4AA', textTransform: 'uppercase' as const }}>/03 VISIBILIDAD</span>
                   <div style={{
                     margin: '1.5rem 0',
                     height: '160px',
-                    backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.15) 1.2px, transparent 1.2px)',
+                    backgroundImage: 'radial-gradient(circle, rgba(0, 212, 170, 0.2) 1.2px, transparent 1.2px)',
                     backgroundSize: '18px 18px',
                     borderRadius: '8px'
                   }} />
                 </div>
                 <div>
                   <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#111', marginBottom: '0.6rem', lineHeight: 1.3 }}>
-                    Mantén a todos alineados
+                    Mant&eacute;n a todos alineados
                   </h3>
                   <p style={{ fontSize: '0.9rem', color: 'rgba(0,0,0,0.5)', lineHeight: 1.6, margin: 0 }}>
-                    Una sola fuente de verdad sobre qué está pasando y qué sigue. Menos &ldquo;¿en qué vamos?&rdquo;, más claridad y ejecución continua.
+                    Una sola fuente de verdad sobre qu&eacute; est&aacute; pasando y qu&eacute; sigue. Menos &ldquo;&iquest;en qu&eacute; vamos?&rdquo;, m&aacute;s claridad y ejecuci&oacute;n continua.
                   </p>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         <section id="testimonios" style={{ padding: '6rem 0', overflow: 'hidden' }}>
           {/* Inline keyframes for marquee — CSS classes don't survive Tailwind v4 */}
@@ -320,31 +359,37 @@ export default function Home() {
           `}</style>
 
           {/* Header */}
-          <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem 4rem' }}>
-            <span style={{
+          <motion.div
+            style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem 4rem' }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={staggerContainer}
+          >
+            <motion.span variants={fadeInUp} style={{
               display: 'inline-block',
               fontSize: '0.8rem',
               fontWeight: 600,
-              color: '#111',
-              border: '1px solid rgba(0,0,0,0.2)',
+              color: '#00D4AA',
+              border: '1px solid rgba(0, 212, 170, 0.3)',
               borderRadius: '4px',
               padding: '0.35rem 0.75rem',
               letterSpacing: '0.02em',
               marginBottom: '1.5rem'
             }}>
               Lo escuchamos todo el tiempo
-            </span>
-            <h2 style={{ fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', fontWeight: 700, color: '#111', lineHeight: 1.1, margin: '0 0 1.5rem 0', maxWidth: '600px' }}>
-              Operar no debería ser tan manual
-            </h2>
-            <p style={{ fontSize: '1rem', color: 'rgba(0,0,0,0.55)', lineHeight: 1.8, margin: 0, maxWidth: '620px' }}>
+            </motion.span>
+            <motion.h2 variants={fadeInUp} style={{ fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', fontWeight: 700, color: '#111', lineHeight: 1.1, margin: '0 0 1.5rem 0', maxWidth: '600px' }}>
+              Operar no deber&iacute;a ser tan manual
+            </motion.h2>
+            <motion.p variants={fadeInUp} style={{ fontSize: '1rem', color: 'rgba(0,0,0,0.55)', lineHeight: 1.8, margin: 0, maxWidth: '620px' }}>
               Hoy el trabajo no falla por falta de talento.<br />
-              Falla porque la operación vive en la cabeza de las personas.<br />
-              Y cuando eso pasa, todo se vuelve lento, frágil y difícil de repetir.
+              Falla porque la operaci&oacute;n vive en la cabeza de las personas.<br />
+              Y cuando eso pasa, todo se vuelve lento, fr&aacute;gil y dif&iacute;cil de repetir.
               <br /><br />
               Esto es lo que seguimos escuchando en empresas que quieren crecer sin ahogarse en lo repetitivo.
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
 
           {/* Marquee Row 1: left */}
           <div className="mq-wrap" style={{ marginBottom: '1.25rem' }}>
@@ -448,78 +493,85 @@ export default function Home() {
         </section>
 
         {/* Plataforma Section */}
-        <section id="plataforma" style={{ padding: '7rem 0', background: '#fff' }}>
+        <motion.section
+          id="plataforma"
+          style={{ padding: '7rem 0', background: '#fff' }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+        >
           <style>{`
             @keyframes dot-float {
               0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
               50% { transform: translateY(-8px) scale(1.3); opacity: 1; }
             }
             .dot-grid-cell {
-              width: 4px; height: 4px; border-radius: 50%; background: rgba(0,0,0,0.18);
+              width: 4px; height: 4px; border-radius: 50%; background: #00D4AA;
               animation: dot-float var(--dur, 3s) ease-in-out var(--delay, 0s) infinite;
             }
           `}</style>
           <div className="plataforma-grid" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
             {/* Left: Content */}
             <div>
-              <span style={{
+              <motion.span variants={fadeInUp} style={{
                 display: 'inline-block',
                 fontSize: '0.8rem',
                 fontWeight: 600,
-                color: '#111',
-                border: '1px solid rgba(0,0,0,0.2)',
+                color: '#00D4AA',
+                border: '1px solid rgba(0, 212, 170, 0.3)',
                 borderRadius: '4px',
                 padding: '0.35rem 0.75rem',
                 letterSpacing: '0.02em',
                 marginBottom: '1.5rem'
               }}>
                 Plataforma
-              </span>
-              <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 700, color: '#111', lineHeight: 1.15, margin: '0 0 1.5rem 0' }}>
-                Diseñada para empresas que quieren operar sin procesos manuales
-              </h2>
-              <p style={{ fontSize: '1rem', color: 'rgba(0,0,0,0.55)', lineHeight: 1.7, margin: '0 0 2.5rem 0', maxWidth: '520px' }}>
-                JOIN.IA está naciendo para darle a las empresas una sola cosa que hoy casi nadie tiene: un puente claro entre lo que pasa en la operación y lo que la IA puede ejecutar, para que el trabajo deje de depender de pasos humanos repetidos.
-              </p>
+              </motion.span>
+              <motion.h2 variants={fadeInUp} style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 700, color: '#111', lineHeight: 1.15, margin: '0 0 1.5rem 0' }}>
+                Dise&ntilde;ada para empresas que quieren operar sin procesos manuales
+              </motion.h2>
+              <motion.p variants={fadeInUp} style={{ fontSize: '1rem', color: 'rgba(0,0,0,0.55)', lineHeight: 1.7, margin: '0 0 2.5rem 0', maxWidth: '520px' }}>
+                JOIN.IA est&aacute; naciendo para darle a las empresas una sola cosa que hoy casi nadie tiene: un puente claro entre lo que pasa en la operaci&oacute;n y lo que la IA puede ejecutar, para que el trabajo deje de depender de pasos humanos repetidos.
+              </motion.p>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
-                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+              <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+                <motion.div variants={fadeInUp} style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: '2px' }}>
-                    <path d="M20 6L9 17l-5-5" stroke="#111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M20 6L9 17l-5-5" stroke="#00D4AA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                   <div>
                     <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#111', marginBottom: '0.25rem' }}>Orientada a resultados</div>
-                    <div style={{ fontSize: '0.9rem', color: 'rgba(0,0,0,0.5)', lineHeight: 1.5 }}>Hecha para que el trabajo avance, no para sumar más &ldquo;herramientas&rdquo; al día a día.</div>
+                    <div style={{ fontSize: '0.9rem', color: 'rgba(0,0,0,0.5)', lineHeight: 1.5 }}>Hecha para que el trabajo avance, no para sumar m&aacute;s &ldquo;herramientas&rdquo; al d&iacute;a a d&iacute;a.</div>
                   </div>
-                </div>
-                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+                </motion.div>
+                <motion.div variants={fadeInUp} style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: '2px' }}>
-                    <path d="M20 6L9 17l-5-5" stroke="#111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M20 6L9 17l-5-5" stroke="#00D4AA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                   <div>
                     <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#111', marginBottom: '0.25rem' }}>Lista para cualquier equipo</div>
-                    <div style={{ fontSize: '0.9rem', color: 'rgba(0,0,0,0.5)', lineHeight: 1.5 }}>Funciona para operaciones, ventas, administración y liderazgo — sin depender de un perfil técnico.</div>
+                    <div style={{ fontSize: '0.9rem', color: 'rgba(0,0,0,0.5)', lineHeight: 1.5 }}>Funciona para operaciones, ventas, administraci&oacute;n y liderazgo — sin depender de un perfil t&eacute;cnico.</div>
                   </div>
-                </div>
-                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+                </motion.div>
+                <motion.div variants={fadeInUp} style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: '2px' }}>
-                    <path d="M20 6L9 17l-5-5" stroke="#111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M20 6L9 17l-5-5" stroke="#00D4AA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                   <div>
-                    <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#111', marginBottom: '0.25rem' }}>Estandariza la ejecución</div>
+                    <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#111', marginBottom: '0.25rem' }}>Estandariza la ejecuci&oacute;n</div>
                     <div style={{ fontSize: '0.9rem', color: 'rgba(0,0,0,0.5)', lineHeight: 1.5 }}>Convierte el &ldquo;cada quien lo hace a su manera&rdquo; en un sistema repetible y confiable.</div>
                   </div>
-                </div>
-                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+                </motion.div>
+                <motion.div variants={fadeInUp} style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: '2px' }}>
-                    <path d="M20 6L9 17l-5-5" stroke="#111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M20 6L9 17l-5-5" stroke="#00D4AA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                   <div>
                     <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#111', marginBottom: '0.25rem' }}>IA desde el inicio</div>
-                    <div style={{ fontSize: '0.9rem', color: 'rgba(0,0,0,0.5)', lineHeight: 1.5 }}>Un enfoque nativo de IA para reducir fricción, acelerar decisiones y eliminar lo repetitivo.</div>
+                    <div style={{ fontSize: '0.9rem', color: 'rgba(0,0,0,0.5)', lineHeight: 1.5 }}>Un enfoque nativo de IA para reducir fricci&oacute;n, acelerar decisiones y eliminar lo repetitivo.</div>
                   </div>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             </div>
 
             {/* Right: Dynamic dot pattern */}
@@ -543,7 +595,7 @@ export default function Home() {
               })}
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* FAQ Section */}
         <FAQSection />

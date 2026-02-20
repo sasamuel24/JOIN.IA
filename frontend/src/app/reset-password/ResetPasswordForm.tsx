@@ -92,7 +92,7 @@ export default function ResetPasswordForm() {
                                 placeholder="Nueva contraseña"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-gray-300 focus:bg-white"
+                                className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-[#00D4AA] focus:bg-white focus:ring-1 focus:ring-[#00D4AA]/20"
                                 autoFocus
                             />
 
@@ -102,7 +102,7 @@ export default function ResetPasswordForm() {
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-                                className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-gray-300 focus:bg-white"
+                                className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-[#00D4AA] focus:bg-white focus:ring-1 focus:ring-[#00D4AA]/20"
                             />
 
                             {error && (
@@ -114,7 +114,7 @@ export default function ResetPasswordForm() {
                             <button
                                 onClick={handleSubmit}
                                 disabled={loading}
-                                className="w-full h-10 bg-gray-900 text-white rounded-lg hover:bg-black transition-all duration-200 font-semibold text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full h-10 bg-gray-900 text-white rounded-lg hover:bg-[#00D4AA] transition-all duration-200 font-semibold text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {loading ? 'Actualizando...' : 'Actualizar contraseña'}
                             </button>
@@ -134,8 +134,8 @@ export default function ResetPasswordForm() {
                     <div className="w-full flex flex-col items-center" style={{ gap: '28px' }}>
 
                         {/* Icono éxito */}
-                        <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <div className="w-14 h-14 rounded-full bg-[#00D4AA]/10 flex items-center justify-center">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00D4AA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M20 6L9 17l-5-5"/>
                             </svg>
                         </div>
@@ -157,7 +157,7 @@ export default function ResetPasswordForm() {
                         <div style={{ width: '288px', marginBottom: '8px' }}>
                             <button
                                 onClick={() => router.push('/login')}
-                                className="w-full h-10 bg-gray-900 text-white rounded-lg hover:bg-black transition-all duration-200 font-semibold text-sm tracking-wide"
+                                className="w-full h-10 bg-gray-900 text-white rounded-lg hover:bg-[#00D4AA] transition-all duration-200 font-semibold text-sm tracking-wide"
                             >
                                 Iniciar sesión
                             </button>
