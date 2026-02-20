@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function AuthCallbackPage() {
+function AuthCallbackInner() {
   const router = useRouter();
   const params = useSearchParams();
 
@@ -22,5 +22,13 @@ export default function AuthCallbackPage() {
     <div style={{ padding: 24 }}>
       Iniciando sesión...
     </div>
+  );
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: 24 }}>Cargando...</div>}>
+      <AuthCallbackInner />
+    </Suspense>
   );
 }
