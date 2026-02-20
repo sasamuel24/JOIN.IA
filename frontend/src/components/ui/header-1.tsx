@@ -100,8 +100,20 @@ export function Header() {
                 padding: 0.45rem 1rem;
                 border: 1px solid rgba(255, 255, 255, 0.2);
                 border-radius: 6px;
-                transition: all 0.2s ease;
+                transition: all 0.3s ease;
                 white-space: nowrap;
+                opacity: 1;
+                visibility: visible;
+                max-width: 200px;
+            }
+            .header-bar.scrolled .header-cta {
+                opacity: 0;
+                visibility: hidden;
+                max-width: 0;
+                padding: 0;
+                margin: 0;
+                border: none;
+                overflow: hidden;
             }
             .header-cta:hover {
                 background: rgba(0, 212, 170, 0.1);
