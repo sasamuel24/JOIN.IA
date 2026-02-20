@@ -10,7 +10,7 @@ interface AuthPanelProps {
 export default function AuthPanel({ isLogin, onToggleMode }: AuthPanelProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const mouseRef = useRef({ x: -9999, y: -9999 });
-    const animFrameRef = useRef<number>();
+    const animFrameRef = useRef<number>(0);
 
     useEffect(() => {
         const canvas = canvasRef.current;
