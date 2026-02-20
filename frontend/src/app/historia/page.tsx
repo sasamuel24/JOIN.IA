@@ -32,7 +32,7 @@ export default function HistoriaPage() {
               letterSpacing: '0.02em',
               marginBottom: '2rem',
             }}>
-              Why we're building JOIN.IA
+              Por qué estamos construyendo JOIN.IA
             </span>
             <h1 style={{ fontSize: 'clamp(2.2rem, 5vw, 3.6rem)', fontWeight: 700, lineHeight: 1.1, margin: '0 0 1.5rem 0', color: '#111' }}>
               El problema operativo que toda empresa conoce demasiado bien

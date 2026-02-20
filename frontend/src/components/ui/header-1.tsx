@@ -50,7 +50,7 @@ export function Header() {
                 padding: 0.5rem 1.25rem;
             }
             .header-logo {
-                font-size: 1rem;
+                font-size: 1.5rem;
                 font-weight: 700;
                 color: #fff;
                 text-decoration: none;
@@ -60,19 +60,19 @@ export function Header() {
                 transition: font-size 0.3s ease;
             }
             .header-bar.scrolled .header-logo {
-                font-size: 0.9rem;
+                font-size: 1.25rem;
             }
             .header-dot-grid {
                 display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: repeat(3, 1fr);
-                gap: 2.5px;
+                grid-template-columns: repeat(3, 4px);
+                grid-template-rows: repeat(3, 4px);
+                gap: 3px;
             }
             .header-dot-grid span {
-                width: 3px;
-                height: 3px;
+                width: 4px;
+                height: 4px;
                 border-radius: 50%;
-                background: rgba(255, 255, 255, 0.5);
+                background: #438B7D;
             }
             .header-nav {
                 display: flex;

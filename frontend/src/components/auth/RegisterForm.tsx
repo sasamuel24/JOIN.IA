@@ -13,7 +13,6 @@ export default function RegisterForm({ onToggleMode }: RegisterFormProps) {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
 
-    // Lee el email guardado desde la página principal
     useEffect(() => {
         const savedEmail = sessionStorage.getItem('register_email');
         if (savedEmail) {
@@ -27,12 +26,12 @@ export default function RegisterForm({ onToggleMode }: RegisterFormProps) {
         setError("");
 
         if (password !== confirmPassword) {
-            setError("Passwords do not match");
+            setError("Las contraseñas no coinciden");
             return;
         }
 
         if (password.length < 6) {
-            setError("Password must be at least 6 characters");
+            setError("La contraseña debe tener al menos 6 caracteres");
             return;
         }
 
@@ -41,21 +40,21 @@ export default function RegisterForm({ onToggleMode }: RegisterFormProps) {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    email: email,
-                    password: password,
+                    email,
+                    password,
                     full_name: fullName,
                 }),
             });
 
             if (!res.ok) {
                 const data = await res.json().catch(() => ({}));
-                setError(data?.detail || "Register failed");
+                setError(data?.detail || "Error al crear la cuenta");
                 return;
             }
 
             onToggleMode();
         } catch (err) {
-            setError("Cannot connect to backend (is it running?)");
+            setError("No se pudo conectar al servidor");
         }
     };
 
@@ -66,52 +65,50 @@ export default function RegisterForm({ onToggleMode }: RegisterFormProps) {
     return (
         <div className="w-full flex flex-col items-center gap-6">
 
-            {/* Título */}
             <div className="text-center flex flex-col gap-1">
                 <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
-                    Create account
+                    Crear cuenta
                 </h2>
                 <p className="text-gray-400 text-sm">
-                    Start your journey with JOIN.IA
+                    Comienza tu camino con JOIN.IA
                 </p>
             </div>
 
-            {/* Campos */}
             <div className="w-72 flex flex-col gap-4">
                 <input
                     type="text"
-                    placeholder="Full Name"
+                    placeholder="Nombre completo"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full px-5 h-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50"
+                    className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-gray-300 focus:bg-white"
                     required
                 />
 
                 <input
                     type="email"
-                    placeholder="Email"
+                    placeholder="Correo electrónico"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-5 h-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50"
+                    className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-gray-300 focus:bg-white"
                     required
                 />
 
                 <input
                     type="password"
-                    placeholder="Password"
+                    placeholder="Contraseña"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-5 h-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50"
+                    className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-gray-300 focus:bg-white"
                     required
                     minLength={6}
                 />
 
                 <input
                     type="password"
-                    placeholder="Confirm Password"
+                    placeholder="Confirmar contraseña"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full px-5 h-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50"
+                    className="w-full px-5 h-10 border border-gray-200 rounded-lg outline-none transition-all text-gray-900 placeholder:text-gray-400 text-sm bg-gray-50 focus:border-gray-300 focus:bg-white"
                     required
                 />
 
@@ -122,19 +119,18 @@ export default function RegisterForm({ onToggleMode }: RegisterFormProps) {
                 )}
             </div>
 
-            {/* Botones */}
             <div className="w-72 flex flex-col gap-3">
                 <button
                     type="button"
                     onClick={handleSubmit}
                     className="w-full h-10 bg-gray-900 text-white rounded-lg hover:bg-black transition-all duration-200 font-semibold text-sm tracking-wide"
                 >
-                    Create Account
+                    Crear cuenta
                 </button>
 
                 <div className="relative flex items-center gap-3 py-1">
                     <div className="flex-1 border-t border-gray-200"></div>
-                    <span className="text-xs text-gray-400">or</span>
+                    <span className="text-xs text-gray-400">o</span>
                     <div className="flex-1 border-t border-gray-200"></div>
                 </div>
 
@@ -149,19 +145,18 @@ export default function RegisterForm({ onToggleMode }: RegisterFormProps) {
                         <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
                         <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                     </svg>
-                    <span className="text-gray-600 font-medium text-sm">Continue with Google</span>
+                    <span className="text-gray-600 font-medium text-sm">Continuar con Google</span>
                 </button>
             </div>
 
-            {/* Link login */}
             <p className="text-sm text-gray-400">
-                Already have an account?{' '}
+                ¿Ya tienes una cuenta?{' '}
                 <button
                     type="button"
                     onClick={onToggleMode}
                     className="text-gray-900 font-bold hover:underline"
                 >
-                    Sign In
+                    Inicia sesión
                 </button>
             </p>
 

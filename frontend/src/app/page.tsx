@@ -227,7 +227,7 @@ export default function Home() {
                 letterSpacing: '0.02em',
                 marginBottom: '1.5rem'
               }}>
-                Why JOIN.IA
+                Por qué JOIN.IA
               </span>
               <h2 style={{ fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', fontWeight: 700, color: '#111', lineHeight: 1.1, margin: '0 0 1.5rem 0' }}>
                 Operar sin procesos manuales
