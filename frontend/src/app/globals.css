@@ -1,7 +1,65 @@
 @import "tailwindcss";
 
+@theme {
+  /* Brand */
+  --color-accent: #00D4AA;
+  --color-accent-dark: #00B892;
+  --color-accent-text: #009E7E;
+  --color-accent-light: rgba(0, 212, 170, 0.08);
+  --color-accent-medium: rgba(0, 212, 170, 0.15);
+  --color-accent-glow: rgba(0, 212, 170, 0.25);
+
+  /* Status */
+  --color-error: #EF4444;
+  --color-error-light: rgba(239, 68, 68, 0.08);
+  --color-success: #22C55E;
+  --color-success-light: rgba(34, 197, 94, 0.08);
+  --color-warning: #F59E0B;
+  --color-warning-light: rgba(245, 158, 11, 0.08);
+  --color-info: #3B82F6;
+
+  /* Surfaces */
+  --color-surface-0: #FFFFFF;
+  --color-surface-1: #FAFAFA;
+  --color-surface-2: #F5F5F5;
+  --color-surface-3: #EBEBEB;
+
+  /* Text */
+  --color-text-main: #111111;
+  --color-text-secondary: #4A4A4A;
+  --color-text-muted: #888888;
+  --color-text-white: #FFFFFF;
+
+  /* Border */
+  --color-border: #DDDDDD;
+  --color-border-hover: #BBBBBB;
+
+  /* Sidebar */
+  --width-sidebar: 230px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.10);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.12);
+  --shadow-accent: 0 4px 20px rgba(0, 212, 170, 0.15);
+  --shadow-accent-lg: 0 8px 30px rgba(0, 212, 170, 0.20);
+
+  /* Animation */
+  --animate-pulse-dot: pulse-dot 2s ease-in-out infinite;
+
+  /* Font */
+  --font-main: var(--font-jura), sans-serif;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
 :root {
-  /* Palette */
+  /* Palette (legacy compat) */
   --bg-white: #FFFFFF;
   --bg-neutral: #F7F7F7;
   --bg-alt: #E0E0E0;
@@ -33,12 +91,6 @@
   /* Transitions */
   --transition-fast: 0.2s ease;
   --transition-medium: 0.4s ease;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
 }
 
 html {
@@ -80,16 +132,10 @@ body {
   color: var(--text-white);
 }
 
-/* Typography Utilities */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+/* Typography Utilities — scoped to landing pages */
+:where(h1, h2, h3, h4, h5, h6) {
   font-weight: 700;
   line-height: 1.2;
-  margin-bottom: var(--spacing-sm);
 }
 
 .text-white {
@@ -241,14 +287,14 @@ h6 {
   font-size: 1.2rem;
 }
 
-/* Grid & Cards */
-.grid {
+/* Grid & Cards (scoped to landing pages only) */
+.landing-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--spacing-md);
 }
 
-.card {
+.landing-card {
   background-color: var(--bg-white);
   padding: var(--spacing-md);
   border: 1px solid var(--border-color);
@@ -256,18 +302,18 @@ h6 {
   transition: transform var(--transition-medium), box-shadow var(--transition-medium);
 }
 
-.card:hover {
+.landing-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 30px rgba(0, 212, 170, 0.1);
   border-color: rgba(0, 212, 170, 0.2);
 }
 
-.card-title {
+.landing-card-title {
   font-size: 1.25rem;
   margin-bottom: var(--spacing-sm);
 }
 
-.card-text {
+.landing-card-text {
   color: var(--text-secondary);
   font-size: 0.95rem;
 }
@@ -825,4 +871,10 @@ input:focus, textarea:focus, select:focus {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent);
+}
+
+/* Spinner for loading states */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }

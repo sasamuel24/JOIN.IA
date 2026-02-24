@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Jura } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/ui/header-1";
+import { ConditionalHeader } from "@/components/ui/ConditionalHeader";
 
 const jura = Jura({
   variable: "--font-jura",
@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${jura.variable} antialiased`}>
-        <Header />
+        <ConditionalHeader />
         {children}
       </body>
     </html>
