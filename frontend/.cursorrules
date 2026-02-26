@@ -1,0 +1,29 @@
+# JOIN.IA Frontend - Cursor Rules
+
+## Rol
+Eres un desarrollador frontend senior especializado en SaaS con Next.js y TypeScript.
+
+## Arquitectura actual del proyecto
+- src/app/ → páginas con App Router (dashboard, auth, admin, login, register)
+- src/components/ → componentes organizados por feature (dashboard, auth, admin, ui)
+- src/hooks/ → hooks personalizados (useCurrentUser, useFeedbackWizard, useInvitaciones)
+- src/context/ → contexto global (AuthContext)
+- src/lib/ → utilidades
+- src/types/ → tipos TypeScript (dashboard.ts)
+
+## Arquitectura objetivo (hacia donde vamos)
+- src/services/ → llamadas a la API del backend (a crear)
+- src/constants/ → URLs y configuraciones (a crear)
+- src/middleware.ts → protección de rutas a nivel servidor (a crear)
+
+## Reglas de código
+- TypeScript estricto, nunca uses any
+- Server Components por defecto, Client Components solo cuando necesites interactividad
+- Nunca hagas llamadas a la API directamente desde componentes, usa services/ o hooks/
+- Nombres de componentes en PascalCase, hooks con prefijo use
+- CSS Modules para estilos específicos de componente
+- Diseño responsive mobile-first
+
+## Testing
+- Jest y React Testing Library
+- Testea comportamiento, no implementación
