@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Users, MessageSquare, UserPlus, TrendingUp } from 'lucide-react';
+import { useAdminDashboard } from '@/hooks/useAdminDashboard';
 
 interface MetricCardProps {
   label: string;
@@ -82,21 +83,15 @@ function MetricCard({ label, value, trend, trendUp, icon, delay }: MetricCardPro
   );
 }
 
-const RECENT_USERS = [
-  { name: 'María Camila', email: 'mcamila@empresa.com', date: '22 Feb 2026', status: 'Activo' },
-  { name: 'Javier P.', email: 'javier@startup.co', date: '21 Feb 2026', status: 'Activo' },
-  { name: 'Ana Torres', email: 'atorres@medialab.io', date: '20 Feb 2026', status: 'Activo' },
-  { name: 'Carlos Ruiz', email: 'cruiz@corp.com', date: '19 Feb 2026', status: 'Pendiente' },
-  { name: 'Laura Méndez', email: 'laura@consult.co', date: '18 Feb 2026', status: 'Activo' },
-];
-
 export function AdminDashboard() {
+  const { metrics, recentUsers, loading } = useAdminDashboard();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: 'easeOut' }}
-      style={{ padding: '2rem' }}
+      className="p-4 md:p-8"
     >
       <h1
         style={{
@@ -120,16 +115,11 @@ export function AdminDashboard() {
 
       {/* Metrics grid */}
       <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-          gap: '1rem',
-          marginBottom: '2rem',
-        }}
+        className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8"
       >
         <MetricCard
           label="Total usuarios"
-          value="147"
+          value={loading ? '—' : String(metrics?.total_usuarios ?? 0)}
           trend="12%"
           trendUp
           icon={<Users size={18} />}
@@ -137,7 +127,7 @@ export function AdminDashboard() {
         />
         <MetricCard
           label="Feedbacks completados"
-          value="89"
+          value={loading ? '—' : String(metrics?.feedbacks_completados ?? 0)}
           trend="8%"
           trendUp
           icon={<MessageSquare size={18} />}
@@ -145,7 +135,7 @@ export function AdminDashboard() {
         />
         <MetricCard
           label="Invitaciones enviadas"
-          value="312"
+          value={loading ? '—' : String(metrics?.invitaciones_enviadas ?? 0)}
           trend="15%"
           trendUp
           icon={<UserPlus size={18} />}
@@ -153,7 +143,7 @@ export function AdminDashboard() {
         />
         <MetricCard
           label="Tasa de conversión"
-          value="34%"
+          value={loading ? '—' : `${metrics?.conversion_rate ?? 0}%`}
           trend="3%"
           trendUp
           icon={<TrendingUp size={18} />}
@@ -180,39 +170,42 @@ export function AdminDashboard() {
           </h2>
         </div>
 
-        {/* Table header */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1.5fr 0.8fr 0.6fr',
-            padding: '0.6rem 1.25rem',
-            background: 'var(--bg-neutral)',
-            fontSize: '0.72rem',
-            fontWeight: 600,
-            color: 'var(--text-secondary)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-          }}
-        >
-          <span>Nombre</span>
-          <span>Email</span>
-          <span>Registro</span>
-          <span>Estado</span>
-        </div>
-
-        {/* Table rows */}
-        {RECENT_USERS.map((u, i) => (
+        <div style={{ overflowX: 'auto' }}>
+          {/* Table header */}
           <div
-            key={u.email}
             style={{
               display: 'grid',
               gridTemplateColumns: '1fr 1.5fr 0.8fr 0.6fr',
-              padding: '0.7rem 1.25rem',
-              fontSize: '0.85rem',
-              borderBottom: i < RECENT_USERS.length - 1 ? '1px solid var(--border-color)' : 'none',
-              alignItems: 'center',
+              padding: '0.6rem 1.25rem',
+              background: 'var(--bg-neutral)',
+              fontSize: '0.72rem',
+              fontWeight: 600,
+              color: 'var(--text-secondary)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              minWidth: 500,
             }}
           >
+            <span>Nombre</span>
+            <span>Email</span>
+            <span>Registro</span>
+            <span>Estado</span>
+          </div>
+
+          {/* Table rows */}
+          {recentUsers.map((u, i) => (
+            <div
+              key={u.email}
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1.5fr 0.8fr 0.6fr',
+                padding: '0.7rem 1.25rem',
+                fontSize: '0.85rem',
+                borderBottom: i < recentUsers.length - 1 ? '1px solid var(--border-color)' : 'none',
+                alignItems: 'center',
+                minWidth: 500,
+              }}
+            >
             <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{u.name}</span>
             <span style={{ color: 'var(--text-secondary)' }}>{u.email}</span>
             <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{u.date}</span>
@@ -229,8 +222,9 @@ export function AdminDashboard() {
             >
               {u.status}
             </span>
-          </div>
-        ))}
+            </div>
+          ))}
+        </div>
       </div>
     </motion.div>
   );

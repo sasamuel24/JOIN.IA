@@ -8,23 +8,23 @@ import {
   Users,
   MessageSquare,
   UserPlus,
-  Terminal,
   LogOut,
 } from 'lucide-react';
 import type { NavItem } from '@/types/dashboard';
 import { JoinIALogo } from '@/components/dashboard/shared/JoinIALogo';
+import { useAdminSidebar } from './AdminSidebarContext';
 
 const ADMIN_NAV: NavItem[] = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { label: 'Usuarios', href: '/admin/usuarios', icon: Users },
   { label: 'Feedback', href: '/admin/feedback', icon: MessageSquare },
   { label: 'Invitaciones', href: '/admin/invitaciones', icon: UserPlus },
-  { label: 'Logs', href: '/admin/logs', icon: Terminal },
 ];
 
 export function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const { isOpen, close } = useAdminSidebar();
 
   const isActive = (href: string) => {
     if (href === '/admin') return pathname === '/admin';
@@ -36,23 +36,8 @@ export function AdminSidebar() {
     router.replace('/login');
   };
 
-  return (
-    <aside
-      style={{
-        width: 230,
-        minWidth: 230,
-        height: '100vh',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        background: '#0F0F0F',
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '1.5rem 1rem',
-        zIndex: 50,
-        overflowY: 'auto',
-      }}
-    >
+  const sidebarContent = (
+    <>
       {/* Title */}
       <div style={{ marginBottom: '0.5rem' }}>
         <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--bg-white)' }}>
@@ -82,6 +67,7 @@ export function AdminSidebar() {
             <motion.div key={item.href} whileHover={{ x: 2 }} transition={{ duration: 0.15 }}>
               <Link
                 href={item.href}
+                onClick={close}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -118,32 +104,6 @@ export function AdminSidebar() {
 
       {/* Spacer */}
       <div style={{ flex: 1 }} />
-
-      {/* Back to dashboard */}
-      <Link
-        href="/dashboard"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.45rem 0.5rem',
-          borderRadius: 6,
-          background: 'transparent',
-          color: 'rgba(255,255,255,0.4)',
-          fontSize: '0.8rem',
-          textDecoration: 'none',
-          marginBottom: '0.35rem',
-          transition: 'color 0.15s ease',
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.color = 'var(--accent)';
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.color = 'rgba(255,255,255,0.4)';
-        }}
-      >
-        &larr; Volver al dashboard
-      </Link>
 
       {/* Logout */}
       <button
@@ -196,6 +156,33 @@ export function AdminSidebar() {
           Reduciendo fricción
         </span>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside className="hidden lg:flex fixed top-0 left-0 h-screen w-[230px] min-w-[230px] flex-col z-50 overflow-y-auto"
+        style={{ background: '#0F0F0F', padding: '1.5rem 1rem' }}
+      >
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden" onClick={close}>
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+          {/* Sidebar */}
+          <aside
+            className="absolute top-0 left-0 h-full w-[270px] flex flex-col overflow-y-auto shadow-xl animate-in slide-in-from-left duration-200"
+            style={{ background: '#0F0F0F', padding: '1.5rem 1rem' }}
+            onClick={e => e.stopPropagation()}
+          >
+            {sidebarContent}
+          </aside>
+        </div>
+      )}
+    </>
   );
 }
