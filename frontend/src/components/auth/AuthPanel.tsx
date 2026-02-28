@@ -10,7 +10,7 @@ interface AuthPanelProps {
 export default function AuthPanel({ isLogin, onToggleMode }: AuthPanelProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const mouseRef = useRef({ x: -9999, y: -9999 });
-    const animFrameRef = useRef<number>();
+    const animFrameRef = useRef<number>(0);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -21,7 +21,7 @@ export default function AuthPanel({ isLogin, onToggleMode }: AuthPanelProps) {
         const PARTICLE_COUNT = 75;
         const CONNECTION_DISTANCE = 110;
         const MOUSE_INFLUENCE = 100;
-        const COLOR = '#438B7D';
+        const COLOR = '#00D4AA';
         let tick = 0;
 
         let particles: {
@@ -194,9 +194,9 @@ export default function AuthPanel({ isLogin, onToggleMode }: AuthPanelProps) {
                 </p>
                 <button
                     onClick={onToggleMode}
-                    className="px-10 py-3 border-2 border-white text-white rounded-full hover:bg-white hover:text-gray-900 transition-all duration-300 font-semibold uppercase tracking-wider"
+                    className="px-10 py-3 border-2 border-[#00D4AA] text-white rounded-full hover:bg-[#00D4AA] hover:text-white transition-all duration-300 font-semibold uppercase tracking-wider"
                 >
-                    {isLogin ? 'Regístrate' : 'Inicia sesión'}
+                    {isLogin ? 'Reg\u00EDstrate' : 'Inicia sesi\u00F3n'}
                 </button>
             </div>
         </div>
