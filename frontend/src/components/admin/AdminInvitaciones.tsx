@@ -6,6 +6,7 @@ import { Trophy, Mail, Users } from 'lucide-react';
 import type { AdminInvitacion, AdminInvitacionesStats } from '@/types/admin';
 import { AdminEmptyState } from '@/components/admin/shared/AdminEmptyState';
 import { useAdminInvitaciones } from '@/hooks/useAdminInvitaciones';
+import { useWindowSize } from '@/hooks/useWindowSize';
 
 // ─── Status config ─────────────────────────────────────────────────────────────
 
@@ -200,6 +201,152 @@ function SectionCard({ title, delay, children, style: extraStyle }: SectionCardP
   );
 }
 
+// ─── Card skeletons (mobile) ──────────────────────────────────────────────────
+
+function InviterCardSkeleton() {
+  return (
+    <>
+      {[...Array(4)].map((_, i) => (
+        <div key={i} style={{ padding: '0.85rem 1rem', borderBottom: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ height: 13, width: '40%', borderRadius: 4, background: 'var(--bg-neutral)' }} />
+            <div style={{ height: 13, width: 52, borderRadius: 4, background: 'var(--bg-neutral)' }} />
+          </div>
+          <div style={{ height: 11, width: '65%', borderRadius: 4, background: 'var(--bg-neutral)' }} />
+          <div style={{ height: 11, width: '50%', borderRadius: 4, background: 'var(--bg-neutral)' }} />
+        </div>
+      ))}
+    </>
+  );
+}
+
+function InvCardSkeleton() {
+  return (
+    <>
+      {[...Array(5)].map((_, i) => (
+        <div key={i} style={{ padding: '0.85rem 1rem', borderBottom: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ height: 13, width: '45%', borderRadius: 4, background: 'var(--bg-neutral)' }} />
+            <div style={{ height: 18, width: 64, borderRadius: 50, background: 'var(--bg-neutral)' }} />
+          </div>
+          <div style={{ height: 11, width: '70%', borderRadius: 4, background: 'var(--bg-neutral)' }} />
+          <div style={{ height: 11, width: '55%', borderRadius: 4, background: 'var(--bg-neutral)' }} />
+        </div>
+      ))}
+    </>
+  );
+}
+
+// ─── InviterCard (mobile) ─────────────────────────────────────────────────────
+
+interface InviterCardProps {
+  inviter: AdminInvitacionesStats['top_inviters'][number];
+  index: number;
+}
+
+function InviterCard({ inviter, index }: InviterCardProps) {
+  const tasa = inviter.count > 0 ? ((inviter.converted / inviter.count) * 100).toFixed(0) : '0';
+  const isFirst = index === 0;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, delay: index * 0.04 }}
+      style={{
+        padding: '0.85rem 1rem',
+        borderBottom: '1px solid var(--border-color)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.4rem',
+        background: isFirst ? 'rgba(0,212,170,0.03)' : 'transparent',
+      }}
+    >
+      {/* Row 1: rank + name + tasa */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', minWidth: 0 }}>
+          <span style={{ fontWeight: 700, color: isFirst ? '#F59E0B' : 'var(--text-muted)', fontSize: '0.8rem', flexShrink: 0 }}>
+            {isFirst ? '🥇' : `#${index + 1}`}
+          </span>
+          <div style={{ width: 26, height: 26, borderRadius: 6, background: 'var(--accent-light)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.68rem', fontWeight: 700, flexShrink: 0 }}>
+            {inviter.name.slice(0, 2).toUpperCase()}
+          </div>
+          <span style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {inviter.name}
+          </span>
+        </div>
+        <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--accent)', flexShrink: 0 }}>{tasa}%</span>
+      </div>
+      {/* Row 2: email */}
+      <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {inviter.email}
+      </span>
+      {/* Row 3: stats */}
+      <div style={{ display: 'flex', gap: '1rem' }}>
+        <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+          <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{inviter.count}</span> enviadas
+        </span>
+        <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+          <span style={{ fontWeight: 600, color: 'var(--accent)' }}>{inviter.converted}</span> convertidas
+        </span>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── InvitacionCard (mobile) ──────────────────────────────────────────────────
+
+interface InvitacionCardProps {
+  inv: AdminInvitacion;
+  index: number;
+}
+
+function InvitacionCard({ inv, index }: InvitacionCardProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, delay: index * 0.04 }}
+      style={{
+        padding: '0.9rem 1rem',
+        borderBottom: '1px solid var(--border-color)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.45rem',
+      }}
+    >
+      {/* Row 1: name + status */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+        <span style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {inv.invited_name ?? '—'}
+        </span>
+        <InvitacionStatusBadge status={inv.status} />
+      </div>
+      {/* Row 2: invited email */}
+      <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {inv.invited_email}
+      </span>
+      {/* Row 3: invitador */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+        <span style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', flexShrink: 0 }}>Invitado por:</span>
+        <span style={{ fontSize: '0.78rem', color: 'var(--text-main)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{inv.inviter_name}</span>
+      </div>
+      {/* Row 4: dates */}
+      <div style={{ display: 'flex', gap: '1rem' }}>
+        <div>
+          <div style={{ fontSize: '0.63rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Enviado</div>
+          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>{formatDate(inv.invited_at)}</div>
+        </div>
+        {inv.joined_at && (
+          <div>
+            <div style={{ fontSize: '0.63rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Unido</div>
+            <div style={{ fontSize: '0.78rem', color: 'var(--accent)' }}>{formatDate(inv.joined_at)}</div>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
 // ─── Top Inviters Table ────────────────────────────────────────────────────────
 
 interface TopInvitersProps {
@@ -208,153 +355,89 @@ interface TopInvitersProps {
 }
 
 function TopInviters({ inviters, delay }: TopInvitersProps) {
+  const { isMobile } = useWindowSize();
   return (
     <SectionCard title="Top Inviters — Ranking de embajadores" delay={delay} style={{ marginBottom: '1.5rem' }}>
-      <div style={{ overflowX: 'auto' }}>
-        {/* Header */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '2.5rem 1fr 1.4fr 6rem 7rem 5rem',
-            padding: '0.55rem 1.25rem',
-            background: 'var(--bg-neutral)',
-            fontSize: '0.7rem',
-            fontWeight: 600,
-            color: 'var(--text-secondary)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            gap: '0.75rem',
-            minWidth: 560,
-          }}
-        >
-          <span>#</span>
-          <span>Usuario</span>
-          <span>Email</span>
-          <span style={{ textAlign: 'center' }}>Enviadas</span>
-          <span style={{ textAlign: 'center' }}>Convertidas</span>
-          <span style={{ textAlign: 'right' }}>Tasa</span>
-        </div>
+      {isMobile ? (
+        /* ── CARD VIEW (< 768px) ── */
+        inviters.length === 0 ? (
+          <AdminEmptyState icon={Trophy} title="Sin datos" description="No hay inviters registrados aún." />
+        ) : (
+          inviters.map((inviter, i) => <InviterCard key={inviter.email} inviter={inviter} index={i} />)
+        )
+      ) : (
+        /* ── TABLE VIEW (≥ 768px) ── */
+        <div style={{ overflowX: 'auto' }}>
+          {/* Header */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '2.5rem 1fr 1.4fr 6rem 7rem 5rem',
+              padding: '0.55rem 1.25rem',
+              background: 'var(--bg-neutral)',
+              fontSize: '0.7rem',
+              fontWeight: 600,
+              color: 'var(--text-secondary)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              gap: '0.75rem',
+              minWidth: 560,
+            }}
+          >
+            <span>#</span>
+            <span>Usuario</span>
+            <span>Email</span>
+            <span style={{ textAlign: 'center' }}>Enviadas</span>
+            <span style={{ textAlign: 'center' }}>Convertidas</span>
+            <span style={{ textAlign: 'right' }}>Tasa</span>
+          </div>
 
-        {/* Rows */}
-        <div style={{ minWidth: 560 }}>
-          {inviters.map((inviter, i) => {
-            const tasa =
-              inviter.count > 0
-                ? ((inviter.converted / inviter.count) * 100).toFixed(0)
-                : '0';
-            const isFirst = i === 0;
-            return (
-              <div
-                key={inviter.email}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '2.5rem 1fr 1.4fr 6rem 7rem 5rem',
-                  padding: '0.65rem 1.25rem',
-                  fontSize: '0.84rem',
-                  borderBottom: i < inviters.length - 1 ? '1px solid var(--border-color)' : 'none',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  background: isFirst ? 'rgba(0,212,170,0.03)' : 'transparent',
-                }}
-              >
-                {/* Rank */}
+          {/* Rows */}
+          <div style={{ minWidth: 560 }}>
+            {inviters.map((inviter, i) => {
+              const tasa =
+                inviter.count > 0
+                  ? ((inviter.converted / inviter.count) * 100).toFixed(0)
+                  : '0';
+              const isFirst = i === 0;
+              return (
                 <div
+                  key={inviter.email}
                   style={{
-                    display: 'flex',
+                    display: 'grid',
+                    gridTemplateColumns: '2.5rem 1fr 1.4fr 6rem 7rem 5rem',
+                    padding: '0.65rem 1.25rem',
+                    fontSize: '0.84rem',
+                    borderBottom: i < inviters.length - 1 ? '1px solid var(--border-color)' : 'none',
                     alignItems: 'center',
-                    gap: '0.2rem',
-                    fontWeight: 600,
-                    color: isFirst ? '#F59E0B' : 'var(--text-muted)',
-                    fontSize: '0.8rem',
+                    gap: '0.75rem',
+                    background: isFirst ? 'rgba(0,212,170,0.03)' : 'transparent',
                   }}
                 >
-                  {isFirst && <Trophy size={14} color="#F59E0B" />}
-                  {!isFirst && <span>{i + 1}</span>}
-                </div>
-
-                {/* Nombre con avatar */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
-                  <div
-                    style={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: 6,
-                      background: 'var(--accent-light)',
-                      color: 'var(--accent)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      flexShrink: 0,
-                    }}
-                  >
-                    {inviter.name.slice(0, 2).toUpperCase()}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', fontWeight: 600, color: isFirst ? '#F59E0B' : 'var(--text-muted)', fontSize: '0.8rem' }}>
+                    {isFirst && <Trophy size={14} color="#F59E0B" />}
+                    {!isFirst && <span>{i + 1}</span>}
                   </div>
-                  <span
-                    style={{
-                      fontWeight: 600,
-                      color: 'var(--text-main)',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {inviter.name}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
+                    <div style={{ width: 28, height: 28, borderRadius: 6, background: 'var(--accent-light)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem', fontWeight: 700, flexShrink: 0 }}>
+                      {inviter.name.slice(0, 2).toUpperCase()}
+                    </div>
+                    <span style={{ fontWeight: 600, color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {inviter.name}
+                    </span>
+                  </div>
+                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {inviter.email}
                   </span>
+                  <span style={{ color: 'var(--text-main)', fontWeight: 600, textAlign: 'center' }}>{inviter.count}</span>
+                  <span style={{ color: 'var(--accent)', fontWeight: 600, textAlign: 'center' }}>{inviter.converted}</span>
+                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', textAlign: 'right', fontWeight: 500 }}>{tasa}%</span>
                 </div>
-
-                {/* Email */}
-                <span
-                  style={{
-                    color: 'var(--text-secondary)',
-                    fontSize: '0.8rem',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {inviter.email}
-                </span>
-
-                {/* Enviadas */}
-                <span
-                  style={{
-                    color: 'var(--text-main)',
-                    fontWeight: 600,
-                    textAlign: 'center',
-                  }}
-                >
-                  {inviter.count}
-                </span>
-
-                {/* Convertidas */}
-                <span
-                  style={{
-                    color: 'var(--accent)',
-                    fontWeight: 600,
-                    textAlign: 'center',
-                  }}
-                >
-                  {inviter.converted}
-                </span>
-
-                {/* Tasa */}
-                <span
-                  style={{
-                    color: 'var(--text-secondary)',
-                    fontSize: '0.8rem',
-                    textAlign: 'right',
-                    fontWeight: 500,
-                  }}
-                >
-                  {tasa}%
-                </span>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </SectionCard>
   );
 }
@@ -464,6 +547,7 @@ type FilterStatus = 'todas' | AdminInvitacion['status'];
 
 export function AdminInvitaciones() {
   const { stats, invitaciones, loading } = useAdminInvitaciones();
+  const { isMobile } = useWindowSize();
 
   // Filters
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('todas');
@@ -715,138 +799,86 @@ export function AdminInvitaciones() {
           />
         </div>
 
-        {/* Tabla */}
-        <div style={{ overflowX: 'auto' }}>
-          {/* Table header */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1.1fr 1.4fr 1.2fr 0.75fr 0.85fr 0.85fr',
-              padding: '0.6rem 1.25rem',
-              background: 'var(--bg-neutral)',
-              fontSize: '0.7rem',
-              fontWeight: 600,
-              color: 'var(--text-secondary)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              gap: '1rem',
-              minWidth: 640,
-            }}
-          >
-            <span>Invitado</span>
-            <span>Email invitado</span>
-            <span>Invitador</span>
-            <span>Estado</span>
-            <span>Enviado</span>
-            <span>Unido</span>
-          </div>
-
-          {/* Table body */}
-          {loading ? (
-            <TableSkeleton />
+        {/* Tabla — dual mode */}
+        {isMobile ? (
+          /* ── CARD VIEW (< 768px) ── */
+          loading ? (
+            <InvCardSkeleton />
           ) : filtered.length === 0 ? (
-            <AdminEmptyState
-              icon={Mail}
-              title="Sin invitaciones"
-              description="No se encontraron invitaciones que coincidan con los filtros aplicados."
-            />
+            <AdminEmptyState icon={Mail} title="Sin invitaciones" description="No se encontraron invitaciones que coincidan con los filtros aplicados." />
           ) : (
-            <div style={{ minWidth: 640 }}>
-              {filtered.map((inv, i) => (
-                <div
-                  key={inv.id}
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1.1fr 1.4fr 1.2fr 0.75fr 0.85fr 0.85fr',
-                    padding: '0.7rem 1.25rem',
-                    fontSize: '0.84rem',
-                    borderBottom:
-                      i < filtered.length - 1 ? '1px solid var(--border-color)' : 'none',
-                    alignItems: 'center',
-                    gap: '1rem',
-                  }}
-                >
-                  {/* Invitado */}
-                  <span
-                    style={{
-                      fontWeight: 600,
-                      color: 'var(--text-main)',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {inv.invited_name ?? '—'}
-                  </span>
+            filtered.map((inv, i) => <InvitacionCard key={inv.id} inv={inv} index={i} />)
+          )
+        ) : (
+          /* ── TABLE VIEW (≥ 768px) ── */
+          <div style={{ overflowX: 'auto' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1.1fr 1.4fr 1.2fr 0.75fr 0.85fr 0.85fr',
+                padding: '0.6rem 1.25rem',
+                background: 'var(--bg-neutral)',
+                fontSize: '0.7rem',
+                fontWeight: 600,
+                color: 'var(--text-secondary)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                gap: '1rem',
+                minWidth: 640,
+              }}
+            >
+              <span>Invitado</span>
+              <span>Email invitado</span>
+              <span>Invitador</span>
+              <span>Estado</span>
+              <span>Enviado</span>
+              <span>Unido</span>
+            </div>
 
-                  {/* Email invitado */}
-                  <span
-                    style={{
-                      color: 'var(--text-secondary)',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      fontSize: '0.8rem',
-                    }}
-                  >
-                    {inv.invited_email}
-                  </span>
-
-                  {/* Invitador */}
+            {loading ? (
+              <TableSkeleton />
+            ) : filtered.length === 0 ? (
+              <AdminEmptyState icon={Mail} title="Sin invitaciones" description="No se encontraron invitaciones que coincidan con los filtros aplicados." />
+            ) : (
+              <div style={{ minWidth: 640 }}>
+                {filtered.map((inv, i) => (
                   <div
+                    key={inv.id}
                     style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      minWidth: 0,
+                      display: 'grid',
+                      gridTemplateColumns: '1.1fr 1.4fr 1.2fr 0.75fr 0.85fr 0.85fr',
+                      padding: '0.7rem 1.25rem',
+                      fontSize: '0.84rem',
+                      borderBottom: i < filtered.length - 1 ? '1px solid var(--border-color)' : 'none',
+                      alignItems: 'center',
+                      gap: '1rem',
                     }}
                   >
-                    <span
-                      style={{
-                        fontWeight: 500,
-                        color: 'var(--text-main)',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                        fontSize: '0.83rem',
-                      }}
-                    >
-                      {inv.inviter_name}
+                    <span style={{ fontWeight: 600, color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {inv.invited_name ?? '—'}
                     </span>
-                    <span
-                      style={{
-                        color: 'var(--text-muted)',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                        fontSize: '0.73rem',
-                      }}
-                    >
-                      {inv.inviter_email}
+                    <span style={{ color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.8rem' }}>
+                      {inv.invited_email}
+                    </span>
+                    <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                      <span style={{ fontWeight: 500, color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.83rem' }}>
+                        {inv.inviter_name}
+                      </span>
+                      <span style={{ color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.73rem' }}>
+                        {inv.inviter_email}
+                      </span>
+                    </div>
+                    <InvitacionStatusBadge status={inv.status} />
+                    <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{formatDate(inv.invited_at)}</span>
+                    <span style={{ color: inv.joined_at ? 'var(--accent)' : 'var(--text-muted)', fontSize: '0.8rem' }}>
+                      {inv.joined_at ? formatDate(inv.joined_at) : '—'}
                     </span>
                   </div>
-
-                  {/* Estado */}
-                  <InvitacionStatusBadge status={inv.status} />
-
-                  {/* Enviado */}
-                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
-                    {formatDate(inv.invited_at)}
-                  </span>
-
-                  {/* Unido */}
-                  <span
-                    style={{
-                      color: inv.joined_at ? 'var(--accent)' : 'var(--text-muted)',
-                      fontSize: '0.8rem',
-                    }}
-                  >
-                    {inv.joined_at ? formatDate(inv.joined_at) : '—'}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Footer con conteo */}
         {!loading && filtered.length > 0 && (

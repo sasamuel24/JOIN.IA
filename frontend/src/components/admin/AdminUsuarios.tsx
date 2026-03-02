@@ -12,6 +12,7 @@ import {
 import { AdminStatBar } from '@/components/admin/shared/AdminStatBar';
 import { AdminEmptyState } from '@/components/admin/shared/AdminEmptyState';
 import { useAdminUsers } from '@/hooks/useAdminUsers';
+import { useWindowSize } from '@/hooks/useWindowSize';
 
 // ─── KPI Card ─────────────────────────────────────────────────────────────────
 
@@ -128,6 +129,88 @@ function StatusBadge({ status }: { status: 'activo' | 'inactivo' }) {
   );
 }
 
+// ─── User Card (mobile) ────────────────────────────────────────────────────────
+
+interface UserCardProps {
+  user: { id: string; name: string; email: string; group: string; access_tier: string; created_at: string; feedback_completed: boolean; status: 'activo' | 'inactivo' };
+  index: number;
+}
+
+function UserCard({ user, index }: UserCardProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, delay: index * 0.04 }}
+      style={{
+        padding: '0.9rem 1rem',
+        borderBottom: '1px solid var(--border-color)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.5rem',
+      }}
+    >
+      {/* Row 1: name + status */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+        <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {user.name}
+        </span>
+        <StatusBadge status={user.status} />
+      </div>
+      {/* Row 2: email */}
+      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {user.email}
+      </span>
+      {/* Row 3: metadata grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.25rem 0.5rem', marginTop: '0.15rem' }}>
+        <div>
+          <div style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Grupo</div>
+          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.group}</div>
+        </div>
+        <div>
+          <div style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Tier</div>
+          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.access_tier}</div>
+        </div>
+        <div>
+          <div style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Registro</div>
+          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>{formatDate(user.created_at)}</div>
+        </div>
+      </div>
+      {/* Row 4: feedback */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+        <span style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Feedback:</span>
+        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: user.feedback_completed ? 'var(--accent)' : 'var(--text-muted)' }}>
+          {user.feedback_completed ? '✓ Completado' : '— Pendiente'}
+        </span>
+      </div>
+    </motion.div>
+  );
+}
+
+function CardSkeleton() {
+  return (
+    <>
+      {[...Array(4)].map((_, i) => (
+        <div key={i} style={{ padding: '0.9rem 1rem', borderBottom: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ height: 14, width: '45%', borderRadius: 4, background: 'var(--bg-neutral)' }} />
+            <div style={{ height: 18, width: 56, borderRadius: 50, background: 'var(--bg-neutral)' }} />
+          </div>
+          <div style={{ height: 12, width: '70%', borderRadius: 4, background: 'var(--bg-neutral)' }} />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.25rem 0.5rem' }}>
+            {[...Array(3)].map((_, j) => (
+              <div key={j}>
+                <div style={{ height: 8, width: '60%', borderRadius: 3, background: 'var(--bg-neutral)', marginBottom: 4 }} />
+                <div style={{ height: 11, borderRadius: 3, background: 'var(--bg-neutral)' }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
 // ─── Distribución Panel ───────────────────────────────────────────────────────
 
 interface DistribucionPanelProps {
@@ -210,6 +293,7 @@ const PAGE_SIZE = 20;
 
 export function AdminUsuarios() {
   const { stats, users, loading } = useAdminUsers();
+  const { isMobile } = useWindowSize();
   const [noResults, setNoResults] = useState(false);
 
   // Filters
@@ -544,118 +628,88 @@ export function AdminUsuarios() {
           </select>
         </div>
 
-        {/* Table header */}
-        <div style={{ overflowX: 'auto' }}>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1.2fr 1.5fr 0.8fr 0.9fr 0.8fr 0.5fr 0.6fr',
-            padding: '0.6rem 1.25rem',
-            background: 'var(--bg-neutral)',
-            fontSize: '0.72rem',
-            fontWeight: 600,
-            color: 'var(--text-secondary)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            gap: '1rem',
-            minWidth: 760,
-          }}
-        >
-          <span>Nombre</span>
-          <span>Email</span>
-          <span>Grupo</span>
-          <span>Tier</span>
-          <span>Registro</span>
-          <span>Feedback</span>
-          <span>Estado</span>
-        </div>
-
-        {/* Table body */}
-        {loading ? (
-          <TableSkeleton />
-        ) : noResults || paginated.length === 0 ? (
-          <AdminEmptyState
-            icon={Users}
-            title="Sin usuarios"
-            description="No se encontraron usuarios que coincidan con los filtros aplicados."
-          />
+        {/* Table body — dual mode: card on mobile, grid on desktop */}
+        {isMobile ? (
+          /* ── CARD VIEW (< 768px) ── */
+          loading ? (
+            <CardSkeleton />
+          ) : noResults || paginated.length === 0 ? (
+            <AdminEmptyState icon={Users} title="Sin usuarios" description="No se encontraron usuarios que coincidan con los filtros aplicados." />
+          ) : (
+            paginated.map((user, i) => <UserCard key={user.id} user={user} index={i} />)
+          )
         ) : (
-          <>
-            {paginated.map((user, i) => (
-              <div
-                key={user.id}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1.2fr 1.5fr 0.8fr 0.9fr 0.8fr 0.5fr 0.6fr',
-                  padding: '0.7rem 1.25rem',
-                  fontSize: '0.85rem',
-                  borderBottom:
-                    i < paginated.length - 1 ? '1px solid var(--border-color)' : 'none',
-                  alignItems: 'center',
-                  gap: '1rem',
-                  minWidth: 760,
-                }}
-              >
-                <span
+          /* ── TABLE VIEW (≥ 768px) ── */
+          <div style={{ overflowX: 'auto' }}>
+            {/* Table header */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1.2fr 1.5fr 0.8fr 0.9fr 0.8fr 0.5fr 0.6fr',
+                padding: '0.6rem 1.25rem',
+                background: 'var(--bg-neutral)',
+                fontSize: '0.72rem',
+                fontWeight: 600,
+                color: 'var(--text-secondary)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                gap: '1rem',
+                minWidth: 760,
+              }}
+            >
+              <span>Nombre</span>
+              <span>Email</span>
+              <span>Grupo</span>
+              <span>Tier</span>
+              <span>Registro</span>
+              <span>Feedback</span>
+              <span>Estado</span>
+            </div>
+
+            {/* Table rows */}
+            {loading ? (
+              <TableSkeleton />
+            ) : noResults || paginated.length === 0 ? (
+              <AdminEmptyState icon={Users} title="Sin usuarios" description="No se encontraron usuarios que coincidan con los filtros aplicados." />
+            ) : (
+              paginated.map((user, i) => (
+                <div
+                  key={user.id}
                   style={{
-                    fontWeight: 600,
-                    color: 'var(--text-main)',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
+                    display: 'grid',
+                    gridTemplateColumns: '1.2fr 1.5fr 0.8fr 0.9fr 0.8fr 0.5fr 0.6fr',
+                    padding: '0.7rem 1.25rem',
+                    fontSize: '0.85rem',
+                    borderBottom: i < paginated.length - 1 ? '1px solid var(--border-color)' : 'none',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    minWidth: 760,
                   }}
                 >
-                  {user.name}
-                </span>
-                <span
-                  style={{
-                    color: 'var(--text-secondary)',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {user.email}
-                </span>
-                <span
-                  style={{
-                    color: 'var(--text-secondary)',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {user.group}
-                </span>
-                <span
-                  style={{
-                    color: 'var(--text-secondary)',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    fontSize: '0.8rem',
-                  }}
-                >
-                  {user.access_tier}
-                </span>
-                <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
-                  {formatDate(user.created_at)}
-                </span>
-                <span
-                  style={{
-                    fontWeight: 700,
-                    fontSize: '0.95rem',
-                    color: user.feedback_completed ? 'var(--accent)' : 'var(--text-muted)',
-                  }}
-                >
-                  {user.feedback_completed ? '✓' : '—'}
-                </span>
-                <StatusBadge status={user.status} />
-              </div>
-            ))}
-          </>
+                  <span style={{ fontWeight: 600, color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user.name}
+                  </span>
+                  <span style={{ color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user.email}
+                  </span>
+                  <span style={{ color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user.group}
+                  </span>
+                  <span style={{ color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.8rem' }}>
+                    {user.access_tier}
+                  </span>
+                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
+                    {formatDate(user.created_at)}
+                  </span>
+                  <span style={{ fontWeight: 700, fontSize: '0.95rem', color: user.feedback_completed ? 'var(--accent)' : 'var(--text-muted)' }}>
+                    {user.feedback_completed ? '✓' : '—'}
+                  </span>
+                  <StatusBadge status={user.status} />
+                </div>
+              ))
+            )}
+          </div>
         )}
-        </div>
 
         {/* Pagination footer */}
         {!loading && filtered.length > 0 && (

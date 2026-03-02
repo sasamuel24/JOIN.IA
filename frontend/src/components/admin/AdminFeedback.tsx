@@ -13,6 +13,7 @@ import {
 import { AdminStatBar } from '@/components/admin/shared/AdminStatBar';
 import { AdminEmptyState } from '@/components/admin/shared/AdminEmptyState';
 import { useAdminFeedback } from '@/hooks/useAdminFeedback';
+import { useWindowSize } from '@/hooks/useWindowSize';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -148,8 +149,166 @@ function Chip({ label, highlighted = false, rightContent }: ChipProps) {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
+// ─── FeedbackCard (mobile) ─────────────────────────────────────────────────────
+
+interface FeedbackEntry {
+  id: string;
+  user_name: string;
+  user_email: string;
+  rol: string;
+  impacto: number;
+  desgastes: string[];
+  herramientas: string[];
+  created_at: string;
+  solucion_actual: string;
+  vision_ia: string;
+  resultados_deseados: string[];
+}
+
+interface FeedbackCardProps {
+  entry: FeedbackEntry;
+  index: number;
+  isExpanded: boolean;
+  onToggle: () => void;
+  isLast: boolean;
+}
+
+function FeedbackCard({ entry, index, isExpanded, onToggle, isLast }: FeedbackCardProps) {
+  return (
+    <div style={{ borderBottom: isLast && !isExpanded ? 'none' : '1px solid var(--border-color)' }}>
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, delay: index * 0.04 }}
+        onClick={onToggle}
+        style={{
+          padding: '0.9rem 1rem',
+          cursor: 'pointer',
+          background: isExpanded ? 'var(--bg-neutral)' : 'transparent',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.45rem',
+        }}
+      >
+        {/* Row 1: name + impacto + expand icon */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {entry.user_name}
+            </div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {entry.user_email}
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem' }}>
+              <span style={{ fontSize: '1.15rem', fontWeight: 700, color: impactoColor(entry.impacto), lineHeight: 1 }}>{entry.impacto}</span>
+              <span style={{ fontSize: '0.65rem', fontWeight: 600, color: impactoColor(entry.impacto), opacity: 0.8 }}>{impactoLabel(entry.impacto)}</span>
+            </div>
+            <span style={{ color: 'var(--text-muted)', display: 'flex' }}>
+              {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            </span>
+          </div>
+        </div>
+        {/* Row 2: rol + fecha */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>{entry.rol}</span>
+          <span style={{ fontSize: '0.73rem', color: 'var(--text-muted)' }}>{formatDate(entry.created_at)}</span>
+        </div>
+        {/* Row 3: desgastes chips */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+          {entry.desgastes.slice(0, 3).map((d) => (
+            <span key={d} style={{ fontSize: '0.68rem', padding: '0.12rem 0.4rem', borderRadius: 50, border: '1px solid var(--border-color)', color: 'var(--text-secondary)', background: 'var(--bg-white)', whiteSpace: 'nowrap' }}>
+              {d}
+            </span>
+          ))}
+          {entry.desgastes.length > 3 && (
+            <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 500 }}>+{entry.desgastes.length - 3} más</span>
+          )}
+        </div>
+        {/* Row 4: herramientas */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+          {entry.herramientas.slice(0, 3).map((h) => (
+            <span key={h} style={{ fontSize: '0.68rem', padding: '0.12rem 0.4rem', borderRadius: 50, border: '1px solid var(--border-color)', color: 'var(--text-secondary)', background: 'var(--bg-neutral)', whiteSpace: 'nowrap' }}>
+              {h}
+            </span>
+          ))}
+          {entry.herramientas.length > 3 && (
+            <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontWeight: 500 }}>+{entry.herramientas.length - 3} más</span>
+          )}
+        </div>
+      </motion.div>
+
+      {/* Expanded detail */}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            key={`card-detail-${entry.id}`}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div style={{ padding: '0.9rem 1rem', background: 'var(--bg-neutral)', borderTop: '1px solid var(--border-color)', borderBottom: isLast ? 'none' : '1px solid var(--border-color)' }}>
+              {/* Solución + Visión */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                <div>
+                  <p style={{ fontSize: '0.68rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 0.2rem' }}>Solución actual</p>
+                  <p style={{ fontSize: '0.83rem', color: 'var(--text-main)', margin: 0, lineHeight: 1.5 }}>{entry.solucion_actual}</p>
+                </div>
+                <div>
+                  <p style={{ fontSize: '0.68rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 0.2rem' }}>Visión con IA</p>
+                  <p style={{ fontSize: '0.83rem', color: 'var(--text-main)', margin: 0, lineHeight: 1.5 }}>{entry.vision_ia}</p>
+                </div>
+              </div>
+              {/* Resultados deseados */}
+              <div>
+                <p style={{ fontSize: '0.68rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 0.4rem' }}>Resultados deseados</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                  {entry.resultados_deseados.map((r) => (
+                    <span key={r} style={{ fontSize: '0.75rem', fontWeight: 500, padding: '0.22rem 0.6rem', borderRadius: 50, border: '1px solid #8B5CF6', color: '#8B5CF6', background: '#F5F3FF' }}>
+                      {r}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function FeedbackCardSkeleton() {
+  return (
+    <>
+      {[...Array(4)].map((_, i) => (
+        <div key={i} style={{ padding: '0.9rem 1rem', borderBottom: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ height: 13, width: '50%', borderRadius: 4, background: 'var(--bg-neutral)', marginBottom: 5 }} />
+              <div style={{ height: 10, width: '65%', borderRadius: 4, background: 'var(--bg-neutral)' }} />
+            </div>
+            <div style={{ height: 20, width: 44, borderRadius: 4, background: 'var(--bg-neutral)' }} />
+          </div>
+          <div style={{ display: 'flex', gap: '0.4rem' }}>
+            {[...Array(3)].map((_, j) => (
+              <div key={j} style={{ height: 20, width: 60, borderRadius: 50, background: 'var(--bg-neutral)' }} />
+            ))}
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
+// ─── Main ──────────────────────────────────────────────────────────────────────
+
 export function AdminFeedback() {
   const { stats, entries, loading } = useAdminFeedback();
+  const { isMobile } = useWindowSize();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [filterRol, setFilterRol] = useState<string>('todos');
   const [filterImpacto, setFilterImpacto] = useState<'todos' | 'alto' | 'medio' | 'bajo'>('todos');
@@ -520,8 +679,28 @@ export function AdminFeedback() {
               </div>
             </div>
 
-            {/* Column headers */}
-            <div style={{ overflowX: 'auto' }}>
+            {/* Table / Card — dual mode */}
+            {isMobile ? (
+              /* ── CARD VIEW (< 768px) ── */
+              loading ? (
+                <FeedbackCardSkeleton />
+              ) : filteredEntries.length === 0 ? (
+                <AdminEmptyState icon={MessageSquare} title="Sin resultados" description="No hay respuestas que coincidan con los filtros seleccionados." />
+              ) : (
+                filteredEntries.map((entry, i) => (
+                  <FeedbackCard
+                    key={entry.id}
+                    entry={entry}
+                    index={i}
+                    isExpanded={expandedId === entry.id}
+                    onToggle={() => setExpandedId(expandedId === entry.id ? null : entry.id)}
+                    isLast={i === filteredEntries.length - 1}
+                  />
+                ))
+              )
+            ) : (
+              /* ── TABLE VIEW (≥ 768px) ── */
+              <div style={{ overflowX: 'auto' }}>
             <div
               style={{
                 display: 'grid',
@@ -860,6 +1039,7 @@ export function AdminFeedback() {
               })
             )}
             </div>
+            )}
           </motion.div>
         </div>
 
