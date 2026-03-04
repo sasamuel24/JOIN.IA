@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Dict
+from urllib.parse import urlencode
 
 import httpx
 from fastapi import HTTPException
@@ -124,8 +125,6 @@ async def google_oauth_callback(code: str, db: Session) -> RedirectResponse:
 
     # 5) Redirigir al frontend con el token
     frontend_callback = f"{settings.FRONTEND_URL}/auth/callback"
-    from urllib.parse import urlencode
-
     params = urlencode({"token": jwt_token})
     return RedirectResponse(url=f"{frontend_callback}?{params}", status_code=302)
 
