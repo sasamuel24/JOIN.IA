@@ -9,6 +9,8 @@ interface ProfileHeaderProps {
   user: CurrentUser;
   coverUrl?: string;
   onAvatarChange?: (file: File) => void;
+   title?: string | null;
+  country?: string | null;
 }
 
 function getInitials(name: string): string {
@@ -20,9 +22,9 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
-export function ProfileHeader({ user, coverUrl, onAvatarChange }: ProfileHeaderProps) {
+export function ProfileHeader({ user, coverUrl, onAvatarChange, title, country}: ProfileHeaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const nameParts = user.name.split(' ');
+  const nameParts = (user?.name ?? '').split(' ');
   const firstName = nameParts[0] || '';
   const lastName = nameParts.slice(1).join(' ') || '';
 
@@ -72,7 +74,7 @@ export function ProfileHeader({ user, coverUrl, onAvatarChange }: ProfileHeaderP
                 'text-white flex items-center justify-center text-2xl font-bold tracking-wide'
               )}
             >
-              {getInitials(user.name)}
+              {getInitials(user?.name ?? '')}
             </div>
           )}
 
@@ -112,8 +114,8 @@ export function ProfileHeader({ user, coverUrl, onAvatarChange }: ProfileHeaderP
             {firstName} {lastName}
           </h1>
           <p className="text-[0.85rem] text-white/60 mt-0.5 mb-2.5">
-            {user.role === 'admin' ? 'Administrador' : 'CEO'} &middot;{' '}
-            {user.group || 'Colombia'}
+          {(title ?? (user.role === 'admin' ? 'Administrador' : 'Usuario'))} &middot;{" "}
+          {(country ?? user.group ?? "—")}
           </p>
 
           {/* Badges */}
@@ -127,7 +129,7 @@ export function ProfileHeader({ user, coverUrl, onAvatarChange }: ProfileHeaderP
                 'bg-white/[0.12] border border-white/20 text-white/85 uppercase tracking-wide'
               )}
             >
-              {user.role === 'admin' ? 'Admin' : 'CEO / Fundador'}
+              {title ? title.toUpperCase() : (user.role === 'admin' ? 'ADMIN' : 'USUARIO')}
             </span>
             <span
               className={cn(
@@ -135,7 +137,7 @@ export function ProfileHeader({ user, coverUrl, onAvatarChange }: ProfileHeaderP
                 'bg-white/[0.12] border border-white/20 text-white/85 uppercase tracking-wide'
               )}
             >
-              Colombia
+              {country ? country.toUpperCase() : "—"}
             </span>
           </div>
         </div>

@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { getMe, patchMe } from '@/services/userService';
+import type { UserProfileResponse, UserProfileUpdate } from '@/services/userService';
 import { ProfileHeader } from './ProfileHeader';
 import { DashboardDivider } from '../shared/DashboardDivider';
 import { DashboardFooter } from '../shared/DashboardFooter';
@@ -54,9 +56,118 @@ const DOLORES = [
   'Procesos no documentados',
 ];
 
+/** Subset of profile used for PATCH (snake_case). */
+type ProfilePayload = Pick<
+  UserProfileResponse,
+  | 'first_name'
+  | 'last_name'
+  | 'phone'
+  | 'title'
+  | 'bio'
+  | 'company'
+  | 'industry'
+  | 'team_size'
+  | 'country'
+  | 'pain_points'
+  | 'notif_product'
+  | 'notif_community'
+  | 'notif_feedback'
+>;
+
+function diffProfilePayload(
+  original: ProfilePayload | null,
+  current: ProfilePayload
+): Partial<UserProfileUpdate> {
+  const patch: Partial<UserProfileUpdate> = {};
+  const keys: (keyof ProfilePayload)[] = [
+    'first_name',
+    'last_name',
+    'phone',
+    'title',
+    'bio',
+    'company',
+    'industry',
+    'team_size',
+    'country',
+    'pain_points',
+    'notif_product',
+    'notif_community',
+    'notif_feedback',
+  ];
+  for (const key of keys) {
+    const origVal = original?.[key];
+    const curVal = current[key];
+    if (key === 'pain_points') {
+      const origArr = (origVal ?? null) as string[] | null;
+      const curArr = (curVal ?? null) as string[] | null;
+      const same =
+        (origArr == null && curArr == null) ||
+        (Array.isArray(origArr) &&
+          Array.isArray(curArr) &&
+          origArr.length === curArr.length &&
+          origArr.every((v, i) => v === curArr[i]));
+      if (!same) patch.pain_points = curArr;
+      continue;
+    }
+    if (typeof curVal === 'string') {
+      const origEmpty = origVal == null || origVal === '';
+      const curEmpty = curVal === '';
+      if (origEmpty && curEmpty) continue;
+      if (origVal !== curVal) (patch as Record<string, unknown>)[key] = curVal;
+      continue;
+    }
+    if (typeof curVal === 'boolean') {
+      if (origVal !== curVal) (patch as Record<string, unknown>)[key] = curVal;
+      continue;
+    }
+    if (origVal !== curVal) (patch as Record<string, unknown>)[key] = curVal;
+  }
+  return patch;
+}
+
+function syncStateFromApi(
+  api: UserProfileResponse,
+  setters: {
+    setFirstName: (v: string) => void;
+    setLastName: (v: string) => void;
+    setEmail: (v: string) => void;
+    setPhone: (v: string) => void;
+    setTitle: (v: string) => void;
+    setBio: (v: string) => void;
+    setCompany: (v: string) => void;
+    setIndustria: (v: string) => void;
+    setTeamSize: (v: string) => void;
+    setPais: (v: string) => void;
+    setSelectedDolores: (v: string[]) => void;
+    setNotifProduct: (v: boolean) => void;
+    setNotifCommunity: (v: boolean) => void;
+    setNotifFeedback: (v: boolean) => void;
+  }
+) {
+  const first = api.first_name ?? (api.full_name ? api.full_name.trim().split(/\s+/)[0] ?? '' : '');
+  const last = api.last_name ?? (api.full_name ? api.full_name.trim().split(/\s+/).slice(1).join(' ') ?? '' : '');
+  setters.setFirstName(first);
+  setters.setLastName(last);
+  setters.setEmail(api.email ?? '');
+  setters.setPhone(api.phone ?? '');
+  setters.setTitle(api.title ?? '');
+  setters.setBio(api.bio ?? '');
+  setters.setCompany(api.company ?? '');
+  setters.setIndustria(api.industry ?? 'Servicios B2B');
+  setters.setTeamSize(api.team_size ?? '6–20 personas');
+  setters.setPais(api.country ?? 'Colombia');
+  setters.setSelectedDolores(api.pain_points ?? []);
+  setters.setNotifProduct(api.notif_product ?? true);
+  setters.setNotifCommunity(api.notif_community ?? false);
+  setters.setNotifFeedback(api.notif_feedback ?? true);
+}
+
 export function PerfilDashboard() {
   const { user, loading } = useCurrentUser();
   const [activeTab, setActiveTab] = useState<Tab>('Mi perfil');
+  const [saving, setSaving] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [initialApiProfile, setInitialApiProfile] = useState<UserProfileResponse | null>(null);
 
   // Editable fields state
   const nameParts = (user?.name || 'Usuario').split(' ');
@@ -81,6 +192,132 @@ export function PerfilDashboard() {
   const [notifCommunity, setNotifCommunity] = useState(false);
   const [notifFeedback, setNotifFeedback] = useState(true);
 
+  useEffect(() => {
+    if (loading) return;
+    getMe()
+      .then(api => {
+        setInitialApiProfile(api);
+        syncStateFromApi(api, {
+          setFirstName,
+          setLastName,
+          setEmail,
+          setPhone,
+          setTitle,
+          setBio,
+          setCompany,
+          setIndustria,
+          setTeamSize,
+          setPais,
+          setSelectedDolores,
+          setNotifProduct,
+          setNotifCommunity,
+          setNotifFeedback,
+        });
+      })
+      .catch(() => {
+        setApiError(err instanceof Error ? err.message : String(err));
+      });
+  }, [loading]);
+
+  const buildApiPayloadFromState = useCallback((): ProfilePayload => ({
+    first_name: firstName.trim() || null,
+    last_name: lastName.trim() || null,
+    phone: phone.trim() || null,
+    title: title.trim() || null,
+    bio: bio.trim() || null,
+    company: company.trim() || null,
+    industry: industria || null,
+    team_size: teamSize || null,
+    country: pais || null,
+    pain_points: selectedDolores.length ? selectedDolores : null,
+    notif_product: notifProduct,
+    notif_community: notifCommunity,
+    notif_feedback: notifFeedback,
+  }), [
+    firstName,
+    lastName,
+    phone,
+    title,
+    bio,
+    company,
+    industria,
+    teamSize,
+    pais,
+    selectedDolores,
+    notifProduct,
+    notifCommunity,
+    notifFeedback,
+  ]);
+
+  const onSave = useCallback(async () => {
+    setSaving(true);
+    setApiError(null);
+    const currentPayload = buildApiPayloadFromState();
+    const original = initialApiProfile
+      ? ({
+          first_name: initialApiProfile.first_name ?? null,
+          last_name: initialApiProfile.last_name ?? null,
+          phone: initialApiProfile.phone ?? null,
+          title: initialApiProfile.title ?? null,
+          bio: initialApiProfile.bio ?? null,
+          company: initialApiProfile.company ?? null,
+          industry: initialApiProfile.industry ?? null,
+          team_size: initialApiProfile.team_size ?? null,
+          country: initialApiProfile.country ?? null,
+          pain_points: initialApiProfile.pain_points ?? null,
+          notif_product: initialApiProfile.notif_product ?? null,
+          notif_community: initialApiProfile.notif_community ?? null,
+          notif_feedback: initialApiProfile.notif_feedback ?? null,
+        } as ProfilePayload)
+      : null;
+    const patch = diffProfilePayload(original, currentPayload);
+    if (Object.keys(patch).length === 0) {
+      setSaving(false);
+      return;
+    }
+    try {
+      const updated = await patchMe(patch as UserProfileUpdate);
+      setInitialApiProfile(updated);
+      syncStateFromApi(updated, {
+        setFirstName,
+        setLastName,
+        setEmail,
+        setPhone,
+        setTitle,
+        setBio,
+        setCompany,
+        setIndustria,
+        setTeamSize,
+        setPais,
+        setSelectedDolores,
+        setNotifProduct,
+        setNotifCommunity,
+        setNotifFeedback,
+      });
+    } catch (err) {
+      setApiError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setSaving(false);
+    }
+  }, [
+    buildApiPayloadFromState,
+    initialApiProfile,
+    setFirstName,
+    setLastName,
+    setEmail,
+    setPhone,
+    setTitle,
+    setBio,
+    setCompany,
+    setIndustria,
+    setTeamSize,
+    setPais,
+    setSelectedDolores,
+    setNotifProduct,
+    setNotifCommunity,
+    setNotifFeedback,
+  ]);
+
   const toggleDolor = (d: string) => {
     setSelectedDolores(prev =>
       prev.includes(d) ? prev.filter(x => x !== d) : [...prev, d]
@@ -101,14 +338,19 @@ export function PerfilDashboard() {
       </div>
     );
   }
+  const displayName =
+  (initialApiProfile?.full_name?.trim() ||
+    `${firstName} ${lastName}`.trim() ||
+    user?.name ||
+    'Usuario');
 
   const fallbackUser = user ?? {
-    id: '',
-    name: `${firstName} ${lastName}`.trim() || 'Usuario',
-    email: email,
+    id:initialApiProfile?.id ?? '',
+    name: displayName,
+    email: initialApiProfile?.email ?? email,
     role: 'user' as const,
-    group: 'Validaci\u00f3n inicial',
-    access_tier: 'Early Access',
+    group: initialApiProfile?.group ?? 'Validación inicial',
+    access_tier: initialApiProfile?.access_tier ?? 'Early Access',
   };
 
   return (
@@ -120,7 +362,11 @@ export function PerfilDashboard() {
     >
       {/* Card container */}
       <div className="flex-1 overflow-hidden bg-surface-0">
-        <ProfileHeader user={fallbackUser} />
+        <ProfileHeader 
+          user={fallbackUser}
+          title={initialApiProfile?.title ?? title}
+          country={initialApiProfile?.country ?? pais}
+        />
 
         {/* Tabs */}
         <div className="flex border-b border-border px-4 sm:px-8 lg:px-12" role="tablist" aria-label="Secciones de perfil">
@@ -147,6 +393,14 @@ export function PerfilDashboard() {
         <div className="p-4 sm:p-8 lg:px-12 lg:py-8">
           {activeTab === 'Mi perfil' && (
             <div className="flex flex-col gap-8">
+              {apiError && (
+                <div
+                  role="alert"
+                  className="rounded-md border border-error bg-error/5 px-4 py-3 text-sm text-error"
+                >
+                  {apiError}
+                </div>
+              )}
               {/* Personal Info Section */}
               <SectionCard
                 title="Informaci\u00f3n personal"
@@ -170,7 +424,8 @@ export function PerfilDashboard() {
                   <FieldGroup label="Correo electr\u00f3nico">
                     <Input
                       value={email}
-                      onChange={e => setEmail(e.target.value)}
+                      disabled
+                      readOnly
                       placeholder="correo@ejemplo.com"
                     />
                   </FieldGroup>
@@ -203,7 +458,12 @@ export function PerfilDashboard() {
                     />
                   </FieldGroup>
                 </div>
-                <SectionFooter hint="Los cambios se guardan autom\u00e1ticamente" />
+                <SectionFooter
+                  hint="Los cambios se guardan autom\u00e1ticamente"
+                  onSave={onSave}
+                  saving={saving}
+                  disabled={saving}
+                />
               </SectionCard>
 
               {/* Company Section */}
@@ -259,7 +519,12 @@ export function PerfilDashboard() {
                     />
                   ))}
                 </div>
-                <SectionFooter hint="Puedes cambiar tu selecci\u00f3n en cualquier momento" />
+                <SectionFooter
+                  hint="Puedes cambiar tu selecci\u00f3n en cualquier momento"
+                  onSave={onSave}
+                  saving={saving}
+                  disabled={saving}
+                />
               </SectionCard>
             </div>
           )}
@@ -370,18 +635,32 @@ function SectionCard({
   );
 }
 
-function SectionFooter({ hint }: { hint: string }) {
+function SectionFooter({
+  hint,
+  onSave,
+  saving = false,
+  disabled = false,
+}: {
+  hint: string;
+  onSave?: () => void;
+  saving?: boolean;
+  disabled?: boolean;
+}) {
   return (
     <div className="flex justify-between items-center mt-5 pt-4 border-t border-border">
       <span className="text-xs text-text-secondary">{hint}</span>
       <button
+        type="button"
+        onClick={onSave}
+        disabled={disabled || saving}
         className={cn(
           'px-4 py-2 rounded-md border-none bg-text-main text-white',
           'text-[0.82rem] font-semibold font-[family-name:var(--font-main)] cursor-pointer',
-          'transition-opacity duration-150 hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2'
+          'transition-opacity duration-150 hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2',
+          (disabled || saving) && 'opacity-70 cursor-not-allowed'
         )}
       >
-        Guardar cambios
+        {saving ? 'Guardando…' : 'Guardar cambios'}
       </button>
     </div>
   );
