@@ -69,10 +69,10 @@ export function InvitadosList({ invitados, disponibles }: InvitadosListProps) {
             </div>
             <div className="flex-1">
               <div className="text-[0.85rem] font-semibold text-text-main">
-                Invitación pendiente
+                Sigue invitando
               </div>
               <div className="text-xs text-accent-text">
-                {disponibles} {disponibles === 1 ? 'lugar disponible' : 'lugares más disponibles'}
+                {disponibles === 1 ? 'Falta 1 aceptación' : `Faltan ${disponibles} aceptaciones`} para Early Access
               </div>
             </div>
             <span className="text-[0.8rem] font-semibold text-text-main border border-border rounded-md px-3 py-1 cursor-default">

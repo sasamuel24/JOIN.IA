@@ -15,15 +15,15 @@ export function MisionCard({ current, meta }: MisionCardProps) {
         Tu misión
       </h3>
       <p className="text-[0.95rem] font-semibold text-text-main mb-2">
-        Consigue {meta} personas que quieran trabajar diferente.
+        Logra que {meta} personas se unan al cambio.
       </p>
       <p className="text-[0.82rem] text-text-secondary leading-relaxed mb-4">
-        Estamos en Early Access. Cada invitación que completes nos ayuda a validar que el problema
-        es real — y le da a alguien más la oportunidad de ser parte del cambio.
+        Estamos en Early Access. Cuando {meta} de tus invitados acepten y se registren,
+        desbloquearás acceso anticipado. Puedes invitar a todas las personas que quieras.
       </p>
 
       <Progress value={current} max={meta} showValue />
-      <span className="text-[0.72rem] text-text-secondary mt-1 block text-right">Invitados</span>
+      <span className="text-[0.72rem] text-text-secondary mt-1 block text-right">Aceptadas</span>
     </Card>
   );
 }

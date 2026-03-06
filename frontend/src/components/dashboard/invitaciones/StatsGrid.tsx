@@ -22,9 +22,9 @@ function StatCell({ value, label, accent }: { value: number; label: string; acce
 export function StatsGrid({ stats }: StatsGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <StatCell value={stats.invitados} label="Personas invitadas" />
-      <StatCell value={stats.unidos} label="Ya se Unieron" accent />
-      <StatCell value={stats.disponibles} label="Lugares disponibles" />
+      <StatCell value={stats.invitados} label="Invitaciones enviadas" />
+      <StatCell value={stats.unidos} label="Ya se unieron" accent />
+      <StatCell value={stats.disponibles} label="Faltan para Early Access" />
     </div>
   );
 }

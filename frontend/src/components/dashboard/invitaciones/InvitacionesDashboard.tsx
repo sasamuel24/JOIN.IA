@@ -53,7 +53,7 @@ export function InvitacionesDashboard() {
         círculo tiene más impacto del que crees.
       </p>
 
-      <MisionCard current={stats.invitados} meta={stats.meta} />
+      <MisionCard current={stats.unidos} meta={stats.meta} />
 
       <div className="mt-6">
         <StatsGrid stats={stats} />
@@ -63,7 +63,6 @@ export function InvitacionesDashboard() {
         <InviteForm
           onSubmit={sendInvitation}
           sending={sending}
-          disabled={stats.disponibles <= 0}
         />
       </div>
 
