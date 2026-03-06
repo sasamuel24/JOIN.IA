@@ -61,13 +61,6 @@ def create_invitation_for_user(
     if existing:
         return InvitationResponse.model_validate(existing)
 
-    total_invitations = len(list_by_inviter(db, current_user.id))
-    if total_invitations >= MAX_INVITATIONS:
-        raise HTTPException(
-            status_code=400,
-            detail=f"You can send at most {MAX_INVITATIONS} invitations",
-        )
-
     try:
         inv = create_invitation(
             db,

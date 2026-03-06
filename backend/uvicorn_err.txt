@@ -220,3 +220,11 @@ INFO:     Finished server process [30020]
 INFO:     Started server process [24660]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app\modules\invitations\service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [24660]
+INFO:     Started server process [9672]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
