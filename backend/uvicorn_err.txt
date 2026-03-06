@@ -1,0 +1,222 @@
+INFO:     Will watch for changes in these directories: ['C:\\Users\\Usuario\\Documents\\JOIN.IA\\backend']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [24028] using WatchFiles
+INFO:     Started server process [8320]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID register_api_v1_auth_register_post for function register at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\auth\router.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID login_api_v1_auth_login_post for function login at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\auth\router.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID google_login_api_v1_auth_google_login_get for function google_login at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\auth\router.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID google_callback_api_v1_auth_google_callback_get for function google_callback at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\auth\router.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID me_api_v1_me_get for function me at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\users\router.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID get_my_profile_api_v1_users_me_get for function get_my_profile at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\users\router.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID update_my_profile_api_v1_users_me_patch for function update_my_profile at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\users\router.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID forgot_password_api_v1_auth_forgot_password_post for function forgot_password at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\password_reset\router.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID reset_password_api_v1_auth_reset_password_post for function reset_password at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\password_reset\router.py
+  warnings.warn(message, stacklevel=1)
+WARNING:  WatchFiles detected changes in 'app\modules\invitations\repository.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8320]
+WARNING:  WatchFiles detected changes in 'app\main.py', 'app\modules\auth\service.py', 'app\modules\invitations\service.py'. Reloading...
+INFO:     Started server process [20300]
+INFO:     Waiting for application startup.
+ERROR:    Traceback (most recent call last):
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\server.py", line 90, in startup
+    await self.lifespan.startup()
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 54, in startup
+    await self.startup_event.wait()
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\locks.py", line 213, in wait
+    await fut
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\starlette\routing.py", line 747, in lifespan
+    await receive()
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+Process SpawnProcess-2:
+Traceback (most recent call last):
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\server.py", line 90, in startup
+    await self.lifespan.startup()
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 54, in startup
+    await self.startup_event.wait()
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\locks.py", line 213, in wait
+    await fut
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\multiprocessing\process.py", line 314, in _bootstrap
+    self.run()
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\_subprocess.py", line 78, in subprocess_started
+    target(sockets=sockets)
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\server.py", line 62, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [22932]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID register_api_v1_auth_register_post for function register at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\auth\router.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID login_api_v1_auth_login_post for function login at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\auth\router.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID google_login_api_v1_auth_google_login_get for function google_login at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\auth\router.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID google_callback_api_v1_auth_google_callback_get for function google_callback at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\auth\router.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID me_api_v1_me_get for function me at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\users\router.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID get_my_profile_api_v1_users_me_get for function get_my_profile at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\users\router.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID update_my_profile_api_v1_users_me_patch for function update_my_profile at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\users\router.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID forgot_password_api_v1_auth_forgot_password_post for function forgot_password at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\password_reset\router.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\fastapi\openapi\utils.py:207: UserWarning: Duplicate Operation ID reset_password_api_v1_auth_reset_password_post for function reset_password at C:\Users\Usuario\Documents\JOIN.IA\backend\app\modules\password_reset\router.py
+  warnings.warn(message, stacklevel=1)
+WARNING:  WatchFiles detected changes in 'app\modules\invitations\repository.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [22932]
+WARNING:  WatchFiles detected changes in 'app\modules\invitations\repository.py'. Reloading...
+INFO:     Started server process [22572]
+INFO:     Waiting for application startup.
+ERROR:    Traceback (most recent call last):
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\server.py", line 90, in startup
+    await self.lifespan.startup()
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 54, in startup
+    await self.startup_event.wait()
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\locks.py", line 213, in wait
+    await fut
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\starlette\routing.py", line 747, in lifespan
+    await receive()
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\queues.py", line 158, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+Process SpawnProcess-4:
+Traceback (most recent call last):
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\server.py", line 79, in serve
+    await self.startup(sockets=sockets)
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\server.py", line 90, in startup
+    await self.lifespan.startup()
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\lifespan\on.py", line 54, in startup
+    await self.startup_event.wait()
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\locks.py", line 213, in wait
+    await fut
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\multiprocessing\process.py", line 314, in _bootstrap
+    self.run()
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\_subprocess.py", line 78, in subprocess_started
+    target(sockets=sockets)
+  File "C:\Users\Usuario\Documents\JOIN.IA\backend\venv\Lib\site-packages\uvicorn\server.py", line 62, in run
+    return asyncio.run(self.serve(sockets=sockets))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Usuario\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+INFO:     Started server process [30020]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'app\api\routes.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [30020]
+INFO:     Started server process [24660]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.

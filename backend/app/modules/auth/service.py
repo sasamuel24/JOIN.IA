@@ -17,6 +17,7 @@ from app.modules.auth.repository import (
     get_user_by_email,
 )
 from app.modules.auth.schemas import LoginRequest, RegisterRequest
+from app.modules.invitations.service import accept_pending_invitation_for_email
 
 
 def register_user(payload: RegisterRequest, db: Session) -> Dict[str, Any]:
@@ -25,13 +26,16 @@ def register_user(payload: RegisterRequest, db: Session) -> Dict[str, Any]:
         hashed = hash_password(payload.password)
         user = create_local_user(
             db,
-            email=payload.email,
+            email=payload.email.strip().lower(),
             full_name=payload.full_name,
             hashed_password=hashed,
         )
     except IntegrityError:
-        # Mirrors router behavior
         raise HTTPException(status_code=400, detail="Email already registered")
+
+    # create_local_user has already committed the user row.
+    # Accept any pending invitation for this email using a direct DB UPDATE.
+    accept_pending_invitation_for_email(db, user.email, user.id)
 
     return {
         "id": str(user.id),
@@ -66,11 +70,10 @@ def login_user(payload: LoginRequest, db: Session) -> Dict[str, Any]:
 
 
 async def google_oauth_callback(code: str, db: Session) -> RedirectResponse:
-    """Logic behind GET /auth/google/callback (without Request parsing)."""
+    """Logic behind GET /auth/google/callback."""
     if not code:
         raise HTTPException(status_code=400, detail="Missing code from Google")
 
-    # 1) Intercambiar code por tokens
     async with httpx.AsyncClient() as client:
         token_resp = await client.post(
             "https://oauth2.googleapis.com/token",
@@ -92,7 +95,6 @@ async def google_oauth_callback(code: str, db: Session) -> RedirectResponse:
     if not access_token_google:
         raise HTTPException(status_code=400, detail="No access_token from Google")
 
-    # 2) Obtener perfil del usuario
     async with httpx.AsyncClient() as client:
         userinfo_resp = await client.get(
             "https://www.googleapis.com/oauth2/v2/userinfo",
@@ -110,7 +112,7 @@ async def google_oauth_callback(code: str, db: Session) -> RedirectResponse:
     if not email or not google_id:
         raise HTTPException(status_code=400, detail="Google response missing email or id")
 
-    # 3) Crear / buscar usuario en DB
+    is_new_user = False
     user = get_user_by_email(db, email)
     if not user:
         user = create_google_user(
@@ -119,12 +121,14 @@ async def google_oauth_callback(code: str, db: Session) -> RedirectResponse:
             full_name=full_name,
             provider_id=str(google_id),
         )
+        is_new_user = True
 
-    # 4) Generar JWT
+    # Accept pending invitation only for brand-new Google users.
+    if is_new_user:
+        accept_pending_invitation_for_email(db, user.email, user.id)
+
     jwt_token = create_access_token(str(user.id))
 
-    # 5) Redirigir al frontend con el token
     frontend_callback = f"{settings.FRONTEND_URL}/auth/callback"
     params = urlencode({"token": jwt_token})
     return RedirectResponse(url=f"{frontend_callback}?{params}", status_code=302)
-
