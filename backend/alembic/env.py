@@ -27,6 +27,11 @@ from app.models.base import Base
 from app.models.user import User  # noqa: F401
 from app.models.password_reset import PasswordResetToken  # noqa: F401
 from app.models.invitation import Invitation  # noqa: F401
+from app.models.feedback_form import FeedbackForm  # noqa: F401
+from app.models.feedback_question import FeedbackQuestion  # noqa: F401
+from app.models.feedback_option import FeedbackOption  # noqa: F401
+from app.models.feedback_submission import FeedbackSubmission  # noqa: F401
+from app.models.feedback_answer import FeedbackAnswer  # noqa: F401
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
