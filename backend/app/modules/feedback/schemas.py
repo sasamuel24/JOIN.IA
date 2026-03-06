@@ -1,9 +1,15 @@
 from __future__ import annotations
 
+from datetime import datetime
+from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
+
+# ---------------------------------------------------------------------------
+# Form / Question / Option  (read-only, unchanged)
+# ---------------------------------------------------------------------------
 
 class FeedbackOptionResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -41,3 +47,58 @@ class FeedbackFormResponse(BaseModel):
     description: str | None = None
     version: int
     questions: list[FeedbackQuestionResponse] = []
+
+
+# ---------------------------------------------------------------------------
+# Answer
+# ---------------------------------------------------------------------------
+
+class FeedbackAnswerResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    question_id: UUID
+    answer_text: str | None = None
+    answer_number: int | None = None
+    answer_json: Any | None = None
+    other_text: str | None = None
+    created_at: datetime
+    updated_at: datetime | None = None
+
+
+class FeedbackAnswerInput(BaseModel):
+    question_id: UUID
+    answer_text: str | None = None
+    answer_number: int | None = None
+    answer_json: Any | None = None
+    other_text: str | None = None
+
+
+# ---------------------------------------------------------------------------
+# Submission
+# ---------------------------------------------------------------------------
+
+class FeedbackSubmissionResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    form_id: UUID
+    status: str
+    started_at: datetime
+    submitted_at: datetime | None = None
+    answers: list[FeedbackAnswerResponse] = []
+
+
+class FeedbackSubmissionUpdateRequest(BaseModel):
+    answers: list[FeedbackAnswerInput]
+
+
+class FeedbackSubmitResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    form_id: UUID
+    status: str
+    started_at: datetime
+    submitted_at: datetime | None = None
+    answers: list[FeedbackAnswerResponse] = []
