@@ -5,6 +5,7 @@ from app.core.config import settings
 from app.core.db import test_db_connection
 from app.api.routes import api_router as core_router
 from app.modules.auth.router import router as auth_router
+from app.modules.feedback.router import router as feedback_router
 from app.modules.invitations.router import router as invitations_router
 from app.modules.password_reset.router import router as password_reset_router
 from app.modules.users.router import router as users_router
@@ -27,6 +28,7 @@ def create_application() -> FastAPI:
 
     application.include_router(core_router, prefix=settings.API_V1_STR)
     application.include_router(auth_router, prefix=settings.API_V1_STR)
+    application.include_router(feedback_router, prefix=settings.API_V1_STR)
     application.include_router(invitations_router, prefix=settings.API_V1_STR)
     application.include_router(users_router, prefix=settings.API_V1_STR)
     application.include_router(password_reset_router, prefix=settings.API_V1_STR)
