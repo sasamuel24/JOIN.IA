@@ -11,6 +11,7 @@ import { TabDebates } from './tabs/TabDebates';
 import { TabRecursos } from './tabs/TabRecursos';
 import { DashboardDivider } from '../shared/DashboardDivider';
 import { DashboardFooter } from '../shared/DashboardFooter';
+import { useCommunityStats } from '@/hooks/useCommunity';
 
 const TAB_COMPONENTS: Record<TabId, React.FC> = {
   feed: TabFeed,
@@ -21,6 +22,7 @@ const TAB_COMPONENTS: Record<TabId, React.FC> = {
 
 export function ComunidadDashboard() {
   const [activeTab, setActiveTab] = useState<TabId>('feed');
+  const { stats, loading: statsLoading, error: statsError } = useCommunityStats();
   const ActiveTabContent = TAB_COMPONENTS[activeTab];
 
   return (
@@ -43,7 +45,24 @@ export function ComunidadDashboard() {
           Este es tu espacio. Comparte lo que te cuesta, aprende de quienes viven lo mismo y se
           parte del producto que estamos construyendo juntos.
         </p>
-        <ComunidadHeader miembros={147} posts={38} activosAhora={12} />
+        {statsLoading ? (
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+            <span className="text-sm text-text-secondary">Cargando estadísticas...</span>
+          </div>
+        ) : statsError ? (
+          <div className="text-sm text-error">
+            Error: {statsError}
+          </div>
+        ) : stats ? (
+          <ComunidadHeader 
+            miembros={stats.miembros} 
+            posts={stats.posts} 
+            activosAhora={stats.activosAhora} 
+          />
+        ) : (
+          <ComunidadHeader miembros={0} posts={0} activosAhora={0} />
+        )}
       </div>
 
       {/* Tabs + Content */}

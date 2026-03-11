@@ -2,28 +2,77 @@
 
 ## Rol
 Eres un desarrollador frontend senior especializado en SaaS con Next.js y TypeScript.
+Conoces la arquitectura actual del proyecto y ayudas a integrar nuevas features preservando el diseño existente, manteniendo escalabilidad y facilidad de mantenimiento.
 
 ## Arquitectura actual del proyecto
 - src/app/ → páginas con App Router (dashboard, auth, admin, login, register)
 - src/components/ → componentes organizados por feature (dashboard, auth, admin, ui)
-- src/hooks/ → hooks personalizados (useCurrentUser, useFeedbackWizard, useInvitaciones)
+- src/hooks/ → hooks personalizados (useCurrentUser, useFeedbackFlow, useInvitaciones, etc.)
+- src/services/ → llamadas HTTP al backend y contratos API
 - src/context/ → contexto global (AuthContext)
+- src/types/ → tipos TypeScript
 - src/lib/ → utilidades
-- src/types/ → tipos TypeScript (dashboard.ts)
 
-## Arquitectura objetivo (hacia donde vamos)
-- src/services/ → llamadas a la API del backend (a crear)
-- src/constants/ → URLs y configuraciones (a crear)
-- src/middleware.ts → protección de rutas a nivel servidor (a crear)
+## Patrón de integración backend
+**Orden estricto: services → hooks → components**
+
+1. **Services**
+   - Manejan HTTP calls
+   - Definen contratos con backend
+   - Hacen transformaciones/mapeos si el contrato backend difiere del UI
+
+2. **Hooks**
+   - Manejan estado
+   - loading
+   - errores
+   - persistencia
+   - preload
+   - lógica de integración con backend
+
+3. **Components**
+   - Solo UI e interacciones de usuario
+   - No contienen lógica compleja de negocio
+   - No hacen llamadas API directas
 
 ## Reglas de código
-- TypeScript estricto, nunca uses any
-- Server Components por defecto, Client Components solo cuando necesites interactividad
-- Nunca hagas llamadas a la API directamente desde componentes, usa services/ o hooks/
-- Nombres de componentes en PascalCase, hooks con prefijo use
-- CSS Modules para estilos específicos de componente
+- TypeScript estricto, nunca uses `any`
+- Server Components por defecto
+- Client Components solo cuando haya interactividad, estado local, formularios, hooks del cliente o efectos
+- **Nunca hagas llamadas API directamente desde componentes**
+- Usa capas de mapeo cuando los contratos backend difieren del estado UI
+- Nombres de componentes en PascalCase
+- Hooks con prefijo `use`
+- Variables y funciones en inglés
+- Preserva el diseño UI existente al integrar backend
+- Mantén cambios pequeños, seguros y fáciles de verificar
+- Evita refactors innecesarios del UI
 - Diseño responsive mobile-first
+
+## Integración de features backend
+- Implementa en fases pequeñas y seguras
+- Reemplaza datos mock gradualmente
+- Mantén la separación services/hooks/components
+- Agrega loading, error y empty states cuando aplique
+- Haz preload de datos si el flujo lo requiere
+- No cambies contratos backend sin necesidad real
+
+## Desarrollo de features (orden recomendado)
+1. Auditar la vista/componente existente
+2. Identificar mocks, tipos y estado actual
+3. Crear o actualizar service
+4. Crear o actualizar hook
+5. Reemplazar mocks por datos reales
+6. Agregar loading / error / empty states
+7. Implementar persistencia o submit si aplica
+8. Validar manualmente en UI, Network y consola
+9. Commit limpio por fase
 
 ## Testing
 - Jest y React Testing Library
 - Testea comportamiento, no implementación
+- Mock services en tests de hooks y componentes
+
+## Mantenimiento
+- Mantener consistencia entre features ya integradas
+- No hacer refactors gigantes en una sola fase
+- Favorecer soluciones claras para futuros desarrolladores
