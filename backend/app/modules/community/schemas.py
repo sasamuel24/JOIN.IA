@@ -37,3 +37,38 @@ class MemberSearchParams(BaseModel):
     search: Optional[str] = None
     page: int = 1
     page_size: int = 20
+
+
+class CommunityResourceResponse(BaseModel):
+    """Response schema for a community resource."""
+    model_config = ConfigDict(from_attributes=True)
+    
+    id: UUID
+    title: str
+    slug: str
+    description: str
+    type: str  # guide, template, video, article, tool
+    category: str | None = None
+    thumbnail_url: str | None = None
+    resource_url: str | None = None
+    author_name: str | None = None
+    is_featured: bool
+    published_at: datetime | None
+
+
+class CommunityResourcesResponse(BaseModel):
+    """Response schema for paginated community resources."""
+    resources: List[CommunityResourceResponse]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
+
+
+class ResourceSearchParams(BaseModel):
+    """Search parameters for community resources."""
+    search: Optional[str] = None
+    type: Optional[str] = None
+    category: Optional[str] = None
+    page: int = 1
+    page_size: int = 20

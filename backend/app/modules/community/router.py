@@ -8,8 +8,10 @@ from app.models.user import User
 from app.modules.community import service as community_service
 from app.modules.community.schemas import (
     CommunityMembersResponse,
+    CommunityResourcesResponse,
     CommunityStatsResponse,
     MemberSearchParams,
+    ResourceSearchParams,
 )
 
 
@@ -49,3 +51,30 @@ def get_community_members(
         page_size=page_size
     )
     return community_service.get_community_members(db, search_params)
+
+
+@router.get("/community/resources", response_model=CommunityResourcesResponse)
+def get_community_resources(
+    search: Optional[str] = Query(None, description="Search term for filtering resources"),
+    type: Optional[str] = Query(None, description="Filter by resource type"),
+    category: Optional[str] = Query(None, description="Filter by resource category"),
+    page: int = Query(1, ge=1, description="Page number (1-based)"),
+    page_size: int = Query(20, ge=1, le=100, description="Number of resources per page"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> CommunityResourcesResponse:
+    """Get paginated list of community resources.
+    
+    Supports search filtering by title, description, or author name.
+    Supports filtering by resource type and category.
+    Returns only published resources ordered by featured first, then newest.
+    Requires authentication.
+    """
+    search_params = ResourceSearchParams(
+        search=search,
+        type=type,
+        category=category,
+        page=page,
+        page_size=page_size
+    )
+    return community_service.get_community_resources(db, search_params)

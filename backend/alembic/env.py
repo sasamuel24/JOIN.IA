@@ -32,6 +32,7 @@ from app.models.feedback_question import FeedbackQuestion  # noqa: F401
 from app.models.feedback_option import FeedbackOption  # noqa: F401
 from app.models.feedback_submission import FeedbackSubmission  # noqa: F401
 from app.models.feedback_answer import FeedbackAnswer  # noqa: F401
+from app.models.community_resource import CommunityResource  # noqa: F401
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

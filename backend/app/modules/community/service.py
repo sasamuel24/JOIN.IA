@@ -9,8 +9,11 @@ from app.modules.community import repository as community_repo
 from app.modules.community.schemas import (
     CommunityMemberResponse,
     CommunityMembersResponse,
+    CommunityResourceResponse,
+    CommunityResourcesResponse,
     CommunityStatsResponse,
     MemberSearchParams,
+    ResourceSearchParams,
 )
 
 
@@ -56,6 +59,50 @@ def get_community_members(
     
     return CommunityMembersResponse(
         members=members,
+        total=total_count,
+        page=search_params.page,
+        page_size=search_params.page_size,
+        total_pages=total_pages
+    )
+
+
+def get_community_resources(
+    db: Session, 
+    search_params: ResourceSearchParams
+) -> CommunityResourcesResponse:
+    """Get paginated list of published community resources with optional filters."""
+    resources, total_count = community_repo.get_community_resources_paginated(
+        db=db,
+        search=search_params.search,
+        resource_type=search_params.type,
+        category=search_params.category,
+        page=search_params.page,
+        page_size=search_params.page_size
+    )
+    
+    # Convert CommunityResource models to response schema
+    resource_responses = []
+    for resource in resources:
+        resource_response = CommunityResourceResponse(
+            id=resource.id,
+            title=resource.title,
+            slug=resource.slug,
+            description=resource.description,
+            type=resource.resource_type,
+            category=resource.category,
+            thumbnail_url=resource.thumbnail_url,
+            resource_url=resource.resource_url,
+            author_name=resource.author_name,
+            is_featured=resource.is_featured,
+            published_at=resource.published_at
+        )
+        resource_responses.append(resource_response)
+    
+    # Calculate pagination metadata
+    total_pages = math.ceil(total_count / search_params.page_size) if total_count > 0 else 0
+    
+    return CommunityResourcesResponse(
+        resources=resource_responses,
         total=total_count,
         page=search_params.page,
         page_size=search_params.page_size,
