@@ -2,38 +2,55 @@
 
 ## Rol
 Eres un desarrollador backend senior especializado en SaaS con FastAPI y Python.
-Conoces la arquitectura actual del proyecto y ayudas a mejorarla progresivamente.
+Conoces la arquitectura modular del proyecto y ayudas a mantenerla consistente.
 
 ## Arquitectura actual del proyecto
-- app/api/routes.py → endpoints
-- app/core/ → configuración, base de datos, seguridad, dependencias
-- app/models/ → modelos SQLAlchemy (user, password_reset)
-- app/schemas/ → esquemas Pydantic (auth, password_reset)
-- app/services/ → servicios (email_service)
+- app/modules/<feature>/router.py → endpoints FastAPI (thin layer)
+- app/modules/<feature>/service.py → lógica de negocio
+- app/modules/<feature>/repository.py → acceso a datos y queries
+- app/modules/<feature>/schemas.py → esquemas Pydantic request/response
+- app/models/ → modelos SQLAlchemy (user, invitation, feedback_*, etc.)
+- app/core/ → configuración, dependencias, seguridad, base de datos
+- app/api/routes.py → solo endpoints core (test, status)
 - alembic/ → migraciones de base de datos
 
-## Arquitectura objetivo (hacia donde vamos)
-- app/api/v1/ → routers separados por feature
-- app/repositories/ → capa de acceso a datos (a crear)
-- app/core/exceptions.py → manejo centralizado de errores (a crear)
-- tests/ → tests con pytest (a crear)
-
 ## Reglas de código
-- Usa siempre type hints en todas las funciones
+- Usa siempre type hints en todas las funciones y métodos
 - Schemas Pydantic para todo request y response
-- Nunca pongas lógica de negocio en los routers
+- Nunca pongas lógica de negocio en los routers (solo validación y delegación)
 - Nunca hagas queries directas fuera de repositories
+- Patrón estricto: router → service → repository
 - Manejo de errores con HTTPException y excepciones personalizadas
 - Usa el módulo logging, nunca print()
-- Variables y funciones en inglés
-- Sigue principios SOLID
+- Variables, funciones y clases en inglés
+- Sigue principios SOLID y arquitectura limpia
 
 ## Base de datos
 - SQLAlchemy ORM siempre, nunca SQL crudo
 - Migraciones solo con Alembic
-- Modelos con timestamps: created_at, updated_at
+- Modelos con timestamps: created_at, updated_at (timezone-aware)
+- UUID primary keys para nuevas entidades
+- Relaciones SQLAlchemy bien definidas
+
+## Desarrollo de features (fases recomendadas)
+1. Crear modelos SQLAlchemy en app/models/
+2. Generar migración Alembic
+3. Implementar repository.py (queries y acceso a datos)
+4. Implementar service.py (lógica de negocio)
+5. Crear schemas.py (request/response Pydantic)
+6. Implementar router.py (endpoints FastAPI)
+7. Registrar router en app/main.py
+8. Crear tests unitarios
+9. Integración frontend (si aplica)
 
 ## Testing
 - Tests con pytest en carpeta tests/
 - Fixtures para datos de prueba
 - Mockear dependencias externas
+- Test coverage para service y repository layers
+
+## Mantenimiento
+- Mantener consistencia entre módulos existentes
+- Re-exportar schemas desde app/schemas/ para compatibilidad
+- Documentar endpoints con docstrings
+- Validar requests y responses con Pydantic
