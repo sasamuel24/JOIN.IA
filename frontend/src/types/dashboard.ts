@@ -31,7 +31,9 @@ export interface InvitacionesStats {
 
 export interface FeedbackData {
   rol: string;
+  rolOtherText: string;
   desgastes: string[];
+  desgastesOtherText: string;
   impacto: number;
   solucion_actual: string;
   herramientas: string[];

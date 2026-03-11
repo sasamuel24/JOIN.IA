@@ -16,9 +16,19 @@ interface StepVisionProps {
   onSubmit: () => void;
   onPrev: () => void;
   submitting: boolean;
+  questionNumber?: number;
+  totalQuestions?: number;
 }
 
-export function StepVision({ data, onUpdate, onSubmit, onPrev, submitting }: StepVisionProps) {
+export function StepVision({
+  data,
+  onUpdate,
+  onSubmit,
+  onPrev,
+  submitting,
+  questionNumber = 4,
+  totalQuestions = 4,
+}: StepVisionProps) {
   const text = data.vision_ia ?? '';
   const resultados = data.resultados_deseados ?? [];
 
@@ -31,7 +41,7 @@ export function StepVision({ data, onUpdate, onSubmit, onPrev, submitting }: Ste
 
   return (
     <div>
-      <p className="text-[0.72rem] font-semibold text-text-secondary uppercase tracking-wider mb-2">Pregunta 4 de 4</p>
+      <p className="text-[0.72rem] font-semibold text-text-secondary uppercase tracking-wider mb-2">Pregunta {questionNumber} de {totalQuestions}</p>
       <h2 className="text-2xl font-bold mb-1">
         Si la IA lo resolviera por ti,{' '}
         <span className="italic">
