@@ -18,7 +18,7 @@ export function SidebarUserBlock({ user }: SidebarUserBlockProps) {
     router.replace('/login');
   };
 
-  const displayName = user?.name ?? 'Usuario';
+  const displayName = user?.name?.trim() || 'Usuario';
   const displayEmail = user?.email ?? '';
 
   return (

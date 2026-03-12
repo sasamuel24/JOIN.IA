@@ -4,9 +4,12 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   getCommunityStats,
   getCommunityMembers,
+  getCommunityResources,
   type CommunityStats,
   type CommunityMemberUI,
   type CommunityMembersParams,
+  type CommunityResourceUI,
+  type CommunityResourcesParams,
 } from '@/services/communityService';
 
 export function useCommunityStats() {
@@ -80,5 +83,41 @@ export function useCommunityMembers(params: CommunityMembersParams = {}) {
     loading, 
     error, 
     refresh: () => fetchMembers(params) 
+  };
+}
+
+export function useCommunityResources(params: CommunityResourcesParams = {}) {
+  const [resources, setResources] = useState<CommunityResourceUI[]>([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchResources = useCallback(async (fetchParams: CommunityResourcesParams = {}) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const data = await getCommunityResources(fetchParams);
+      setResources(data.resources);
+      setTotal(data.total);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Error al cargar recursos'
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchResources(params);
+  }, [fetchResources, params.search, params.type, params.category, params.page, params.page_size]);
+
+  return { 
+    resources, 
+    total, 
+    loading, 
+    error, 
+    refresh: () => fetchResources(params) 
   };
 }

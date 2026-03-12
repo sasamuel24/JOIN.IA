@@ -79,3 +79,17 @@ export interface OpenDebate {
   participants: number;
   last_activity: string;
 }
+
+export interface CommunityResource {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  type: 'guide' | 'template' | 'video' | 'article' | 'tool';
+  category: string | null;
+  thumbnail_url: string | null;
+  resource_url: string | null;
+  author_name: string | null;
+  is_featured: boolean;
+  published_at: string | null;
+}

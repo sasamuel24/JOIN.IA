@@ -1,37 +1,14 @@
-import { FileText, Video, Link as LinkIcon, BookOpen } from 'lucide-react';
+'use client';
 
-const MOCK_RECURSOS = [
-  {
-    id: '1',
-    title: 'Guia: Como reducir reuniones innecesarias',
-    description: 'Estrategias practicas para equipos que quieren recuperar tiempo.',
-    type: 'guide' as const,
-  },
-  {
-    id: '2',
-    title: 'Template: Tablero de seguimiento semanal',
-    description: 'Una plantilla para centralizar tareas sin complicaciones.',
-    type: 'template' as const,
-  },
-  {
-    id: '3',
-    title: 'Video: Por que estamos construyendo JOIN.IA',
-    description: 'El equipo fundador explica la vision y el problema que resolvemos.',
-    type: 'video' as const,
-  },
-  {
-    id: '4',
-    title: 'Articulo: La friccion operativa invisible',
-    description: 'Como las micro-ineficiencias destruyen la productividad sin que lo notes.',
-    type: 'article' as const,
-  },
-];
+import { FileText, Video, Link as LinkIcon, BookOpen, Settings } from 'lucide-react';
+import { useCommunityResources } from '@/hooks/useCommunity';
 
 const TYPE_ICONS = {
   guide: BookOpen,
   template: FileText,
   video: Video,
   article: LinkIcon,
+  tool: Settings,
 };
 
 const TYPE_LABELS = {
@@ -39,9 +16,55 @@ const TYPE_LABELS = {
   template: 'Template',
   video: 'Video',
   article: 'Articulo',
+  tool: 'Herramienta',
 };
 
 export function TabRecursos() {
+  const { resources, loading, error } = useCommunityResources();
+
+  if (loading) {
+    return (
+      <div>
+        <p className="text-[0.85rem] text-secondary mb-4">
+          Recursos para la comunidad
+        </p>
+        <div className="flex flex-col items-center justify-center py-12 gap-4">
+          <div className="w-10 h-10 border-[3px] border-accent/30 border-t-accent rounded-full animate-spin" />
+          <p className="text-sm text-text-secondary">Cargando recursos...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div>
+        <p className="text-[0.85rem] text-secondary mb-4">
+          Recursos para la comunidad
+        </p>
+        <div className="flex flex-col items-center justify-center py-12 gap-3">
+          <div className="text-sm text-error">Error: {error}</div>
+          <p className="text-xs text-text-secondary">
+            No se pudieron cargar los recursos de la comunidad
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (resources.length === 0) {
+    return (
+      <div>
+        <p className="text-[0.85rem] text-secondary mb-4">
+          Recursos para la comunidad
+        </p>
+        <div className="flex flex-col items-center justify-center py-12 gap-3">
+          <p className="text-sm text-text-secondary">No hay recursos disponibles</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <p className="text-[0.85rem] text-secondary mb-4">
@@ -49,7 +72,7 @@ export function TabRecursos() {
       </p>
 
       <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-3">
-        {MOCK_RECURSOS.map(recurso => {
+        {resources.map(recurso => {
           const Icon = TYPE_ICONS[recurso.type];
           return (
             <div
