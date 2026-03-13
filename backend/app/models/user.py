@@ -2,6 +2,7 @@ import uuid
 
 from sqlalchemy import Boolean, Column, DateTime, String, Text
 from sqlalchemy.dialects.postgresql import ARRAY, UUID
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.models.base import Base
@@ -49,3 +50,9 @@ class User(Base):
     access_tier = Column(String, nullable=True)
 
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=True)
+    
+    # Community relationships
+    community_posts = relationship("CommunityPost", back_populates="author")
+    community_post_comments = relationship("CommunityPostComment", back_populates="author")
+    community_debates = relationship("CommunityDebate", back_populates="author")
+    community_debate_replies = relationship("CommunityDebateReply", back_populates="author")
