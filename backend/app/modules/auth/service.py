@@ -132,3 +132,4 @@ async def google_oauth_callback(code: str, db: Session) -> RedirectResponse:
     frontend_callback = f"{settings.FRONTEND_URL}/auth/callback"
     params = urlencode({"token": jwt_token})
     return RedirectResponse(url=f"{frontend_callback}?{params}", status_code=302)
+#join
