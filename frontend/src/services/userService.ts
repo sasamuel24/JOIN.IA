@@ -137,7 +137,7 @@ export function getMe(): Promise<UserProfileResponse> {
 }
 
 export function patchMe(payload: UserProfileUpdate): Promise<UserProfileResponse> {
-  return request<UserProfileResponse>(USERS_ME, { method: 'PATCH', body: payload });
+  return request<UserProfileResponse>(USERS_ME, { method: 'PATCH', body: JSON.stringify(payload) });
 }
 
 export async function uploadAvatar(file: File): Promise<{ avatar_url: string }> {
