@@ -15,9 +15,20 @@ interface StepSolucionProps {
   onUpdate: (partial: Partial<FeedbackData>) => void;
   onNext: () => void;
   onPrev: () => void;
+  questionNumber?: number;
+  totalQuestions?: number;
+  isSaving?: boolean;
 }
 
-export function StepSolucion({ data, onUpdate, onNext, onPrev }: StepSolucionProps) {
+export function StepSolucion({
+  data,
+  onUpdate,
+  onNext,
+  onPrev,
+  questionNumber = 3,
+  totalQuestions = 4,
+  isSaving,
+}: StepSolucionProps) {
   const text = data.solucion_actual ?? '';
   const herramientas = data.herramientas ?? [];
 
@@ -30,7 +41,7 @@ export function StepSolucion({ data, onUpdate, onNext, onPrev }: StepSolucionPro
 
   return (
     <div>
-      <p className="text-[0.72rem] font-semibold text-text-secondary uppercase tracking-wider mb-2">Pregunta 3 de 4</p>
+      <p className="text-[0.72rem] font-semibold text-text-secondary uppercase tracking-wider mb-2">Pregunta {questionNumber} de {totalQuestions}</p>
       <h2 className="text-2xl font-bold mb-1">
         ¿Cómo lo estás{' '}
         <span className="italic bg-gradient-to-r from-accent to-[#00e6b8] bg-clip-text text-transparent">resolviendo</span> hoy?
@@ -58,13 +69,13 @@ export function StepSolucion({ data, onUpdate, onNext, onPrev }: StepSolucionPro
       <div className="flex items-center gap-3">
         <button
           onClick={onNext}
-          disabled={!canContinue}
+          disabled={!canContinue || isSaving}
           className={cn(
             'px-6 py-2.5 rounded-md border-none text-sm font-semibold cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30',
-            canContinue ? 'bg-accent text-white hover:bg-accent-dark' : 'bg-surface-2 text-text-muted cursor-not-allowed'
+            canContinue && !isSaving ? 'bg-accent text-white hover:bg-accent-dark' : 'bg-surface-2 text-text-muted cursor-not-allowed'
           )}
         >
-          Continuar &rarr;
+          {isSaving ? 'Guardando…' : 'Continuar \u2192'}
         </button>
         <button onClick={onPrev} className="bg-transparent border-none text-text-secondary text-[0.85rem] cursor-pointer hover:text-text-main transition-colors">
           &larr; Atrás

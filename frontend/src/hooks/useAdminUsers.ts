@@ -65,11 +65,11 @@ export function useAdminUsers() {
 
       const [statsData, usersData] = await Promise.all([
         statsRes.json() as Promise<AdminUsersStats>,
-        usersRes.json() as Promise<AdminUser[]>,
+        usersRes.json() as Promise<{ items: AdminUser[]; total: number }>,
       ]);
 
       setStats(statsData);
-      setUsers(usersData);
+      setUsers(usersData.items ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
       // Fallback silencioso mientras el backend no esté disponible

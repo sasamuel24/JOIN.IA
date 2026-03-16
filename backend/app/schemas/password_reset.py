@@ -1,8 +1,3 @@
-from pydantic import BaseModel, EmailStr
+from app.modules.password_reset.schemas import ForgotPasswordRequest, ResetPasswordRequest
 
-class ForgotPasswordRequest(BaseModel):
-    email: EmailStr
-
-class ResetPasswordRequest(BaseModel):
-    token: str
-    new_password: str
+__all__ = ["ForgotPasswordRequest", "ResetPasswordRequest"]

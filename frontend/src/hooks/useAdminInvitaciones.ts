@@ -67,11 +67,11 @@ export function useAdminInvitaciones() {
 
       const [statsData, invData] = await Promise.all([
         statsRes.json() as Promise<AdminInvitacionesStats>,
-        invRes.json() as Promise<AdminInvitacion[]>,
+        invRes.json() as Promise<{ items: AdminInvitacion[]; total: number }>,
       ]);
 
       setStats(statsData);
-      setInvitaciones(invData);
+      setInvitaciones(invData.items ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
       // Fallback silencioso mientras el backend no esté disponible

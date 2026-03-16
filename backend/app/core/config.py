@@ -24,9 +24,15 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str = ""
     GOOGLE_REDIRECT_URI: str = "http://localhost:8000/api/v1/auth/google/callback"
 
-    # Resend
-    RESEND_API_KEY: str = ""
-    RESEND_FROM_EMAIL: str = "no-reply@joinia.com"
+    # N8N Webhooks
+    N8N_WEBHOOK_PASSWORD_RESET: str = ""
+    N8N_WEBHOOK_INVITATION: str = ""
+
+    # AWS S3
+    AWS_ACCESS_KEY_ID: str = ""
+    AWS_SECRET_ACCESS_KEY: str = ""
+    AWS_REGION: str = "us-east-1"
+    AWS_S3_BUCKET_NAME: str = "joiniaimages"
 
     class Config:
         case_sensitive = True

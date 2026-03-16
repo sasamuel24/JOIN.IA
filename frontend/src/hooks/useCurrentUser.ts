@@ -19,7 +19,7 @@ export function useCurrentUser() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => (res.ok ? res.json() : Promise.reject('unauthorized')))
-      .then((data: CurrentUser) => setUser(data))
+      .then((data: any) => setUser({ ...data, name: data.name || data.full_name || data.email }))
       .catch(err => setError(String(err)))
       .finally(() => setLoading(false));
   }, []);

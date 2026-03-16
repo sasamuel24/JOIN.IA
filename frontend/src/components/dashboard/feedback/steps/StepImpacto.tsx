@@ -8,6 +8,9 @@ interface StepImpactoProps {
   onUpdate: (partial: Partial<FeedbackData>) => void;
   onNext: () => void;
   onPrev: () => void;
+  questionNumber?: number;
+  totalQuestions?: number;
+  isSaving?: boolean;
 }
 
 function getImpactLabel(n: number): string {
@@ -16,12 +19,20 @@ function getImpactLabel(n: number): string {
   return 'Crítico para el negocio';
 }
 
-export function StepImpacto({ data, onUpdate, onNext, onPrev }: StepImpactoProps) {
+export function StepImpacto({
+  data,
+  onUpdate,
+  onNext,
+  onPrev,
+  questionNumber = 2,
+  totalQuestions = 4,
+  isSaving,
+}: StepImpactoProps) {
   const selected = data.impacto ?? 0;
 
   return (
     <div>
-      <p className="text-[0.72rem] font-semibold text-text-secondary uppercase tracking-wider mb-2">Pregunta 2 de 4</p>
+      <p className="text-[0.72rem] font-semibold text-text-secondary uppercase tracking-wider mb-2">Pregunta {questionNumber} de {totalQuestions}</p>
       <h2 className="text-2xl font-bold mb-1">
         ¿Cuánto te{' '}
         <span className="italic bg-gradient-to-r from-accent to-[#00e6b8] bg-clip-text text-transparent">afecta</span>{' '}
@@ -58,13 +69,13 @@ export function StepImpacto({ data, onUpdate, onNext, onPrev }: StepImpactoProps
       <div className="flex items-center gap-3">
         <button
           onClick={onNext}
-          disabled={selected === 0}
+          disabled={selected === 0 || isSaving}
           className={cn(
             'px-6 py-2.5 rounded-md border-none text-sm font-semibold cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30',
-            selected > 0 ? 'bg-accent text-white hover:bg-accent-dark' : 'bg-surface-2 text-text-muted cursor-not-allowed'
+            selected > 0 && !isSaving ? 'bg-accent text-white hover:bg-accent-dark' : 'bg-surface-2 text-text-muted cursor-not-allowed'
           )}
         >
-          Continuar &rarr;
+          {isSaving ? 'Guardando…' : 'Continuar \u2192'}
         </button>
         <button onClick={onPrev} className="bg-transparent border-none text-text-secondary text-[0.85rem] cursor-pointer hover:text-text-main transition-colors">
           &larr; Atrás

@@ -1,26 +1,48 @@
-import { Avatar } from '@/components/ui/avatar';
+'use client';
 
-const MOCK_MIEMBROS = [
-  { id: '1', name: 'Maria Camila', role: 'Fundadora', joined: 'Ene 2026' },
-  { id: '2', name: 'Javier P.', role: 'Dir. Operaciones', joined: 'Ene 2026' },
-  { id: '3', name: 'Ana Torres', role: 'CTO', joined: 'Feb 2026' },
-  { id: '4', name: 'Carlos Ruiz', role: 'Marketing Lead', joined: 'Feb 2026' },
-  { id: '5', name: 'Laura Mendez', role: 'Consultora', joined: 'Feb 2026' },
-  { id: '6', name: 'Diego Salazar', role: 'CEO', joined: 'Ene 2026' },
-  { id: '7', name: 'Valentina Rojas', role: 'RRHH', joined: 'Feb 2026' },
-  { id: '8', name: 'Andres Lopez', role: 'Ventas', joined: 'Feb 2026' },
-];
+import { Avatar } from '@/components/ui/avatar';
+import { useCommunityMembers } from '@/hooks/useCommunity';
 
 export function TabMiembros() {
+  const { members, loading, error } = useCommunityMembers();
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 gap-4">
+        <div className="w-10 h-10 border-[3px] border-accent/30 border-t-accent rounded-full animate-spin" />
+        <p className="text-sm text-text-secondary">Cargando miembros...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 gap-3">
+        <div className="text-sm text-error">Error: {error}</div>
+        <p className="text-xs text-text-secondary">
+          No se pudieron cargar los miembros de la comunidad
+        </p>
+      </div>
+    );
+  }
+
+  if (members.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 gap-3">
+        <p className="text-sm text-text-secondary">No hay miembros para mostrar</p>
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3">
-      {MOCK_MIEMBROS.map(m => (
+      {members.map(m => (
         <div
           key={m.id}
           className="border border-border rounded-[10px] p-4 flex flex-col items-center text-center transition-all duration-150 cursor-default hover:border-accent-glow hover:shadow-accent"
         >
           <div className="mb-2.5">
-            <Avatar name={m.name} size="md" />
+            <Avatar name={m.name} src={m.avatar_url} size="md" />
           </div>
           <div className="text-[0.9rem] font-semibold text-main">
             {m.name}

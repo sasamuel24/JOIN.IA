@@ -3,6 +3,29 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Invitado, InvitacionesStats } from '@/types/dashboard';
 
+const STATUS_MAP: Record<string, Invitado['status']> = {
+  pending: 'pendiente',
+  accepted: 'unido',
+  cancelled: 'expirado',
+};
+
+interface ApiInvitationItem {
+  id: string;
+  invited_email: string;
+  status: string;
+  created_at: string;
+  accepted_user_id?: string | null;
+}
+
+function mapInvitation(item: ApiInvitationItem): Invitado {
+  return {
+    id: item.id,
+    email: item.invited_email,
+    status: STATUS_MAP[item.status] ?? 'pendiente',
+    invited_at: item.created_at,
+  };
+}
+
 export function useInvitaciones() {
   const [invitados, setInvitados] = useState<Invitado[]>([]);
   const [stats, setStats] = useState<InvitacionesStats>({
@@ -32,15 +55,17 @@ export function useInvitaciones() {
       if (!res.ok) throw new Error('Error al cargar invitaciones');
 
       const data = await res.json();
-      setInvitados(data.invitados ?? []);
-      setStats(
-        data.stats ?? {
-          invitados: data.invitados?.length ?? 0,
-          unidos: data.invitados?.filter((i: Invitado) => i.status === 'unido').length ?? 0,
-          disponibles: 5 - (data.invitados?.length ?? 0),
-          meta: 5,
-        }
-      );
+
+      const items: ApiInvitationItem[] = data.items ?? [];
+      setInvitados(items.map(mapInvitation));
+
+      const apiStats = data.stats;
+      setStats({
+        invitados: apiStats?.invited_count ?? items.length,
+        unidos: apiStats?.accepted_count ?? 0,
+        disponibles: apiStats?.remaining ?? 5,
+        meta: 5,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
     } finally {

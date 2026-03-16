@@ -543,6 +543,8 @@ function Timeline({ invitaciones, delay }: TimelineProps) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
+const PAGE_SIZE = 15;
+
 type FilterStatus = 'todas' | AdminInvitacion['status'];
 
 export function AdminInvitaciones() {
@@ -552,6 +554,7 @@ export function AdminInvitaciones() {
   // Filters
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('todas');
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
 
   // ── Filtered rows ─────────────────────────────────────────────────────────
   const filtered = useMemo(() => {
@@ -567,6 +570,14 @@ export function AdminInvitaciones() {
       return matchStatus && matchSearch;
     });
   }, [invitaciones, filterStatus, search]);
+
+  // Reset page when filters change
+  useMemo(() => { setPage(1); }, [filterStatus, search]);
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const rangeStart = filtered.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const rangeEnd = Math.min(page * PAGE_SIZE, filtered.length);
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
@@ -807,7 +818,7 @@ export function AdminInvitaciones() {
           ) : filtered.length === 0 ? (
             <AdminEmptyState icon={Mail} title="Sin invitaciones" description="No se encontraron invitaciones que coincidan con los filtros aplicados." />
           ) : (
-            filtered.map((inv, i) => <InvitacionCard key={inv.id} inv={inv} index={i} />)
+            paginated.map((inv, i) => <InvitacionCard key={inv.id} inv={inv} index={i} />)
           )
         ) : (
           /* ── TABLE VIEW (≥ 768px) ── */
@@ -841,7 +852,7 @@ export function AdminInvitaciones() {
               <AdminEmptyState icon={Mail} title="Sin invitaciones" description="No se encontraron invitaciones que coincidan con los filtros aplicados." />
             ) : (
               <div style={{ minWidth: 640 }}>
-                {filtered.map((inv, i) => (
+                {paginated.map((inv, i) => (
                   <div
                     key={inv.id}
                     style={{
@@ -849,7 +860,7 @@ export function AdminInvitaciones() {
                       gridTemplateColumns: '1.1fr 1.4fr 1.2fr 0.75fr 0.85fr 0.85fr',
                       padding: '0.7rem 1.25rem',
                       fontSize: '0.84rem',
-                      borderBottom: i < filtered.length - 1 ? '1px solid var(--border-color)' : 'none',
+                      borderBottom: i < paginated.length - 1 ? '1px solid var(--border-color)' : 'none',
                       alignItems: 'center',
                       gap: '1rem',
                     }}
@@ -880,7 +891,7 @@ export function AdminInvitaciones() {
           </div>
         )}
 
-        {/* Footer con conteo */}
+        {/* Footer con paginación */}
         {!loading && filtered.length > 0 && (
           <div
             style={{
@@ -888,16 +899,85 @@ export function AdminInvitaciones() {
               borderTop: '1px solid var(--border-color)',
               display: 'flex',
               alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
               gap: '0.5rem',
             }}
           >
-            <Users size={13} color="var(--text-muted)" />
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-              {filtered.length} invitación{filtered.length !== 1 ? 'es' : ''}
-              {filterStatus !== 'todas'
-                ? ` · filtrado por "${STATUS_LABELS[filterStatus]}"`
-                : ''}
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Users size={13} color="var(--text-muted)" />
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                {rangeStart}–{rangeEnd} de {filtered.length} invitación{filtered.length !== 1 ? 'es' : ''}
+                {filterStatus !== 'todas' ? ` · "${STATUS_LABELS[filterStatus]}"` : ''}
+              </span>
+            </div>
+
+            {totalPages > 1 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  style={{
+                    padding: '0.3rem 0.7rem',
+                    fontSize: '0.78rem',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: 6,
+                    background: page === 1 ? 'var(--bg-neutral)' : 'var(--bg-white)',
+                    color: page === 1 ? 'var(--text-muted)' : 'var(--text-main)',
+                    cursor: page === 1 ? 'default' : 'pointer',
+                  }}
+                >
+                  ← Anterior
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                  .reduce<(number | '...')[]>((acc, p, idx, arr) => {
+                    if (idx > 0 && typeof arr[idx - 1] === 'number' && (p as number) - (arr[idx - 1] as number) > 1) acc.push('...');
+                    acc.push(p);
+                    return acc;
+                  }, [])
+                  .map((p, idx) =>
+                    p === '...' ? (
+                      <span key={`ellipsis-${idx}`} style={{ fontSize: '0.78rem', color: 'var(--text-muted)', padding: '0 0.2rem' }}>…</span>
+                    ) : (
+                      <button
+                        key={p}
+                        onClick={() => setPage(p as number)}
+                        style={{
+                          width: 30,
+                          height: 30,
+                          fontSize: '0.78rem',
+                          border: '1px solid var(--border-color)',
+                          borderRadius: 6,
+                          background: p === page ? 'var(--accent)' : 'var(--bg-white)',
+                          color: p === page ? '#ffffff' : 'var(--text-main)',
+                          fontWeight: p === page ? 700 : 500,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {p}
+                      </button>
+                    )
+                  )}
+
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  style={{
+                    padding: '0.3rem 0.7rem',
+                    fontSize: '0.78rem',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: 6,
+                    background: page === totalPages ? 'var(--bg-neutral)' : 'var(--bg-white)',
+                    color: page === totalPages ? 'var(--text-muted)' : 'var(--text-main)',
+                    cursor: page === totalPages ? 'default' : 'pointer',
+                  }}
+                >
+                  Siguiente →
+                </button>
+              </div>
+            )}
           </div>
         )}
       </motion.div>

@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 interface RegisterFormProps {
     onToggleMode: () => void;
 }
 
 export default function RegisterForm({ onToggleMode }: RegisterFormProps) {
-    const [email, setEmail] = useState('');
+    const searchParams = useSearchParams();
+    const [email, setEmail] = useState(searchParams.get('email') ?? '');
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -15,11 +17,11 @@ export default function RegisterForm({ onToggleMode }: RegisterFormProps) {
 
     useEffect(() => {
         const savedEmail = sessionStorage.getItem('register_email');
-        if (savedEmail) {
+        if (savedEmail && !searchParams.get('email')) {
             setEmail(savedEmail);
             sessionStorage.removeItem('register_email');
         }
-    }, []);
+    }, [searchParams]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

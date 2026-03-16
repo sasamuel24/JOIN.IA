@@ -1,5 +1,3 @@
-from pydantic import BaseModel, EmailStr
+from app.modules.auth.schemas import LoginRequest
 
-class LoginRequest(BaseModel):
-    email: EmailStr
-    password: str
+__all__ = ["LoginRequest"]

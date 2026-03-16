@@ -68,7 +68,7 @@ export function useAdminDashboard() {
       const [usersStats, invStats, recentData] = await Promise.all([
         usersStatsRes.json(),
         invStatsRes.json(),
-        recentRes.json(),
+        recentRes.json() as Promise<{ items: { name: string; email: string; created_at: string; status: string }[] }>,
       ]);
 
       setMetrics({
@@ -77,7 +77,16 @@ export function useAdminDashboard() {
         invitaciones_enviadas: invStats.total_enviadas,
         conversion_rate: Math.round(invStats.conversion_rate),
       });
-      setRecentUsers(recentData);
+      setRecentUsers(
+        (recentData.items ?? []).map((u) => ({
+          name: u.name,
+          email: u.email,
+          date: new Date(u.created_at).toLocaleDateString('es-CO', {
+            day: '2-digit', month: 'short', year: 'numeric',
+          }),
+          status: u.status === 'activo' ? 'Activo' : 'Inactivo',
+        }))
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
       // Fallback silencioso mientras el backend no esté disponible

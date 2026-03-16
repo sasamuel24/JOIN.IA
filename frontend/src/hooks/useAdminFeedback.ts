@@ -84,11 +84,11 @@ export function useAdminFeedback() {
 
       const [statsData, entriesData] = await Promise.all([
         statsRes.json() as Promise<AdminFeedbackStats>,
-        entriesRes.json() as Promise<AdminFeedbackEntry[]>,
+        entriesRes.json() as Promise<{ items: AdminFeedbackEntry[]; total: number }>,
       ]);
 
       setStats(statsData);
-      setEntries(entriesData);
+      setEntries(entriesData.items ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
       // Fallback silencioso mientras el backend no esté disponible

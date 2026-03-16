@@ -9,6 +9,9 @@ interface ProfileHeaderProps {
   user: CurrentUser;
   coverUrl?: string;
   onAvatarChange?: (file: File) => void;
+  uploading?: boolean;
+  title?: string | null;
+  country?: string | null;
 }
 
 function getInitials(name: string): string {
@@ -20,9 +23,9 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
-export function ProfileHeader({ user, coverUrl, onAvatarChange }: ProfileHeaderProps) {
+export function ProfileHeader({ user, coverUrl, onAvatarChange, uploading = false, title, country}: ProfileHeaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const nameParts = user.name.split(' ');
+  const nameParts = (user?.name ?? '').split(' ');
   const firstName = nameParts[0] || '';
   const lastName = nameParts.slice(1).join(' ') || '';
 
@@ -32,6 +35,8 @@ export function ProfileHeader({ user, coverUrl, onAvatarChange }: ProfileHeaderP
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    // Reset so the same file can be re-selected after a failed upload
+    e.target.value = '';
     if (file && onAvatarChange) {
       onAvatarChange(file);
     }
@@ -72,35 +77,57 @@ export function ProfileHeader({ user, coverUrl, onAvatarChange }: ProfileHeaderP
                 'text-white flex items-center justify-center text-2xl font-bold tracking-wide'
               )}
             >
-              {getInitials(user.name)}
+              {getInitials(user?.name ?? '')}
             </div>
           )}
 
           {/* Upload overlay button */}
-          <button
-            onClick={handleFileSelect}
-            aria-label="Cambiar foto de perfil"
-            className={cn(
-              'absolute inset-0 rounded-full bg-black/45 border-none cursor-pointer',
-              'flex items-center justify-center',
-              'opacity-0 group-hover:opacity-100 transition-opacity duration-200',
-              'focus-visible:outline-none focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2'
-            )}
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#fff"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          {uploading ? (
+            <div
+              className={cn(
+                'absolute inset-0 rounded-full bg-black/60',
+                'flex items-center justify-center'
+              )}
             >
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-              <circle cx="12" cy="13" r="4" />
-            </svg>
-          </button>
+              <svg
+                className="animate-spin"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+              </svg>
+            </div>
+          ) : (
+            <button
+              onClick={handleFileSelect}
+              aria-label="Cambiar foto de perfil"
+              className={cn(
+                'absolute inset-0 rounded-full bg-black/45 border-none cursor-pointer',
+                'flex items-center justify-center',
+                'opacity-0 group-hover:opacity-100 transition-opacity duration-200',
+                'focus-visible:outline-none focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2'
+              )}
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
+              </svg>
+            </button>
+          )}
 
           {/* Online dot */}
           <div className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-[#00D4AA] border-[2.5px] border-[#1a1a1a]" />
@@ -112,8 +139,8 @@ export function ProfileHeader({ user, coverUrl, onAvatarChange }: ProfileHeaderP
             {firstName} {lastName}
           </h1>
           <p className="text-[0.85rem] text-white/60 mt-0.5 mb-2.5">
-            {user.role === 'admin' ? 'Administrador' : 'CEO'} &middot;{' '}
-            {user.group || 'Colombia'}
+          {(title ?? (user.role === 'admin' ? 'Administrador' : 'Usuario'))} &middot;{" "}
+          {(country ?? user.group ?? "—")}
           </p>
 
           {/* Badges */}
@@ -127,7 +154,7 @@ export function ProfileHeader({ user, coverUrl, onAvatarChange }: ProfileHeaderP
                 'bg-white/[0.12] border border-white/20 text-white/85 uppercase tracking-wide'
               )}
             >
-              {user.role === 'admin' ? 'Admin' : 'CEO / Fundador'}
+              {title ? title.toUpperCase() : (user.role === 'admin' ? 'ADMIN' : 'USUARIO')}
             </span>
             <span
               className={cn(
@@ -135,7 +162,7 @@ export function ProfileHeader({ user, coverUrl, onAvatarChange }: ProfileHeaderP
                 'bg-white/[0.12] border border-white/20 text-white/85 uppercase tracking-wide'
               )}
             >
-              Colombia
+              {country ? country.toUpperCase() : "—"}
             </span>
           </div>
         </div>

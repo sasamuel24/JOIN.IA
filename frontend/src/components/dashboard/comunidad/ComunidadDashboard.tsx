@@ -11,6 +11,8 @@ import { TabDebates } from './tabs/TabDebates';
 import { TabRecursos } from './tabs/TabRecursos';
 import { DashboardDivider } from '../shared/DashboardDivider';
 import { DashboardFooter } from '../shared/DashboardFooter';
+import { useCommunityStats } from '@/hooks/useCommunity';
+import { useNextEvent } from '@/hooks/useNextEvent';
 
 const TAB_COMPONENTS: Record<TabId, React.FC> = {
   feed: TabFeed,
@@ -21,6 +23,8 @@ const TAB_COMPONENTS: Record<TabId, React.FC> = {
 
 export function ComunidadDashboard() {
   const [activeTab, setActiveTab] = useState<TabId>('feed');
+  const { stats, loading: statsLoading, error: statsError } = useCommunityStats();
+  const { event, loading: eventLoading } = useNextEvent();
   const ActiveTabContent = TAB_COMPONENTS[activeTab];
 
   return (
@@ -43,7 +47,24 @@ export function ComunidadDashboard() {
           Este es tu espacio. Comparte lo que te cuesta, aprende de quienes viven lo mismo y se
           parte del producto que estamos construyendo juntos.
         </p>
-        <ComunidadHeader miembros={147} posts={38} activosAhora={12} />
+        {statsLoading ? (
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+            <span className="text-sm text-text-secondary">Cargando estadísticas...</span>
+          </div>
+        ) : statsError ? (
+          <div className="text-sm text-error">
+            Error: {statsError}
+          </div>
+        ) : stats ? (
+          <ComunidadHeader 
+            miembros={stats.miembros} 
+            posts={stats.posts} 
+            activosAhora={stats.activosAhora} 
+          />
+        ) : (
+          <ComunidadHeader miembros={0} posts={0} activosAhora={0} />
+        )}
       </div>
 
       {/* Tabs + Content */}
@@ -58,19 +79,50 @@ export function ComunidadDashboard() {
         {/* Sidebar -- upcoming event */}
         <div className="hidden lg:block w-[260px] shrink-0 bg-surface-1 rounded-xl p-5 sticky top-8">
           <h3 className="text-[0.95rem] font-bold text-main mb-3">
-            Proximo evento
+            Próximo evento
           </h3>
-          <div className="bg-surface-0 border border-border rounded-lg p-4">
-            <p className="text-[0.72rem] font-semibold text-accent-text uppercase tracking-wide mb-1">
-              Webinar
-            </p>
-            <p className="text-[0.9rem] font-semibold text-main leading-snug mb-1">
-              Como la IA puede reducir tu carga operativa
-            </p>
-            <p className="text-[0.78rem] text-secondary">
-              Jueves 27 Feb · 6:00 PM COT
-            </p>
-          </div>
+
+          {eventLoading ? (
+            <div className="space-y-2">
+              <div className="h-3 bg-surface-0 rounded animate-pulse w-1/3" />
+              <div className="h-4 bg-surface-0 rounded animate-pulse" />
+              <div className="h-3 bg-surface-0 rounded animate-pulse w-2/3" />
+            </div>
+          ) : event ? (
+            <div className="bg-surface-0 border border-border rounded-lg p-4">
+              <p className="text-[0.72rem] font-semibold text-accent-text uppercase tracking-wide mb-1">
+                {event.type}
+              </p>
+              <p className="text-[0.9rem] font-semibold text-main leading-snug mb-1">
+                {event.title}
+              </p>
+              <p className="text-[0.78rem] text-secondary">
+                {new Date(event.event_date).toLocaleDateString('es-CO', {
+                  weekday: 'long', day: 'numeric', month: 'short',
+                })}{' '}
+                · {new Date(event.event_date).toLocaleTimeString('es-CO', {
+                  hour: '2-digit', minute: '2-digit',
+                })} {event.timezone_label}
+              </p>
+              {event.registration_url && (
+                <a
+                  href={event.registration_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 block text-center text-[0.75rem] font-semibold text-accent-text border border-accent-text rounded-md py-1.5 hover:bg-accent-text hover:text-white transition-colors"
+                >
+                  Registrarme
+                </a>
+              )}
+            </div>
+          ) : (
+            <div className="bg-surface-0 border border-border rounded-lg p-4 text-center">
+              <p className="text-[0.85rem] font-semibold text-main mb-1">Próximamente</p>
+              <p className="text-[0.75rem] text-secondary">
+                Estamos preparando el próximo evento. ¡Mantente atento!
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

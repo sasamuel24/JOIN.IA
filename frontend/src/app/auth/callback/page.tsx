@@ -15,7 +15,15 @@ function AuthCallbackInner() {
     }
 
     localStorage.setItem("access_token", token);
-    router.replace("/dashboard");
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((user) => {
+        router.replace(user?.role === "admin" ? "/admin" : "/dashboard");
+      })
+      .catch(() => router.replace("/dashboard"));
   }, [params, router]);
 
   return (

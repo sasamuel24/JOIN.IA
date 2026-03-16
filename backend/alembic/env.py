@@ -24,8 +24,19 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from app.models.base import Base
-from app.models.user import User  # import model for registration
-from app.models.password_reset import PasswordResetToken  # import model for password reset
+from app.models.user import User  # noqa: F401
+from app.models.password_reset import PasswordResetToken  # noqa: F401
+from app.models.invitation import Invitation  # noqa: F401
+from app.models.feedback_form import FeedbackForm  # noqa: F401
+from app.models.feedback_question import FeedbackQuestion  # noqa: F401
+from app.models.feedback_option import FeedbackOption  # noqa: F401
+from app.models.feedback_submission import FeedbackSubmission  # noqa: F401
+from app.models.feedback_answer import FeedbackAnswer  # noqa: F401
+from app.models.community_resource import CommunityResource  # noqa: F401
+from app.models.community_post import CommunityPost  # noqa: F401
+from app.models.community_post_comment import CommunityPostComment  # noqa: F401
+from app.models.community_debate import CommunityDebate  # noqa: F401
+from app.models.community_debate_reply import CommunityDebateReply  # noqa: F401
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

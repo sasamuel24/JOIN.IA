@@ -2,12 +2,16 @@
 
 import React, { useState } from 'react';
 import ForgotPasswordModal from './ForgotPasswordModal';
+import { useSearchParams } from 'next/navigation';
 
 interface LoginFormProps {
     onToggleMode: () => void;
 }
 
 export default function LoginForm({ onToggleMode }: LoginFormProps) {
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get('redirect') || '/dashboard';
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -32,7 +36,8 @@ export default function LoginForm({ onToggleMode }: LoginFormProps) {
             }
 
             localStorage.setItem("access_token", data.access_token);
-            window.location.href = '/dashboard';
+            const destination = data.user?.role === 'admin' ? '/admin' : redirectTo;
+            window.location.href = destination;
         } catch (err) {
             setError("No se pudo conectar al servidor");
         }

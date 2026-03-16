@@ -1,32 +1,45 @@
-import resend
+import httpx
 from app.core.config import settings
 
-resend.api_key = settings.RESEND_API_KEY
 
 def send_password_reset_email(to_email: str, reset_link: str) -> None:
-    response = resend.Emails.send({
-        "from": settings.RESEND_FROM_EMAIL,
+    """Dispara el workflow de N8N para enviar el email de reset de contraseña."""
+    if not settings.N8N_WEBHOOK_PASSWORD_RESET:
+        print("[email_service] N8N_WEBHOOK_PASSWORD_RESET no configurado, email no enviado.")
+        return
+
+    payload = {
         "to": to_email,
-        "subject": "Restablecer contraseña — JOIN.IA",
-        "html": f"""
-            <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 2rem;">
-                <h2 style="color: #111; font-size: 1.5rem; margin-bottom: 1rem;">
-                    Restablecer tu contraseña
-                </h2>
-                <p style="color: #555; line-height: 1.6; margin-bottom: 1.5rem;">
-                    Recibimos una solicitud para restablecer la contraseña de tu cuenta en JOIN.IA.
-                    Haz clic en el botón para continuar. Este enlace expira en <strong>1 hora</strong>.
-                </p>
-                <a href="{reset_link}"
-                   style="display: inline-block; padding: 0.75rem 1.5rem; background: #111;
-                          color: #fff; text-decoration: none; border-radius: 6px;
-                          font-weight: 600; font-size: 0.9rem;">
-                    Restablecer contraseña
-                </a>
-                <p style="color: #999; font-size: 0.8rem; margin-top: 2rem;">
-                    Si no solicitaste esto, ignora este correo. Tu contraseña no cambiará.
-                </p>
-            </div>
-        """,
-    })
-    print("Resend response:", response)  # 👈 esto mostrará el error exacto en la terminal
+        "reset_link": reset_link,
+    }
+    try:
+        response = httpx.post(settings.N8N_WEBHOOK_PASSWORD_RESET, json=payload, timeout=10)
+        response.raise_for_status()
+        print(f"[email_service] Webhook N8N password_reset OK: {response.status_code}")
+    except httpx.HTTPError as e:
+        print(f"[email_service] Error al llamar webhook N8N password_reset: {e}")
+
+
+def send_invitation_email(
+    to_email: str,
+    invitation_link: str,
+    inviter_name: str = "Un miembro",
+    inviter_email: str = "",
+) -> None:
+    """Dispara el workflow de N8N para enviar el email de invitación."""
+    if not settings.N8N_WEBHOOK_INVITATION:
+        print("[email_service] N8N_WEBHOOK_INVITATION no configurado, email no enviado.")
+        return
+
+    payload = {
+        "to": to_email,
+        "invitation_link": invitation_link,
+        "inviter_name": inviter_name,
+        "inviter_email": inviter_email,
+    }
+    try:
+        response = httpx.post(settings.N8N_WEBHOOK_INVITATION, json=payload, timeout=10)
+        response.raise_for_status()
+        print(f"[email_service] Webhook N8N invitation OK: {response.status_code}")
+    except httpx.HTTPError as e:
+        print(f"[email_service] Error al llamar webhook N8N invitation: {e}")

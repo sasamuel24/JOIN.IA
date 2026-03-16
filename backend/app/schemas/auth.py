@@ -1,6 +1,3 @@
-from pydantic import BaseModel, EmailStr
+from app.modules.auth.schemas import RegisterRequest
 
-class RegisterRequest(BaseModel):
-    email: EmailStr
-    password: str
-    full_name: str | None = None
+__all__ = ["RegisterRequest"]

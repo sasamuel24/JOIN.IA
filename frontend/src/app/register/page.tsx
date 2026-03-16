@@ -2,8 +2,13 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function RegisterPage() {
+function RegisterContent() {
+    const searchParams = useSearchParams();
+    const invitationToken = searchParams.get('invitation_token');
+
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -43,7 +48,12 @@ export default function RegisterPage() {
         return;
         }
 
-        window.location.href = "/login";
+        // Si vino con token de invitación, redirigir a aceptar (el backend ya lo auto-acepta)
+        if (invitationToken) {
+          window.location.href = `/invitations/accept?token=${encodeURIComponent(invitationToken)}`;
+        } else {
+          window.location.href = "/login";
+        }
     } catch (err) {
         setError("Cannot connect to backend (is it running?)");
     }
@@ -51,7 +61,7 @@ export default function RegisterPage() {
 
 
     const handleGoogleSignup = () => {
-        window.location.href = '/';
+        window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/google/login`;
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -224,5 +234,13 @@ export default function RegisterPage() {
                 </div>
             </main>
         </div>
+    );
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Cargando...</div>}>
+            <RegisterContent />
+        </Suspense>
     );
 }
