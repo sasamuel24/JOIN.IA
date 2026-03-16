@@ -2,6 +2,10 @@ export interface AuthUser {
   id: string;
   email: string;
   full_name?: string;
+  role?: 'user' | 'admin';
+  group?: string;
+  access_tier?: string;
+  avatar_url?: string;
 }
 
 export interface CurrentUser {

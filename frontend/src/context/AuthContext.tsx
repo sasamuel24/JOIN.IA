@@ -19,10 +19,10 @@ function mapAuthUser(data: AuthUser): CurrentUser {
     id: data.id,
     email: data.email,
     name: data.full_name ?? "Usuario",
-    avatar_url: undefined,
-    role: undefined,
-    group: undefined,
-    access_tier: undefined,
+    avatar_url: data.avatar_url,
+    role: data.role ?? 'user',
+    group: data.group ?? '',
+    access_tier: data.access_tier ?? '',
   };
 }
 
