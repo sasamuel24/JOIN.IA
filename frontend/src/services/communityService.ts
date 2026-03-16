@@ -681,6 +681,7 @@ export async function createDebateReply(
     author: {
       name: data.author.name,
       role: data.author.role || 'Miembro',
+      avatar_url: data.author.avatar_url ?? null,
     },
     content: data.content,
     created_at: data.created_at,
