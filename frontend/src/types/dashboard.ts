@@ -1,3 +1,9 @@
+export interface AuthUser {
+  id: string;
+  email: string;
+  full_name?: string;
+}
+
 export interface CurrentUser {
   id: string;
   name: string;
