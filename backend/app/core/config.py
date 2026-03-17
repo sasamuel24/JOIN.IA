@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
-from typing import Optional
+from pydantic import field_validator
+from typing import Optional, Union
 
 
 class Settings(BaseSettings):
@@ -7,10 +8,26 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "Joinia API"
     VERSION: str = "1.0.0"
-    
+
     # CORS Settings
-    BACKEND_CORS_ORIGINS: list = ["http://localhost:3000", "http://localhost:3001"]
+    # Can be set in .env as a JSON array or comma-separated string:
+    # BACKEND_CORS_ORIGINS=["https://www.ia-join.com","https://ia-join.com"]
+    # BACKEND_CORS_ORIGINS=https://www.ia-join.com,https://ia-join.com
+    BACKEND_CORS_ORIGINS: list = [
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "https://www.ia-join.com",
+        "https://ia-join.com",
+    ]
     FRONTEND_URL: str = "http://localhost:3000"
+
+    @field_validator("BACKEND_CORS_ORIGINS", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, v: Union[str, list]) -> list:
+        if isinstance(v, str):
+            # Support comma-separated string from env vars
+            return [origin.strip() for origin in v.split(",") if origin.strip()]
+        return v
 
     # Database Settings
     DATABASE_URL: Optional[str] = None

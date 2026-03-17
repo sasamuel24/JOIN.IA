@@ -50,7 +50,7 @@ export default function LoginForm({ onToggleMode }: LoginFormProps) {
     };
 
     const handleGoogleLogin = () => {
-        window.location.href = "http://127.0.0.1:8000/api/v1/auth/google/login";
+        window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/google/login`;
     };
 
     return (
