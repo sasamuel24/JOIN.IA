@@ -39,10 +39,10 @@ async def upload_my_avatar(
     if file.content_type not in allowed:
         raise HTTPException(status_code=400, detail="Formato no permitido. Usa JPG, PNG o WebP.")
 
-    max_bytes = 5 * 1024 * 1024  # 5 MB
+    max_bytes = 20 * 1024 * 1024  # 20 MB
     contents = await file.read()
     if len(contents) > max_bytes:
-        raise HTTPException(status_code=400, detail="La imagen no puede superar 5 MB.")
+        raise HTTPException(status_code=400, detail="La imagen no puede superar 20 MB.")
 
     try:
         avatar_url = await asyncio.to_thread(
