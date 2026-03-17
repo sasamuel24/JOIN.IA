@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import RedirectResponse
+from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
@@ -12,6 +13,10 @@ from app.schemas.auth_login import LoginRequest
 router = APIRouter()
 
 
+class ResendVerificationRequest(BaseModel):
+    email: EmailStr
+
+
 @router.post("/auth/register")
 def register(payload: RegisterRequest, db: Session = Depends(get_db)):
     """Registro de usuarios (self-signup)"""
@@ -22,6 +27,18 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)):
 def login(payload: LoginRequest, db: Session = Depends(get_db)):
     """Login de usuarios"""
     return auth_service.login_user(payload, db)
+
+
+@router.get("/auth/verify-email")
+def verify_email(token: str = Query(...), db: Session = Depends(get_db)):
+    """Verifica el email con el token recibido por correo"""
+    return auth_service.verify_email_token(token, db)
+
+
+@router.post("/auth/resend-verification")
+def resend_verification(payload: ResendVerificationRequest, db: Session = Depends(get_db)):
+    """Reenvía el correo de verificación"""
+    return auth_service.resend_verification_email(payload.email, db)
 
 
 @router.get("/auth/google/login")

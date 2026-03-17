@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     # N8N Webhooks
     N8N_WEBHOOK_PASSWORD_RESET: str = ""
     N8N_WEBHOOK_INVITATION: str = ""
+    N8N_WEBHOOK_EMAIL_VERIFICATION: str = "https://n8n.srv1143747.hstgr.cloud/webhook/e73f6477-94c9-4ecb-9259-b10937dafa44"
 
     # AWS S3
     AWS_ACCESS_KEY_ID: str = ""

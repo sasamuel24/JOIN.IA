@@ -30,6 +30,12 @@ export default function LoginForm({ onToggleMode }: LoginFormProps) {
 
             const data = await res.json().catch(() => ({}));
 
+            if (res.status === 403 && data?.detail === "email_not_verified") {
+                const userEmail = res.headers.get("X-User-Email") || email;
+                window.location.href = `/verify-email?email=${encodeURIComponent(userEmail)}`;
+                return;
+            }
+
             if (!res.ok) {
                 setError(data?.detail || "Correo o contraseña incorrectos");
                 return;
