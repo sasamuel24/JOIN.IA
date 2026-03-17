@@ -38,7 +38,6 @@ def upload_avatar(file_bytes: bytes, content_type: str, user_id: str) -> str:
             Key=key,
             Body=file_bytes,
             ContentType=content_type,
-            ACL="public-read",
         )
     except ClientError as e:
         raise HTTPException(status_code=500, detail=f"S3 upload failed: {e}")
