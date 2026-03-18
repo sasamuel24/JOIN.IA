@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict
@@ -24,6 +25,21 @@ from app.modules.invitations.service import accept_pending_invitation_for_email
 from app.services.email_service import send_verification_email
 
 
+async def _notify_new_user(email: str, full_name: str, provider: str) -> None:
+    """Llama al webhook de N8N cuando se registra un nuevo usuario."""
+    if not settings.N8N_WEBHOOK_NEW_USER:
+        return
+    try:
+        async with httpx.AsyncClient() as client:
+            await client.post(
+                settings.N8N_WEBHOOK_NEW_USER,
+                json={"email": email, "full_name": full_name, "provider": provider},
+                timeout=5,
+            )
+    except Exception:
+        pass  # No bloquear el registro si el webhook falla
+
+
 def register_user(payload: RegisterRequest, db: Session) -> Dict[str, Any]:
     """Logic behind POST /auth/register."""
     try:
@@ -40,6 +56,12 @@ def register_user(payload: RegisterRequest, db: Session) -> Dict[str, Any]:
     # create_local_user has already committed the user row.
     # Accept any pending invitation for this email using a direct DB UPDATE.
     accept_pending_invitation_for_email(db, user.email, user.id)
+
+    try:
+        loop = asyncio.get_event_loop()
+        loop.create_task(_notify_new_user(user.email, user.full_name or "", "email"))
+    except RuntimeError:
+        pass
 
     return {
         "id": str(user.id),
@@ -228,6 +250,7 @@ async def google_oauth_callback(code: str, db: Session) -> RedirectResponse:
     # Accept pending invitation only for brand-new Google users.
     if is_new_user:
         accept_pending_invitation_for_email(db, user.email, user.id)
+        await _notify_new_user(user.email, user.full_name or "", "google")
 
     jwt_token = create_access_token(str(user.id))
 
