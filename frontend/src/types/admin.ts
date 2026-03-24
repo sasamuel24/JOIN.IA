@@ -66,3 +66,46 @@ export interface AdminInvitacionesStats {
   conversion_rate: number;
   top_inviters: { name: string; email: string; count: number; converted: number }[];
 }
+
+// ─── Debates admin ────────────────────────────────────────────────────────────
+
+export interface AdminDebateItem {
+  id: string;
+  title: string;
+  category: string;
+  content: string;
+  slug: string;
+  is_featured: boolean;
+  replies_count: number;
+  created_at: string;
+  author_name: string;
+}
+
+export interface AdminDebatesStats {
+  total: number;
+  featured: number;
+  con_respuestas: number;
+}
+
+// ─── Recursos admin ───────────────────────────────────────────────────────────
+
+export interface AdminResourceItem {
+  id: string;
+  title: string;
+  description: string;
+  resource_type: string;
+  category: string | null;
+  resource_url: string | null;
+  thumbnail_url: string | null;
+  author_name: string | null;
+  is_featured: boolean;
+  is_published: boolean;
+  created_at: string;
+}
+
+export interface AdminResourcesStats {
+  total: number;
+  featured: number;
+  published: number;
+  por_tipo: { tipo: string; count: number }[];
+}

@@ -8,12 +8,22 @@ from app.modules.admin import repository as repo
 from app.modules.admin.schemas import (
     AdminDashboardMetrics,
     AdminDashboardResponse,
+    AdminDebateCreate,
+    AdminDebateItem,
+    AdminDebatesListResponse,
+    AdminDebatesStats,
+    AdminDebateUpdate,
     AdminFeedbackEntry,
     AdminFeedbackListResponse,
     AdminFeedbackStats,
     AdminInvitacion,
     AdminInvitacionesListResponse,
     AdminInvitacionesStats,
+    AdminResourceCreate,
+    AdminResourceItem,
+    AdminResourcesListResponse,
+    AdminResourcesStats,
+    AdminResourceUpdate,
     AdminUserItem,
     AdminUsersListResponse,
     AdminUsersStats,
@@ -23,6 +33,7 @@ from app.modules.admin.schemas import (
     TopInviter,
     TopItem,
 )
+from app.modules.community import repository as community_repo
 
 
 # ---------------------------------------------------------------------------
@@ -272,3 +283,214 @@ def get_dashboard(db: Session) -> AdminDashboardResponse:
     recent = [_build_user_item(u, feedback_ids, inv_map) for u in users]
 
     return AdminDashboardResponse(metrics=metrics, recent_users=recent)
+
+
+# ---------------------------------------------------------------------------
+# Debates admin
+# ---------------------------------------------------------------------------
+
+def get_debates_list(db: Session) -> AdminDebatesListResponse:
+    debates, total = community_repo.admin_get_all_debates(db)
+    items = []
+    for d in debates:
+        replies_count = community_repo.get_debate_replies_count(db, str(d.id))
+        items.append(AdminDebateItem(
+            id=str(d.id),
+            title=d.title,
+            category=d.category,
+            content=d.content,
+            slug=d.slug,
+            is_featured=d.is_featured,
+            replies_count=replies_count,
+            created_at=d.created_at,
+            author_name=d.author.full_name if d.author else "Admin"
+        ))
+    return AdminDebatesListResponse(items=items, total=total)
+
+
+def get_debates_stats(db: Session) -> AdminDebatesStats:
+    data = community_repo.admin_get_debates_stats(db)
+    return AdminDebatesStats(**data)
+
+
+def create_debate_admin(db: Session, user_id: str, request: AdminDebateCreate) -> AdminDebateItem:
+    debate = community_repo.admin_create_debate(
+        db, user_id, request.title, request.category, request.content, request.is_featured
+    )
+    return AdminDebateItem(
+        id=str(debate.id),
+        title=debate.title,
+        category=debate.category,
+        content=debate.content,
+        slug=debate.slug,
+        is_featured=debate.is_featured,
+        replies_count=0,
+        created_at=debate.created_at,
+        author_name=debate.author.full_name if debate.author else "Admin"
+    )
+
+
+def update_debate_admin(db: Session, debate_id: str, request: AdminDebateUpdate) -> AdminDebateItem:
+    from fastapi import HTTPException
+    debate = community_repo.admin_update_debate(
+        db, debate_id,
+        title=request.title,
+        content=request.content,
+        category=request.category,
+        is_featured=request.is_featured
+    )
+    if not debate:
+        raise HTTPException(status_code=404, detail="Debate not found")
+    replies_count = community_repo.get_debate_replies_count(db, str(debate.id))
+    return AdminDebateItem(
+        id=str(debate.id),
+        title=debate.title,
+        category=debate.category,
+        content=debate.content,
+        slug=debate.slug,
+        is_featured=debate.is_featured,
+        replies_count=replies_count,
+        created_at=debate.created_at,
+        author_name=debate.author.full_name if debate.author else "Admin"
+    )
+
+
+def delete_debate_admin(db: Session, debate_id: str) -> dict:
+    from fastapi import HTTPException
+    ok = community_repo.admin_delete_debate(db, debate_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Debate not found")
+    return {"ok": True}
+
+
+def toggle_debate_featured(db: Session, debate_id: str) -> AdminDebateItem:
+    from fastapi import HTTPException
+    debate = community_repo.admin_toggle_debate_featured(db, debate_id)
+    if not debate:
+        raise HTTPException(status_code=404, detail="Debate not found")
+    replies_count = community_repo.get_debate_replies_count(db, str(debate.id))
+    return AdminDebateItem(
+        id=str(debate.id),
+        title=debate.title,
+        category=debate.category,
+        content=debate.content,
+        slug=debate.slug,
+        is_featured=debate.is_featured,
+        replies_count=replies_count,
+        created_at=debate.created_at,
+        author_name=debate.author.full_name if debate.author else "Admin"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Recursos admin
+# ---------------------------------------------------------------------------
+
+def get_resources_list(db: Session) -> AdminResourcesListResponse:
+    resources, total = community_repo.admin_get_all_resources(db)
+    items = [AdminResourceItem(
+        id=str(r.id),
+        title=r.title,
+        description=r.description,
+        resource_type=r.resource_type,
+        category=r.category,
+        resource_url=r.resource_url,
+        thumbnail_url=r.thumbnail_url,
+        author_name=r.author_name,
+        is_featured=r.is_featured,
+        is_published=r.is_published,
+        created_at=r.created_at,
+    ) for r in resources]
+    return AdminResourcesListResponse(items=items, total=total)
+
+
+def get_resources_stats(db: Session) -> AdminResourcesStats:
+    data = community_repo.admin_get_resources_stats(db)
+    return AdminResourcesStats(**data)
+
+
+def create_resource_admin(db: Session, user_id: str, request: AdminResourceCreate) -> AdminResourceItem:
+    r = community_repo.admin_create_resource(
+        db, user_id,
+        title=request.title,
+        description=request.description,
+        resource_type=request.resource_type,
+        category=request.category,
+        resource_url=request.resource_url,
+        thumbnail_url=request.thumbnail_url,
+        author_name=request.author_name,
+        is_featured=request.is_featured,
+        is_published=request.is_published
+    )
+    return AdminResourceItem(
+        id=str(r.id),
+        title=r.title,
+        description=r.description,
+        resource_type=r.resource_type,
+        category=r.category,
+        resource_url=r.resource_url,
+        thumbnail_url=r.thumbnail_url,
+        author_name=r.author_name,
+        is_featured=r.is_featured,
+        is_published=r.is_published,
+        created_at=r.created_at,
+    )
+
+
+def update_resource_admin(db: Session, resource_id: str, request: AdminResourceUpdate) -> AdminResourceItem:
+    from fastapi import HTTPException
+    r = community_repo.admin_update_resource(
+        db, resource_id,
+        title=request.title,
+        description=request.description,
+        resource_type=request.resource_type,
+        category=request.category,
+        resource_url=request.resource_url,
+        thumbnail_url=request.thumbnail_url,
+        author_name=request.author_name,
+        is_featured=request.is_featured,
+        is_published=request.is_published
+    )
+    if not r:
+        raise HTTPException(status_code=404, detail="Resource not found")
+    return AdminResourceItem(
+        id=str(r.id),
+        title=r.title,
+        description=r.description,
+        resource_type=r.resource_type,
+        category=r.category,
+        resource_url=r.resource_url,
+        thumbnail_url=r.thumbnail_url,
+        author_name=r.author_name,
+        is_featured=r.is_featured,
+        is_published=r.is_published,
+        created_at=r.created_at,
+    )
+
+
+def delete_resource_admin(db: Session, resource_id: str) -> dict:
+    from fastapi import HTTPException
+    ok = community_repo.admin_delete_resource(db, resource_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Resource not found")
+    return {"ok": True}
+
+
+def toggle_resource_featured(db: Session, resource_id: str) -> AdminResourceItem:
+    from fastapi import HTTPException
+    r = community_repo.admin_toggle_resource_featured(db, resource_id)
+    if not r:
+        raise HTTPException(status_code=404, detail="Resource not found")
+    return AdminResourceItem(
+        id=str(r.id),
+        title=r.title,
+        description=r.description,
+        resource_type=r.resource_type,
+        category=r.category,
+        resource_url=r.resource_url,
+        thumbnail_url=r.thumbnail_url,
+        author_name=r.author_name,
+        is_featured=r.is_featured,
+        is_published=r.is_published,
+        created_at=r.created_at,
+    )

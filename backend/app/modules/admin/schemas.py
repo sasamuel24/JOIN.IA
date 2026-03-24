@@ -143,3 +143,98 @@ class AdminDashboardMetrics(BaseModel):
 class AdminDashboardResponse(BaseModel):
     metrics: AdminDashboardMetrics
     recent_users: list[AdminUserItem]
+
+
+# ---------------------------------------------------------------------------
+# Debates (admin)
+# ---------------------------------------------------------------------------
+
+class AdminDebateItem(BaseModel):
+    id: str
+    title: str
+    category: str
+    content: str
+    slug: str
+    is_featured: bool
+    replies_count: int
+    created_at: datetime
+    author_name: str
+
+
+class AdminDebatesStats(BaseModel):
+    total: int
+    featured: int
+    con_respuestas: int
+
+
+class AdminDebatesListResponse(BaseModel):
+    items: list[AdminDebateItem]
+    total: int
+
+
+class AdminDebateCreate(BaseModel):
+    title: str
+    content: str
+    category: str
+    is_featured: bool = False
+
+
+class AdminDebateUpdate(BaseModel):
+    title: str | None = None
+    content: str | None = None
+    category: str | None = None
+    is_featured: bool | None = None
+
+
+# ---------------------------------------------------------------------------
+# Recursos (admin)
+# ---------------------------------------------------------------------------
+
+class AdminResourceItem(BaseModel):
+    id: str
+    title: str
+    description: str
+    resource_type: str
+    category: str | None
+    resource_url: str | None
+    thumbnail_url: str | None
+    author_name: str | None
+    is_featured: bool
+    is_published: bool
+    created_at: datetime
+
+
+class AdminResourcesStats(BaseModel):
+    total: int
+    featured: int
+    published: int
+    por_tipo: list[dict]
+
+
+class AdminResourcesListResponse(BaseModel):
+    items: list[AdminResourceItem]
+    total: int
+
+
+class AdminResourceCreate(BaseModel):
+    title: str
+    description: str
+    resource_type: str  # guide | template | video | article | tool
+    category: str | None = None
+    resource_url: str | None = None
+    thumbnail_url: str | None = None
+    author_name: str | None = None
+    is_featured: bool = False
+    is_published: bool = True
+
+
+class AdminResourceUpdate(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    resource_type: str | None = None
+    category: str | None = None
+    resource_url: str | None = None
+    thumbnail_url: str | None = None
+    author_name: str | None = None
+    is_featured: bool | None = None
+    is_published: bool | None = None

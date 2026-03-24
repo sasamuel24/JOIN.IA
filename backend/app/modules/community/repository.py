@@ -347,3 +347,255 @@ def get_debate_participants_count(db: Session, debate_id: str) -> int:
         CommunityDebateReply.debate_id == debate_id,
         CommunityDebateReply.is_published.is_(True)
     ).distinct().count()
+
+
+# ---------------------------------------------------------------------------
+# Admin: Debates CRUD
+# ---------------------------------------------------------------------------
+
+def admin_get_all_debates(db: Session) -> Tuple[List[CommunityDebate], int]:
+    """Admin: Get all debates (published and unpublished) ordered by created_at desc."""
+    query = db.query(CommunityDebate).options(joinedload(CommunityDebate.author))
+    total = query.count()
+    debates = query.order_by(CommunityDebate.is_featured.desc(), CommunityDebate.created_at.desc()).all()
+    return debates, total
+
+
+def admin_get_debate_by_id(db: Session, debate_id: str) -> CommunityDebate | None:
+    """Admin: Get any debate by ID regardless of published status."""
+    return db.query(CommunityDebate).filter(
+        CommunityDebate.id == debate_id
+    ).options(joinedload(CommunityDebate.author)).first()
+
+
+def admin_create_debate(
+    db: Session,
+    user_id: str,
+    title: str,
+    category: str,
+    content: str,
+    is_featured: bool = False
+) -> CommunityDebate:
+    """Admin: Create a debate with optional featured flag."""
+    slug = generate_debate_slug(title)
+    existing_count = db.query(CommunityDebate).filter(
+        CommunityDebate.slug.like(f"{slug}%")
+    ).count()
+    if existing_count > 0:
+        slug = f"{slug}-{existing_count + 1}"
+
+    debate = CommunityDebate(
+        slug=slug,
+        title=title,
+        category=category,
+        content=content,
+        created_by_user_id=user_id,
+        is_published=True,
+        is_featured=is_featured
+    )
+    db.add(debate)
+    db.commit()
+    db.refresh(debate)
+    return debate
+
+
+def admin_update_debate(
+    db: Session,
+    debate_id: str,
+    title: str | None = None,
+    content: str | None = None,
+    category: str | None = None,
+    is_featured: bool | None = None
+) -> CommunityDebate | None:
+    """Admin: Update debate fields."""
+    debate = admin_get_debate_by_id(db, debate_id)
+    if not debate:
+        return None
+    if title is not None:
+        debate.title = title
+    if content is not None:
+        debate.content = content
+    if category is not None:
+        debate.category = category
+    if is_featured is not None:
+        debate.is_featured = is_featured
+    db.commit()
+    db.refresh(debate)
+    return debate
+
+
+def admin_delete_debate(db: Session, debate_id: str) -> bool:
+    """Admin: Delete a debate and all its replies (cascade)."""
+    debate = admin_get_debate_by_id(db, debate_id)
+    if not debate:
+        return False
+    db.delete(debate)
+    db.commit()
+    return True
+
+
+def admin_toggle_debate_featured(db: Session, debate_id: str) -> CommunityDebate | None:
+    """Admin: Toggle is_featured on a debate."""
+    debate = admin_get_debate_by_id(db, debate_id)
+    if not debate:
+        return None
+    debate.is_featured = not debate.is_featured
+    db.commit()
+    db.refresh(debate)
+    return debate
+
+
+def admin_get_debates_stats(db: Session) -> dict:
+    """Admin: Get debates statistics."""
+    total = db.query(CommunityDebate).count()
+    featured = db.query(CommunityDebate).filter(CommunityDebate.is_featured.is_(True)).count()
+    con_respuestas = db.query(CommunityDebate).join(
+        CommunityDebateReply, CommunityDebateReply.debate_id == CommunityDebate.id
+    ).distinct().count()
+    return {"total": total, "featured": featured, "con_respuestas": con_respuestas}
+
+
+# ---------------------------------------------------------------------------
+# Admin: Resources CRUD
+# ---------------------------------------------------------------------------
+
+def admin_get_all_resources(db: Session) -> Tuple[List[CommunityResource], int]:
+    """Admin: Get all resources ordered by is_featured desc, created_at desc."""
+    query = db.query(CommunityResource)
+    total = query.count()
+    resources = query.order_by(
+        CommunityResource.is_featured.desc(),
+        CommunityResource.created_at.desc()
+    ).all()
+    return resources, total
+
+
+def admin_get_resource_by_id(db: Session, resource_id: str) -> CommunityResource | None:
+    """Admin: Get any resource by ID."""
+    return db.query(CommunityResource).filter(CommunityResource.id == resource_id).first()
+
+
+def admin_create_resource(
+    db: Session,
+    user_id: str,
+    title: str,
+    description: str,
+    resource_type: str,
+    category: str | None = None,
+    resource_url: str | None = None,
+    thumbnail_url: str | None = None,
+    author_name: str | None = None,
+    is_featured: bool = False,
+    is_published: bool = True
+) -> CommunityResource:
+    """Admin: Create a new resource."""
+    import re as re_module
+    from datetime import timezone
+
+    slug_base = re_module.sub(r'[^a-zA-Z0-9\s-]', '', title.lower())
+    slug_base = re_module.sub(r'\s+', '-', slug_base.strip())[:80]
+
+    existing = db.query(CommunityResource).filter(
+        CommunityResource.slug.like(f"{slug_base}%")
+    ).count()
+    slug = f"{slug_base}-{existing + 1}" if existing > 0 else slug_base
+
+    from datetime import datetime
+    resource = CommunityResource(
+        title=title,
+        slug=slug,
+        description=description,
+        resource_type=resource_type,
+        category=category,
+        resource_url=resource_url,
+        thumbnail_url=thumbnail_url,
+        author_name=author_name,
+        created_by_user_id=user_id,
+        is_featured=is_featured,
+        is_published=is_published,
+        published_at=datetime.now(timezone.utc) if is_published else None
+    )
+    db.add(resource)
+    db.commit()
+    db.refresh(resource)
+    return resource
+
+
+def admin_update_resource(
+    db: Session,
+    resource_id: str,
+    title: str | None = None,
+    description: str | None = None,
+    resource_type: str | None = None,
+    category: str | None = None,
+    resource_url: str | None = None,
+    thumbnail_url: str | None = None,
+    author_name: str | None = None,
+    is_featured: bool | None = None,
+    is_published: bool | None = None
+) -> CommunityResource | None:
+    """Admin: Update resource fields."""
+    resource = admin_get_resource_by_id(db, resource_id)
+    if not resource:
+        return None
+    if title is not None:
+        resource.title = title
+    if description is not None:
+        resource.description = description
+    if resource_type is not None:
+        resource.resource_type = resource_type
+    if category is not None:
+        resource.category = category
+    if resource_url is not None:
+        resource.resource_url = resource_url
+    if thumbnail_url is not None:
+        resource.thumbnail_url = thumbnail_url
+    if author_name is not None:
+        resource.author_name = author_name
+    if is_featured is not None:
+        resource.is_featured = is_featured
+    if is_published is not None:
+        from datetime import datetime, timezone
+        resource.is_published = is_published
+        if is_published and not resource.published_at:
+            resource.published_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(resource)
+    return resource
+
+
+def admin_delete_resource(db: Session, resource_id: str) -> bool:
+    """Admin: Delete a resource."""
+    resource = admin_get_resource_by_id(db, resource_id)
+    if not resource:
+        return False
+    db.delete(resource)
+    db.commit()
+    return True
+
+
+def admin_toggle_resource_featured(db: Session, resource_id: str) -> CommunityResource | None:
+    """Admin: Toggle is_featured on a resource."""
+    resource = admin_get_resource_by_id(db, resource_id)
+    if not resource:
+        return None
+    resource.is_featured = not resource.is_featured
+    db.commit()
+    db.refresh(resource)
+    return resource
+
+
+def admin_get_resources_stats(db: Session) -> dict:
+    """Admin: Get resources statistics."""
+    from sqlalchemy import func as sql_func
+    total = db.query(CommunityResource).count()
+    featured = db.query(CommunityResource).filter(CommunityResource.is_featured.is_(True)).count()
+    published = db.query(CommunityResource).filter(CommunityResource.is_published.is_(True)).count()
+
+    por_tipo_rows = db.query(
+        CommunityResource.resource_type,
+        sql_func.count(CommunityResource.id).label("count")
+    ).group_by(CommunityResource.resource_type).all()
+    por_tipo = [{"tipo": row.resource_type, "count": row.count} for row in por_tipo_rows]
+
+    return {"total": total, "featured": featured, "published": published, "por_tipo": por_tipo}

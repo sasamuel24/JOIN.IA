@@ -9,6 +9,8 @@ import {
   MessageSquare,
   UserPlus,
   LogOut,
+  Flame,
+  BookOpen,
 } from 'lucide-react';
 import type { NavItem } from '@/types/dashboard';
 import { JoinIALogo } from '@/components/dashboard/shared/JoinIALogo';
@@ -19,6 +21,8 @@ const ADMIN_NAV: NavItem[] = [
   { label: 'Usuarios', href: '/admin/usuarios', icon: Users },
   { label: 'Feedback', href: '/admin/feedback', icon: MessageSquare },
   { label: 'Invitaciones', href: '/admin/invitaciones', icon: UserPlus },
+  { label: 'Debates', href: '/admin/debates', icon: Flame },
+  { label: 'Recursos', href: '/admin/recursos', icon: BookOpen },
 ];
 
 export function AdminSidebar() {

@@ -6,10 +6,20 @@ from app.models.user import User
 from app.modules.admin import service as admin_service
 from app.modules.admin.schemas import (
     AdminDashboardResponse,
+    AdminDebateCreate,
+    AdminDebateItem,
+    AdminDebatesListResponse,
+    AdminDebatesStats,
+    AdminDebateUpdate,
     AdminFeedbackListResponse,
     AdminFeedbackStats,
     AdminInvitacionesListResponse,
     AdminInvitacionesStats,
+    AdminResourceCreate,
+    AdminResourceItem,
+    AdminResourcesListResponse,
+    AdminResourcesStats,
+    AdminResourceUpdate,
     AdminUsersListResponse,
     AdminUsersStats,
 )
@@ -96,3 +106,117 @@ def get_invitations(
     db: Session = Depends(get_db),
 ) -> AdminInvitacionesListResponse:
     return admin_service.get_invitations_list(db)
+
+
+# ---------------------------------------------------------------------------
+# Debates
+# ---------------------------------------------------------------------------
+
+@router.get("/debates/stats", response_model=AdminDebatesStats)
+def get_debates_stats(
+    _: User = Depends(get_current_admin_user),
+    db: Session = Depends(get_db),
+) -> AdminDebatesStats:
+    return admin_service.get_debates_stats(db)
+
+
+@router.get("/debates", response_model=AdminDebatesListResponse)
+def get_debates(
+    _: User = Depends(get_current_admin_user),
+    db: Session = Depends(get_db),
+) -> AdminDebatesListResponse:
+    return admin_service.get_debates_list(db)
+
+
+@router.post("/debates", response_model=AdminDebateItem)
+def create_debate(
+    request: AdminDebateCreate,
+    current_user: User = Depends(get_current_admin_user),
+    db: Session = Depends(get_db),
+) -> AdminDebateItem:
+    return admin_service.create_debate_admin(db, str(current_user.id), request)
+
+
+@router.put("/debates/{debate_id}", response_model=AdminDebateItem)
+def update_debate(
+    debate_id: str,
+    request: AdminDebateUpdate,
+    _: User = Depends(get_current_admin_user),
+    db: Session = Depends(get_db),
+) -> AdminDebateItem:
+    return admin_service.update_debate_admin(db, debate_id, request)
+
+
+@router.delete("/debates/{debate_id}")
+def delete_debate(
+    debate_id: str,
+    _: User = Depends(get_current_admin_user),
+    db: Session = Depends(get_db),
+):
+    return admin_service.delete_debate_admin(db, debate_id)
+
+
+@router.patch("/debates/{debate_id}/featured", response_model=AdminDebateItem)
+def toggle_debate_featured(
+    debate_id: str,
+    _: User = Depends(get_current_admin_user),
+    db: Session = Depends(get_db),
+) -> AdminDebateItem:
+    return admin_service.toggle_debate_featured(db, debate_id)
+
+
+# ---------------------------------------------------------------------------
+# Recursos
+# ---------------------------------------------------------------------------
+
+@router.get("/resources/stats", response_model=AdminResourcesStats)
+def get_resources_stats(
+    _: User = Depends(get_current_admin_user),
+    db: Session = Depends(get_db),
+) -> AdminResourcesStats:
+    return admin_service.get_resources_stats(db)
+
+
+@router.get("/resources", response_model=AdminResourcesListResponse)
+def get_resources(
+    _: User = Depends(get_current_admin_user),
+    db: Session = Depends(get_db),
+) -> AdminResourcesListResponse:
+    return admin_service.get_resources_list(db)
+
+
+@router.post("/resources", response_model=AdminResourceItem)
+def create_resource(
+    request: AdminResourceCreate,
+    current_user: User = Depends(get_current_admin_user),
+    db: Session = Depends(get_db),
+) -> AdminResourceItem:
+    return admin_service.create_resource_admin(db, str(current_user.id), request)
+
+
+@router.put("/resources/{resource_id}", response_model=AdminResourceItem)
+def update_resource(
+    resource_id: str,
+    request: AdminResourceUpdate,
+    _: User = Depends(get_current_admin_user),
+    db: Session = Depends(get_db),
+) -> AdminResourceItem:
+    return admin_service.update_resource_admin(db, resource_id, request)
+
+
+@router.delete("/resources/{resource_id}")
+def delete_resource(
+    resource_id: str,
+    _: User = Depends(get_current_admin_user),
+    db: Session = Depends(get_db),
+):
+    return admin_service.delete_resource_admin(db, resource_id)
+
+
+@router.patch("/resources/{resource_id}/featured", response_model=AdminResourceItem)
+def toggle_resource_featured(
+    resource_id: str,
+    _: User = Depends(get_current_admin_user),
+    db: Session = Depends(get_db),
+) -> AdminResourceItem:
+    return admin_service.toggle_resource_featured(db, resource_id)
