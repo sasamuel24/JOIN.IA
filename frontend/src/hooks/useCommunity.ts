@@ -10,6 +10,7 @@ import {
   togglePostLike,
   getPostComments,
   createPostComment,
+  deletePostComment,
   getCommunityDebates,
   createCommunityDebate,
   getDebateReplies,
@@ -292,12 +293,26 @@ export function usePostComments(postId: string | null) {
     }
   }, [fetchComments]);
 
+  const deleteComment = useCallback(async (commentId: string) => {
+    if (!postId) return;
+    // Optimistic update
+    setComments(prev => prev.filter(c => c.id !== commentId));
+    try {
+      await deletePostComment(postId, commentId);
+    } catch (err) {
+      // Revert on error by refetching
+      fetchComments();
+      throw err;
+    }
+  }, [postId, fetchComments]);
+
   return {
     comments,
     loading,
     error,
     submitting,
     createComment,
+    deleteComment,
     refresh: fetchComments,
   };
 }

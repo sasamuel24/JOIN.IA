@@ -208,6 +208,23 @@ def create_comment(db: Session, post_id: str, user_id: str, content: str) -> Com
     return comment
 
 
+def get_comment_by_id(db: Session, comment_id: str) -> CommunityPostComment | None:
+    """Get a comment by ID regardless of published status."""
+    return db.query(CommunityPostComment).filter(
+        CommunityPostComment.id == comment_id
+    ).first()
+
+
+def delete_comment(db: Session, comment_id: str) -> bool:
+    """Delete a comment by ID. Returns True if deleted, False if not found."""
+    comment = get_comment_by_id(db, comment_id)
+    if not comment:
+        return False
+    db.delete(comment)
+    db.commit()
+    return True
+
+
 def get_post_comments_count(db: Session, post_id: str) -> int:
     """Get count of published comments for a post."""
     return db.query(CommunityPostComment).filter(

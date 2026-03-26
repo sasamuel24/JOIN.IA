@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Heart, MessageCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Heart, MessageCircle, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { useCommunityFeed, usePostComments } from '@/hooks/useCommunity';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 interface PostWithComments {
   id: string;
@@ -20,7 +21,9 @@ export function TabFeed() {
   
   // Feed hooks
   const { posts, loading, error, submitting, createPost, toggleLike } = useCommunityFeed({ page: 1, page_size: 20 });
-  const { comments, loading: loadingComments, submitting: submittingComment, createComment } = usePostComments(selectedPostId);
+  const { comments, loading: loadingComments, submitting: submittingComment, createComment, deleteComment } = usePostComments(selectedPostId);
+  const { user: currentUser } = useCurrentUser();
+  const isAdmin = currentUser?.role === 'admin';
 
   // Handle post creation
   const handleCreatePost = async () => {
@@ -234,7 +237,7 @@ export function TabFeed() {
                         ) : (
                           <div className="space-y-3">
                             {comments.map(comment => (
-                              <div key={comment.id} className="flex gap-2">
+                              <div key={comment.id} className="flex gap-2 group">
                                 <Avatar name={comment.author.name} src={comment.author.avatar_url} size="sm" />
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-1">
@@ -247,6 +250,15 @@ export function TabFeed() {
                                     <span className="text-[0.7rem] text-secondary">
                                       {comment.time}
                                     </span>
+                                    {isAdmin && (
+                                      <button
+                                        onClick={() => deleteComment(comment.id)}
+                                        aria-label="Eliminar comentario"
+                                        className="ml-auto opacity-0 group-hover:opacity-100 bg-transparent border-none cursor-pointer text-secondary hover:text-red-500 transition-all duration-150 focus-visible:outline-none focus-visible:opacity-100"
+                                      >
+                                        <Trash2 size={12} />
+                                      </button>
+                                    )}
                                   </div>
                                   <p className="text-[0.85rem] text-main">
                                     {comment.content}

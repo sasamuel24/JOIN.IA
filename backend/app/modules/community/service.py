@@ -301,6 +301,19 @@ def create_post_comment(
     )
 
 
+def delete_post_comment(
+    db: Session,
+    post_id: str,
+    comment_id: str,
+) -> None:
+    """Delete a comment. Raises 404 if the comment doesn't exist or doesn't belong to the post."""
+    from fastapi import HTTPException
+    comment = community_repo.get_comment_by_id(db, comment_id)
+    if not comment or str(comment.post_id) != post_id:
+        raise HTTPException(status_code=404, detail="Comment not found")
+    community_repo.delete_comment(db, comment_id)
+
+
 # Debate service functions
 
 def get_community_debates(

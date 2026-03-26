@@ -545,6 +545,17 @@ export async function createPostComment(
   };
 }
 
+export async function deletePostComment(postId: string, commentId: string): Promise<void> {
+  const res = await fetch(`${API_URL}/api/v1/community/posts/${postId}/comments/${commentId}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  });
+
+  if (!res.ok) {
+    throw new Error('Error al eliminar el comentario');
+  }
+}
+
 function formatTimeAgo(dateString: string): string {
   try {
     const date = new Date(dateString);

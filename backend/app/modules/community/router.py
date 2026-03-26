@@ -175,6 +175,24 @@ def create_post_comment(
     return community_service.create_post_comment(db, post_id, str(current_user.id), request)
 
 
+@router.delete("/community/posts/{post_id}/comments/{comment_id}", status_code=204)
+def delete_post_comment(
+    post_id: str,
+    comment_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> None:
+    """Delete a comment on a post. Requires admin role.
+
+    Returns 403 if the user is not an admin.
+    Returns 404 if the comment doesn't exist or doesn't belong to the post.
+    """
+    from fastapi import HTTPException
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    community_service.delete_post_comment(db, post_id, comment_id)
+
+
 # Debate endpoints
 
 @router.get("/community/debates", response_model=CommunityDebatesResponse)
