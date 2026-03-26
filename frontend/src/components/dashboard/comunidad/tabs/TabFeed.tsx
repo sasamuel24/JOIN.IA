@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Heart, MessageCircle, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
 import { useCommunityFeed, usePostComments } from '@/hooks/useCommunity';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 
