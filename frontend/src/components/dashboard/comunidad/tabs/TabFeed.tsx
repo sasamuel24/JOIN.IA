@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Heart, MessageCircle, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/ui/avatar';
-import { Input } from '@/components/ui/input';
 import { useCommunityFeed, usePostComments } from '@/hooks/useCommunity';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 
@@ -114,21 +113,16 @@ export function TabFeed() {
     <div>
       {/* New post input */}
       <div className="border border-border rounded-[10px] p-4 mb-5">
-        <Input
-          type="text"
+        <textarea
           placeholder="Comparte algo con la comunidad"
           value={newPost}
           onChange={e => setNewPost(e.target.value)}
-          className="mb-3"
           disabled={submitting}
-          onKeyDown={e => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              handleCreatePost();
-            }
-          }}
+          rows={3}
+          className="w-full mb-3 resize-none bg-transparent border-0 border-b-2 border-accent outline-none text-[0.9rem] text-main placeholder:text-secondary font-[family-name:var(--font-main)] leading-relaxed"
+          style={{ fieldSizing: 'content' } as React.CSSProperties}
         />
-        <div className="flex justify-end">
+        <div className="flex items-center justify-between">
           <button
             onClick={handleCreatePost}
             disabled={!newPost.trim() || submitting}
@@ -187,7 +181,7 @@ export function TabFeed() {
                 </div>
 
                 {/* Content */}
-                <p className="text-[0.9rem] text-main leading-relaxed mb-3">
+                <p className="text-[0.9rem] text-main leading-relaxed mb-3 whitespace-pre-wrap">
                   {post.content}
                 </p>
 
