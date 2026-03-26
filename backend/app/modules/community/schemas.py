@@ -15,12 +15,13 @@ class CommunityStatsResponse(BaseModel):
 class CommunityMemberResponse(BaseModel):
     """Response schema for a community member."""
     model_config = ConfigDict(from_attributes=True)
-    
+
     id: UUID
     name: str
     role: str | None = None
     avatar_url: str | None = None
     joined_at: datetime
+    is_active_now: bool = False
 
 
 class CommunityMembersResponse(BaseModel):

@@ -62,14 +62,20 @@ def get_community_members(
     )
     
     # Convert User models to response schema
+    from datetime import datetime, timedelta, timezone
+    threshold = datetime.now(timezone.utc) - timedelta(minutes=15)
     members = []
     for user in users:
+        is_active_now = (
+            user.last_seen_at is not None and user.last_seen_at >= threshold
+        )
         member = CommunityMemberResponse(
             id=user.id,
             name=user.full_name or "Usuario Anónimo",
             role=user.title,
             avatar_url=user.avatar_url,
-            joined_at=user.created_at
+            joined_at=user.created_at,
+            is_active_now=is_active_now,
         )
         members.append(member)
     

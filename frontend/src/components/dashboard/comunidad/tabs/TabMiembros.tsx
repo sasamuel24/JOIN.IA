@@ -41,8 +41,11 @@ export function TabMiembros() {
           key={m.id}
           className="border border-border rounded-[10px] p-4 flex flex-col items-center text-center transition-all duration-150 cursor-default hover:border-accent-glow hover:shadow-accent"
         >
-          <div className="mb-2.5">
+          <div className="relative mb-2.5 inline-block">
             <Avatar name={m.name} src={m.avatar_url} size="md" />
+            {m.is_active_now && (
+              <span className="absolute bottom-0.5 right-0.5 w-3 h-3 rounded-full bg-success border-2 border-bg-white" />
+            )}
           </div>
           <div className="text-[0.9rem] font-semibold text-main">
             {m.name}

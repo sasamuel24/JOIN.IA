@@ -33,6 +33,7 @@ export interface CommunityMemberResponse {
   role: string | null;
   avatar_url: string | null;
   joined_at: string;
+  is_active_now: boolean;
 }
 
 export interface CommunityMembersResponse {
@@ -95,6 +96,7 @@ export interface CommunityMemberUI {
   role: string;
   avatar_url: string | null;
   joined: string;
+  is_active_now: boolean;
 }
 
 export interface CommunityResourceUI {
@@ -330,6 +332,7 @@ export async function getCommunityMembers(
     role: member.role || 'Miembro',
     avatar_url: member.avatar_url,
     joined: formatJoinedDate(member.joined_at),
+    is_active_now: member.is_active_now ?? false,
   }));
 
   return {
