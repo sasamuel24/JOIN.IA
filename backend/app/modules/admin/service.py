@@ -410,6 +410,8 @@ def get_resources_stats(db: Session) -> AdminResourcesStats:
 
 
 def create_resource_admin(db: Session, user_id: str, request: AdminResourceCreate) -> AdminResourceItem:
+    from app.services.email_service import notify_new_resource
+
     r = community_repo.admin_create_resource(
         db, user_id,
         title=request.title,
@@ -422,6 +424,22 @@ def create_resource_admin(db: Session, user_id: str, request: AdminResourceCreat
         is_featured=request.is_featured,
         is_published=request.is_published
     )
+
+    # Notify via N8N only when published (fire-and-forget)
+    if request.is_published:
+        try:
+            from app.modules.community.repository import get_all_active_user_emails
+            recipients = get_all_active_user_emails(db)
+            notify_new_resource(
+                title=r.title,
+                resource_type=r.resource_type,
+                author_name=r.author_name,
+                resource_url=r.resource_url,
+                recipients=recipients,
+            )
+        except Exception:
+            pass
+
     return AdminResourceItem(
         id=str(r.id),
         title=r.title,

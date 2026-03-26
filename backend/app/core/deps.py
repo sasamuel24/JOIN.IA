@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from uuid import UUID
 
 from fastapi import Depends, HTTPException
@@ -44,6 +45,10 @@ def get_current_user(
     user = db.query(User).filter(User.id == user_uuid).first()
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
+
+    # Track last activity for "activos ahora" stat
+    user.last_seen_at = datetime.now(timezone.utc)
+    db.commit()
 
     return user
 

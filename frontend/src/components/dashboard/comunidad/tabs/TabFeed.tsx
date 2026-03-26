@@ -19,7 +19,7 @@ export function TabFeed() {
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   
   // Feed hooks
-  const { posts, loading, error, submitting, createPost } = useCommunityFeed({ page: 1, page_size: 20 });
+  const { posts, loading, error, submitting, createPost, toggleLike } = useCommunityFeed({ page: 1, page_size: 20 });
   const { comments, loading: loadingComments, submitting: submittingComment, createComment } = usePostComments(selectedPostId);
 
   // Handle post creation
@@ -191,11 +191,20 @@ export function TabFeed() {
                 {/* Actions */}
                 <div className="flex gap-4 mb-3">
                   <button
-                    aria-label="Me gusta"
-                    className="flex items-center gap-1 bg-transparent border-none text-secondary text-[0.8rem] font-[family-name:var(--font-main)] cursor-pointer hover:text-main transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-sm"
+                    onClick={() => toggleLike(post.id)}
+                    aria-label={post.is_liked_by_me ? 'Quitar me gusta' : 'Me gusta'}
+                    className={cn(
+                      'flex items-center gap-1 bg-transparent border-none text-[0.8rem] font-[family-name:var(--font-main)] cursor-pointer transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-sm',
+                      post.is_liked_by_me ? 'text-red-500 hover:text-red-400' : 'text-secondary hover:text-main'
+                    )}
                   >
-                    <Heart size={14} />
-                    <span className="text-xs opacity-75">Próximamente</span>
+                    <Heart
+                      size={14}
+                      className={post.is_liked_by_me ? 'fill-current' : ''}
+                    />
+                    {post.likes_count > 0 && (
+                      <span className="text-xs">{post.likes_count}</span>
+                    )}
                   </button>
                   <button
                     onClick={() => toggleComments(post.id)}

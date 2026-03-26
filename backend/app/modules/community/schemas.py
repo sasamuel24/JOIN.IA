@@ -87,12 +87,20 @@ class PostAuthorResponse(BaseModel):
 class CommunityPostResponse(BaseModel):
     """Response schema for a community post."""
     model_config = ConfigDict(from_attributes=True)
-    
+
     id: UUID
     content: str
     created_at: datetime
     comments_count: int
+    likes_count: int
+    is_liked_by_me: bool
     author: PostAuthorResponse
+
+
+class PostLikeResponse(BaseModel):
+    """Response schema for toggling a like."""
+    likes_count: int
+    is_liked_by_me: bool
 
 
 class CommunityPostsResponse(BaseModel):

@@ -7,6 +7,7 @@ import {
   getCommunityResources,
   getCommunityPosts,
   createCommunityPost,
+  togglePostLike,
   getPostComments,
   createPostComment,
   getCommunityDebates,
@@ -185,6 +186,40 @@ export function useCommunityFeed(params: FeedPostsParams = {}) {
     }
   }, []);
 
+  const toggleLike = useCallback(async (postId: string) => {
+    // Optimistic update
+    setPosts(prev => prev.map(p =>
+      p.id === postId
+        ? {
+            ...p,
+            is_liked_by_me: !p.is_liked_by_me,
+            likes_count: p.is_liked_by_me ? p.likes_count - 1 : p.likes_count + 1,
+          }
+        : p
+    ));
+
+    try {
+      const result = await togglePostLike(postId);
+      // Sync with server response
+      setPosts(prev => prev.map(p =>
+        p.id === postId
+          ? { ...p, likes_count: result.likes_count, is_liked_by_me: result.is_liked_by_me }
+          : p
+      ));
+    } catch {
+      // Revert optimistic update on error
+      setPosts(prev => prev.map(p =>
+        p.id === postId
+          ? {
+              ...p,
+              is_liked_by_me: !p.is_liked_by_me,
+              likes_count: p.is_liked_by_me ? p.likes_count - 1 : p.likes_count + 1,
+            }
+          : p
+      ));
+    }
+  }, []);
+
   useEffect(() => {
     fetchPosts(params);
   }, [fetchPosts, params.page, params.page_size]);
@@ -197,6 +232,7 @@ export function useCommunityFeed(params: FeedPostsParams = {}) {
     error,
     submitting,
     createPost,
+    toggleLike,
     refresh: () => fetchPosts(params),
   };
 }

@@ -117,6 +117,8 @@ export interface FeedPostResponse {
   content: string;
   created_at: string;
   comments_count: number;
+  likes_count: number;
+  is_liked_by_me: boolean;
   author: FeedPostAuthorResponse;
 }
 
@@ -170,6 +172,8 @@ export interface FeedPostUI {
   };
   content: string;
   comments_count: number;
+  likes_count: number;
+  is_liked_by_me: boolean;
   created_at: string;
   time: string; // formatted time like "Hace 2h"
 }
@@ -430,6 +434,8 @@ export async function getCommunityPosts(
     },
     content: post.content,
     comments_count: post.comments_count,
+    likes_count: post.likes_count ?? 0,
+    is_liked_by_me: post.is_liked_by_me ?? false,
     created_at: post.created_at,
     time: formatTimeAgo(post.created_at),
   }));
@@ -464,9 +470,24 @@ export async function createCommunityPost(payload: CreatePostPayload): Promise<F
     },
     content: data.content,
     comments_count: data.comments_count,
+    likes_count: data.likes_count ?? 0,
+    is_liked_by_me: data.is_liked_by_me ?? false,
     created_at: data.created_at,
     time: formatTimeAgo(data.created_at),
   };
+}
+
+export async function togglePostLike(postId: string): Promise<{ likes_count: number; is_liked_by_me: boolean }> {
+  const res = await fetch(`${API_URL}/api/v1/community/posts/${postId}/like`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+
+  if (!res.ok) {
+    throw new Error('Error al procesar el like');
+  }
+
+  return res.json();
 }
 
 export async function getPostComments(postId: string): Promise<PostCommentUI[]> {

@@ -68,8 +68,8 @@ export function ComunidadDashboard() {
       </div>
 
       {/* Tabs + Content */}
-      <div className="flex gap-6 items-start">
-        <div className="flex-1 min-w-0">
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
+        <div className="flex-1 min-w-0 order-2 lg:order-1">
           <ComunidadTabs activeTab={activeTab} onTabChange={setActiveTab} />
           <div className="mt-5">
             <ActiveTabContent />
@@ -77,7 +77,7 @@ export function ComunidadDashboard() {
         </div>
 
         {/* Sidebar -- upcoming event */}
-        <div className="hidden lg:block w-[260px] shrink-0 bg-surface-1 rounded-xl p-5 sticky top-8">
+        <div className="w-full lg:w-[260px] order-1 lg:order-2 shrink-0 bg-surface-1 rounded-xl p-5 lg:sticky lg:top-8">
           <h3 className="text-[0.95rem] font-bold text-main mb-3">
             Próximo evento
           </h3>

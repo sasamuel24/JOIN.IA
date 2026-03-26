@@ -62,3 +62,62 @@ def send_invitation_email(
         print(f"[email_service] Webhook N8N invitation OK: {response.status_code}")
     except httpx.HTTPError as e:
         print(f"[email_service] Error al llamar webhook N8N invitation: {e}")
+
+
+def notify_new_feed_post(
+    author_name: str,
+    author_email: str,
+    content: str,
+    recipients: list[dict],
+) -> None:
+    """Dispara el workflow de N8N cuando alguien publica en el feed.
+
+    recipients: lista de {email, name} — todos los usuarios activos de la plataforma.
+    N8N itera sobre recipients y envía un correo personalizado a cada uno.
+    """
+    if not settings.N8N_WEBHOOK_NEW_FEED_POST:
+        print("[email_service] N8N_WEBHOOK_NEW_FEED_POST no configurado, notificación omitida.")
+        return
+
+    payload = {
+        "author_name": author_name,
+        "author_email": author_email,
+        "content": content[:300],
+        "recipients": recipients,
+    }
+    try:
+        response = httpx.post(settings.N8N_WEBHOOK_NEW_FEED_POST, json=payload, timeout=15)
+        response.raise_for_status()
+        print(f"[email_service] Webhook N8N new_feed_post OK ({len(recipients)} destinatarios): {response.status_code}")
+    except httpx.HTTPError as e:
+        print(f"[email_service] Error al llamar webhook N8N new_feed_post: {e}")
+
+
+def notify_new_resource(
+    title: str,
+    resource_type: str,
+    author_name: str | None,
+    resource_url: str | None,
+    recipients: list[dict],
+) -> None:
+    """Dispara el workflow de N8N cuando se publica un nuevo recurso.
+
+    recipients: lista de {email, name} — todos los usuarios activos de la plataforma.
+    """
+    if not settings.N8N_WEBHOOK_NEW_RESOURCE:
+        print("[email_service] N8N_WEBHOOK_NEW_RESOURCE no configurado, notificación omitida.")
+        return
+
+    payload = {
+        "title": title,
+        "resource_type": resource_type,
+        "author_name": author_name or "",
+        "resource_url": resource_url or "",
+        "recipients": recipients,
+    }
+    try:
+        response = httpx.post(settings.N8N_WEBHOOK_NEW_RESOURCE, json=payload, timeout=15)
+        response.raise_for_status()
+        print(f"[email_service] Webhook N8N new_resource OK ({len(recipients)} destinatarios): {response.status_code}")
+    except httpx.HTTPError as e:
+        print(f"[email_service] Error al llamar webhook N8N new_resource: {e}")

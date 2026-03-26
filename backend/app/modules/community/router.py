@@ -17,6 +17,7 @@ from app.modules.community.schemas import (
     CreateCommentRequest,
     CreatePostRequest,
     MemberSearchParams,
+    PostLikeResponse,
     PostSearchParams,
     ResourceSearchParams,
     CommunityDebateResponse,
@@ -111,7 +112,7 @@ def get_community_posts(
         page=page,
         page_size=page_size
     )
-    return community_service.get_feed_posts(db, search_params)
+    return community_service.get_feed_posts(db, search_params, current_user_id=str(current_user.id))
 
 
 @router.post("/community/posts", response_model=CommunityPostResponse)
@@ -126,6 +127,21 @@ def create_community_post(
     Requires authentication.
     """
     return community_service.create_feed_post(db, str(current_user.id), request)
+
+
+@router.post("/community/posts/{post_id}/like", response_model=PostLikeResponse)
+def toggle_post_like(
+    post_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> PostLikeResponse:
+    """Toggle like on a post.
+
+    Adds a like if the user hasn't liked the post yet, removes it otherwise.
+    Returns the updated likes count and whether the current user has liked the post.
+    Requires authentication.
+    """
+    return community_service.toggle_post_like(db, post_id, str(current_user.id))
 
 
 @router.get("/community/posts/{post_id}/comments", response_model=CommunityPostCommentsResponse)

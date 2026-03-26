@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 import re
+from datetime import datetime, timedelta, timezone
 from typing import List, Tuple
 
 from sqlalchemy import func, or_
@@ -11,6 +12,7 @@ from app.models.user import User
 from app.models.community_resource import CommunityResource
 from app.models.community_post import CommunityPost
 from app.models.community_post_comment import CommunityPostComment
+from app.models.community_post_like import CommunityPostLike
 from app.models.community_debate import CommunityDebate
 from app.models.community_debate_reply import CommunityDebateReply
 
@@ -21,6 +23,18 @@ def get_active_users_count(db: Session) -> int:
         User.is_active.is_(True),
         User.full_name.is_not(None)  # Only users with names are considered community members
     ).count()
+
+
+def get_all_active_user_emails(db: Session) -> list[dict]:
+    """Return list of {email, name} for all active registered users."""
+    users = db.query(User.email, User.full_name).filter(
+        User.is_active.is_(True),
+        User.email.is_not(None),
+    ).all()
+    return [
+        {"email": u.email, "name": u.full_name or "Miembro"}
+        for u in users
+    ]
 
 
 def get_community_members_paginated(
@@ -65,9 +79,12 @@ def get_posts_placeholder_count(db: Session) -> int:
     ).count()
 
 
-def get_active_now_placeholder_count(db: Session) -> int:
-    """Placeholder for currently active users count. Returns 0 for now."""
-    return 0
+def get_active_now_count(db: Session, window_minutes: int = 15) -> int:
+    """Count users seen in the last `window_minutes` minutes."""
+    threshold = datetime.now(timezone.utc) - timedelta(minutes=window_minutes)
+    return db.query(User).filter(
+        User.last_seen_at >= threshold
+    ).count()
 
 
 def get_community_resources_paginated(
@@ -197,6 +214,42 @@ def get_post_comments_count(db: Session, post_id: str) -> int:
         CommunityPostComment.post_id == post_id,
         CommunityPostComment.is_published.is_(True)
     ).count()
+
+
+def get_post_likes_count(db: Session, post_id: str) -> int:
+    """Get count of likes for a post."""
+    return db.query(CommunityPostLike).filter(
+        CommunityPostLike.post_id == post_id
+    ).count()
+
+
+def user_has_liked_post(db: Session, post_id: str, user_id: str) -> bool:
+    """Check if a specific user has liked a post."""
+    return db.query(CommunityPostLike).filter(
+        CommunityPostLike.post_id == post_id,
+        CommunityPostLike.user_id == user_id
+    ).first() is not None
+
+
+def toggle_post_like(db: Session, post_id: str, user_id: str) -> tuple[int, bool]:
+    """Toggle like on a post. Returns (likes_count, is_liked_by_me)."""
+    existing = db.query(CommunityPostLike).filter(
+        CommunityPostLike.post_id == post_id,
+        CommunityPostLike.user_id == user_id
+    ).first()
+
+    if existing:
+        db.delete(existing)
+        db.commit()
+        is_liked = False
+    else:
+        like = CommunityPostLike(post_id=post_id, user_id=user_id)
+        db.add(like)
+        db.commit()
+        is_liked = True
+
+    count = get_post_likes_count(db, post_id)
+    return count, is_liked
 
 
 def get_post_by_id(db: Session, post_id: str) -> CommunityPost | None:

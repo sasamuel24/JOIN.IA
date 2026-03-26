@@ -21,6 +21,7 @@ from app.modules.community.schemas import (
     CreatePostRequest,
     MemberSearchParams,
     PostAuthorResponse,
+    PostLikeResponse,
     PostSearchParams,
     ResourceSearchParams,
     DebateAuthorResponse,
@@ -39,7 +40,7 @@ def get_community_stats(db: Session) -> CommunityStatsResponse:
     """Get community statistics for the dashboard header."""
     miembros_count = community_repo.get_active_users_count(db)
     posts_count = community_repo.get_posts_placeholder_count(db)
-    activos_ahora_count = community_repo.get_active_now_placeholder_count(db)
+    activos_ahora_count = community_repo.get_active_now_count(db)
     
     return CommunityStatsResponse(
         miembros=miembros_count,
@@ -129,23 +130,28 @@ def get_community_resources(
 
 
 def get_feed_posts(
-    db: Session, 
-    search_params: PostSearchParams
+    db: Session,
+    search_params: PostSearchParams,
+    current_user_id: str | None = None,
 ) -> CommunityPostsResponse:
-    """Get paginated list of community posts with comments count."""
+    """Get paginated list of community posts with comments count and likes."""
     posts, total_count = community_repo.get_posts_paginated(
         db=db,
         page=search_params.page,
         page_size=search_params.page_size
     )
-    
+
     # Convert CommunityPost models to response schema
     post_responses = []
     for post in posts:
-        # Get comments count for this post
-        comments_count = community_repo.get_post_comments_count(db, str(post.id))
-        
-        # Build author response
+        post_id = str(post.id)
+        comments_count = community_repo.get_post_comments_count(db, post_id)
+        likes_count = community_repo.get_post_likes_count(db, post_id)
+        is_liked_by_me = (
+            community_repo.user_has_liked_post(db, post_id, current_user_id)
+            if current_user_id else False
+        )
+
         author = PostAuthorResponse(
             id=post.author.id,
             name=post.author.full_name or "Usuario Anónimo",
@@ -158,13 +164,14 @@ def get_feed_posts(
             content=post.content,
             created_at=post.created_at,
             comments_count=comments_count,
+            likes_count=likes_count,
+            is_liked_by_me=is_liked_by_me,
             author=author
         )
         post_responses.append(post_response)
-    
-    # Calculate pagination metadata
+
     total_pages = math.ceil(total_count / search_params.page_size) if total_count > 0 else 0
-    
+
     return CommunityPostsResponse(
         posts=post_responses,
         total=total_count,
@@ -175,14 +182,16 @@ def get_feed_posts(
 
 
 def create_feed_post(
-    db: Session, 
+    db: Session,
     user_id: str,
     request: CreatePostRequest
 ) -> CommunityPostResponse:
     """Create a new community feed post."""
+    from app.services.email_service import notify_new_feed_post
+
     # Create the post
     post = community_repo.create_post(db, user_id, request.content)
-    
+
     # Build author response
     author = PostAuthorResponse(
         id=post.author.id,
@@ -191,17 +200,46 @@ def create_feed_post(
         avatar_url=post.author.avatar_url
     )
 
+    # Notify via N8N (fire-and-forget, never blocks the response)
+    try:
+        recipients = community_repo.get_all_active_user_emails(db)
+        notify_new_feed_post(
+            author_name=post.author.full_name or "Usuario Anónimo",
+            author_email=post.author.email,
+            content=request.content,
+            recipients=recipients,
+        )
+    except Exception:
+        pass
+
     return CommunityPostResponse(
         id=post.id,
         content=post.content,
         created_at=post.created_at,
-        comments_count=0,  # New posts have no comments
+        comments_count=0,
+        likes_count=0,
+        is_liked_by_me=False,
         author=author
     )
 
 
+def toggle_post_like(
+    db: Session,
+    post_id: str,
+    user_id: str,
+) -> PostLikeResponse:
+    """Toggle like on a post for the given user."""
+    post = community_repo.get_post_by_id(db, post_id)
+    if not post:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    likes_count, is_liked_by_me = community_repo.toggle_post_like(db, post_id, user_id)
+    return PostLikeResponse(likes_count=likes_count, is_liked_by_me=is_liked_by_me)
+
+
 def get_post_comments(
-    db: Session, 
+    db: Session,
     post_id: str
 ) -> CommunityPostCommentsResponse:
     """Get all comments for a post."""

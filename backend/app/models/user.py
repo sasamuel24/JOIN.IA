@@ -52,9 +52,11 @@ class User(Base):
     avatar_url = Column(String, nullable=True)
 
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=True)
+    last_seen_at = Column(DateTime(timezone=True), nullable=True)
     
     # Community relationships
     community_posts = relationship("CommunityPost", back_populates="author")
     community_post_comments = relationship("CommunityPostComment", back_populates="author")
     community_debates = relationship("CommunityDebate", back_populates="author")
     community_debate_replies = relationship("CommunityDebateReply", back_populates="author")
+    post_likes = relationship("CommunityPostLike", back_populates="user")

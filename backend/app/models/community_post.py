@@ -29,3 +29,4 @@ class CommunityPost(Base):
     # Relationships
     author = relationship("User", back_populates="community_posts")
     comments = relationship("CommunityPostComment", back_populates="post", cascade="all, delete-orphan")
+    likes = relationship("CommunityPostLike", back_populates="post", cascade="all, delete-orphan")

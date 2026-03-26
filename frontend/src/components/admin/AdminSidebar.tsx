@@ -11,6 +11,7 @@ import {
   LogOut,
   Flame,
   BookOpen,
+  CalendarDays,
 } from 'lucide-react';
 import type { NavItem } from '@/types/dashboard';
 import { JoinIALogo } from '@/components/dashboard/shared/JoinIALogo';
@@ -23,6 +24,7 @@ const ADMIN_NAV: NavItem[] = [
   { label: 'Invitaciones', href: '/admin/invitaciones', icon: UserPlus },
   { label: 'Debates', href: '/admin/debates', icon: Flame },
   { label: 'Recursos', href: '/admin/recursos', icon: BookOpen },
+  { label: 'Webinars', href: '/admin/eventos', icon: CalendarDays },
 ];
 
 export function AdminSidebar() {
