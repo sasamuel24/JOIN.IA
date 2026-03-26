@@ -13,6 +13,8 @@ from app.modules.admin.schemas import (
     AdminDebateUpdate,
     AdminFeedbackListResponse,
     AdminFeedbackStats,
+    AdminFeedListResponse,
+    AdminFeedStats,
     AdminInvitacionesListResponse,
     AdminInvitacionesStats,
     AdminResourceCreate,
@@ -106,6 +108,35 @@ def get_invitations(
     db: Session = Depends(get_db),
 ) -> AdminInvitacionesListResponse:
     return admin_service.get_invitations_list(db)
+
+
+# ---------------------------------------------------------------------------
+# Feed Posts
+# ---------------------------------------------------------------------------
+
+@router.get("/feed/stats", response_model=AdminFeedStats)
+def get_feed_stats(
+    _: User = Depends(get_current_admin_user),
+    db: Session = Depends(get_db),
+) -> AdminFeedStats:
+    return admin_service.get_feed_stats(db)
+
+
+@router.get("/feed", response_model=AdminFeedListResponse)
+def get_feed_posts(
+    _: User = Depends(get_current_admin_user),
+    db: Session = Depends(get_db),
+) -> AdminFeedListResponse:
+    return admin_service.get_feed_list(db)
+
+
+@router.delete("/feed/{post_id}")
+def delete_feed_post(
+    post_id: str,
+    _: User = Depends(get_current_admin_user),
+    db: Session = Depends(get_db),
+):
+    return admin_service.delete_post_admin(db, post_id)
 
 
 # ---------------------------------------------------------------------------

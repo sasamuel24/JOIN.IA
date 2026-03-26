@@ -420,6 +420,43 @@ def get_debate_participants_count(db: Session, debate_id: str) -> int:
 
 
 # ---------------------------------------------------------------------------
+# Admin: Feed Posts CRUD
+# ---------------------------------------------------------------------------
+
+def admin_get_all_posts(db: Session) -> Tuple[List[CommunityPost], int]:
+    """Admin: Get all posts (published and unpublished) ordered by created_at desc."""
+    query = db.query(CommunityPost).options(joinedload(CommunityPost.author))
+    total = query.count()
+    posts = query.order_by(CommunityPost.is_pinned.desc(), CommunityPost.created_at.desc()).all()
+    return posts, total
+
+
+def admin_get_post_by_id(db: Session, post_id: str) -> CommunityPost | None:
+    """Admin: Get any post by ID regardless of published status."""
+    return db.query(CommunityPost).filter(
+        CommunityPost.id == post_id
+    ).options(joinedload(CommunityPost.author)).first()
+
+
+def admin_delete_post(db: Session, post_id: str) -> bool:
+    """Admin: Delete a post and all its comments/likes (cascade)."""
+    post = admin_get_post_by_id(db, post_id)
+    if not post:
+        return False
+    db.delete(post)
+    db.commit()
+    return True
+
+
+def admin_get_posts_stats(db: Session) -> dict:
+    """Admin: Get feed posts statistics."""
+    total = db.query(CommunityPost).count()
+    published = db.query(CommunityPost).filter(CommunityPost.is_published.is_(True)).count()
+    pinned = db.query(CommunityPost).filter(CommunityPost.is_pinned.is_(True)).count()
+    return {"total": total, "published": published, "pinned": pinned}
+
+
+# ---------------------------------------------------------------------------
 # Admin: Debates CRUD
 # ---------------------------------------------------------------------------
 

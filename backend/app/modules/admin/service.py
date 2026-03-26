@@ -286,6 +286,43 @@ def get_dashboard(db: Session) -> AdminDashboardResponse:
 
 
 # ---------------------------------------------------------------------------
+# Feed Posts admin
+# ---------------------------------------------------------------------------
+
+def get_feed_list(db: Session) -> "AdminFeedListResponse":
+    from app.modules.admin.schemas import AdminFeedPostItem, AdminFeedListResponse
+    posts, total = community_repo.admin_get_all_posts(db)
+    items = []
+    for p in posts:
+        comments_count = community_repo.get_post_comments_count(db, str(p.id))
+        likes_count = community_repo.get_post_likes_count(db, str(p.id))
+        items.append(AdminFeedPostItem(
+            id=str(p.id),
+            content=p.content,
+            author_name=p.author.full_name if p.author else "Anónimo",
+            author_email=p.author.email if p.author else "",
+            comments_count=comments_count,
+            likes_count=likes_count,
+            created_at=p.created_at,
+        ))
+    return AdminFeedListResponse(items=items, total=total)
+
+
+def get_feed_stats(db: Session) -> "AdminFeedStats":
+    from app.modules.admin.schemas import AdminFeedStats
+    data = community_repo.admin_get_posts_stats(db)
+    return AdminFeedStats(**data)
+
+
+def delete_post_admin(db: Session, post_id: str) -> dict:
+    from fastapi import HTTPException
+    ok = community_repo.admin_delete_post(db, post_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Post not found")
+    return {"ok": True}
+
+
+# ---------------------------------------------------------------------------
 # Debates admin
 # ---------------------------------------------------------------------------
 

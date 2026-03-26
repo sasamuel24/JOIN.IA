@@ -146,6 +146,31 @@ class AdminDashboardResponse(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# Feed Posts (admin)
+# ---------------------------------------------------------------------------
+
+class AdminFeedPostItem(BaseModel):
+    id: str
+    content: str
+    author_name: str
+    author_email: str
+    comments_count: int
+    likes_count: int
+    created_at: datetime
+
+
+class AdminFeedStats(BaseModel):
+    total: int
+    published: int
+    pinned: int
+
+
+class AdminFeedListResponse(BaseModel):
+    items: list[AdminFeedPostItem]
+    total: int
+
+
+# ---------------------------------------------------------------------------
 # Debates (admin)
 # ---------------------------------------------------------------------------
 

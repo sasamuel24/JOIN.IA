@@ -67,6 +67,24 @@ export interface AdminInvitacionesStats {
   top_inviters: { name: string; email: string; count: number; converted: number }[];
 }
 
+// ─── Feed Posts admin ─────────────────────────────────────────────────────────
+
+export interface AdminFeedPost {
+  id: string;
+  content: string;
+  author_name: string;
+  author_email: string;
+  comments_count: number;
+  likes_count: number;
+  created_at: string;
+}
+
+export interface AdminFeedStats {
+  total: number;
+  published: number;
+  pinned: number;
+}
+
 // ─── Debates admin ────────────────────────────────────────────────────────────
 
 export interface AdminDebateItem {
