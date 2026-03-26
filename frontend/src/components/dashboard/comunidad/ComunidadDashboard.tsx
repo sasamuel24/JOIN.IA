@@ -32,7 +32,7 @@ export function ComunidadDashboard() {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: 'easeOut' }}
-      className="p-8"
+      className="p-4 sm:p-8"
     >
       <div className="mb-4">
         <EarlyAccessBadge />

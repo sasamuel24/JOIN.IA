@@ -19,7 +19,7 @@ const TABS: { id: TabId; label: string }[] = [
 
 export function ComunidadTabs({ activeTab, onTabChange }: ComunidadTabsProps) {
   return (
-    <div className="flex gap-1 border-b border-border" role="tablist" aria-label="Secciones de comunidad">
+    <div className="flex gap-1 border-b border-border overflow-x-auto scrollbar-none" role="tablist" aria-label="Secciones de comunidad">
       {TABS.map(tab => {
         const isActive = activeTab === tab.id;
         return (
