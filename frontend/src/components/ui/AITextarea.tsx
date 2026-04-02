@@ -113,12 +113,24 @@ export function AITextarea({
 
       <AnimatePresence>
         {aiOpen && (
-          <AIAssistBar
-            currentText={value}
-            onResult={handleAIResult}
-            onClose={() => setAIOpen(false)}
-            slashMode={slashMode}
-          />
+          /* Portal-like: fixed positioning so no parent overflow clips it */
+          <div
+            style={{
+              position: 'fixed',
+              bottom: 24,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: 'min(640px, calc(100vw - 32px))',
+              zIndex: 9999,
+            }}
+          >
+            <AIAssistBar
+              currentText={value}
+              onResult={handleAIResult}
+              onClose={() => setAIOpen(false)}
+              slashMode={slashMode}
+            />
+          </div>
         )}
       </AnimatePresence>
     </div>
