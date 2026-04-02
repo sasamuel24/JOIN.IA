@@ -17,9 +17,9 @@ const MOCK_STATS: AdminResourcesStats = {
 };
 
 const MOCK_RECURSOS: AdminResourceItem[] = [
-  { id: '1', title: 'Guía de prompts para psicólogos', description: 'Cómo escribir prompts efectivos para trabajo clínico.', resource_type: 'guide', category: 'Productividad', resource_url: 'https://example.com', thumbnail_url: null, author_name: 'JOIN.IA', is_featured: true, is_published: true, created_at: '2026-03-20T10:00:00Z' },
-  { id: '2', title: 'Plantilla SOAP con IA', description: 'Plantilla para notas SOAP asistidas por IA.', resource_type: 'template', category: 'Clínico', resource_url: null, thumbnail_url: null, author_name: 'JOIN.IA', is_featured: true, is_published: true, created_at: '2026-03-18T09:00:00Z' },
-  { id: '3', title: 'Video: ChatGPT para psicólogos', description: 'Tutorial práctico de uso de ChatGPT en consulta.', resource_type: 'video', category: 'Formación', resource_url: 'https://youtube.com', thumbnail_url: null, author_name: 'JOIN.IA', is_featured: false, is_published: true, created_at: '2026-03-15T11:00:00Z' },
+  { id: '1', title: 'Guía de prompts para psicólogos', description: 'Cómo escribir prompts efectivos para trabajo clínico.', resource_type: 'guide', category: 'Productividad', resource_url: 'https://example.com', thumbnail_url: null, author_name: 'JOIN.IA', is_featured: true, is_published: true, published_at: null, created_at: '2026-03-20T10:00:00Z' },
+  { id: '2', title: 'Plantilla SOAP con IA', description: 'Plantilla para notas SOAP asistidas por IA.', resource_type: 'template', category: 'Clínico', resource_url: null, thumbnail_url: null, author_name: 'JOIN.IA', is_featured: true, is_published: true, published_at: null, created_at: '2026-03-18T09:00:00Z' },
+  { id: '3', title: 'Video: ChatGPT para psicólogos', description: 'Tutorial práctico de uso de ChatGPT en consulta.', resource_type: 'video', category: 'Formación', resource_url: 'https://youtube.com', thumbnail_url: null, author_name: 'JOIN.IA', is_featured: false, is_published: true, published_at: null, created_at: '2026-03-15T11:00:00Z' },
 ];
 
 const API = process.env.NEXT_PUBLIC_API_URL;
