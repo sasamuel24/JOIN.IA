@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { Heart, MessageCircle, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/ui/avatar';
-import { Input } from '@/components/ui/input';
 import { AITextarea } from '@/components/ui/AITextarea';
+import { AIInput } from '@/components/ui/AIInput';
 import { useCommunityFeed, usePostComments } from '@/hooks/useCommunity';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 
@@ -271,11 +271,11 @@ export function TabFeed() {
 
                     {/* New comment input */}
                     <div className="flex gap-2">
-                      <Input
-                        type="text"
+                      <AIInput
                         placeholder="Escribe un comentario..."
                         value={newComment}
                         onChange={e => updateCommentInput(post.id, e.target.value)}
+                        onAIResult={text => updateCommentInput(post.id, text)}
                         className="text-sm"
                         disabled={submittingComment}
                         onKeyDown={e => {

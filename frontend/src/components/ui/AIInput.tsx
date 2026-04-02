@@ -4,53 +4,43 @@ import {
   useRef,
   useState,
   useCallback,
-  type TextareaHTMLAttributes,
+  type InputHTMLAttributes,
 } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { AIAssistBar } from './AIAssistBar';
 import type { AIAction } from '@/hooks/useAIAssist';
 
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
-
-interface AITextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface AIInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  /** Called when AI replaces or inserts text */
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onAIResult?: (newText: string, action: AIAction) => void;
-  /** Extra wrapper style */
   wrapperStyle?: React.CSSProperties;
+  wrapperClassName?: string;
 }
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
-export function AITextarea({
+export function AIInput({
   value,
   onChange,
   onAIResult,
   wrapperStyle,
+  wrapperClassName,
   onKeyDown: externalKeyDown,
   style,
   ...props
-}: AITextareaProps) {
+}: AIInputProps) {
   const [aiOpen, setAIOpen] = useState(false);
   const [slashMode, setSlashMode] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (!value.trim() && !aiOpen) {
-        // Space → open AI in generate mode
         if (e.key === ' ') {
           e.preventDefault();
           setSlashMode(false);
           setAIOpen(true);
           return;
         }
-        // "/" → open command menu
         if (e.key === '/') {
           e.preventDefault();
           setSlashMode(true);
@@ -64,15 +54,13 @@ export function AITextarea({
   );
 
   function handleAIResult(newText: string, action: AIAction) {
-    // Synthetic event to keep the parent's onChange compatible
-    const nativeInput = textareaRef.current;
+    const nativeInput = inputRef.current;
     if (nativeInput) {
-      // Use Object.getOwnPropertyDescriptor to trigger React's synthetic event
-      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-        window.HTMLTextAreaElement.prototype,
+      const setter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
         'value'
       )?.set;
-      nativeInputValueSetter?.call(nativeInput, newText);
+      setter?.call(nativeInput, newText);
       nativeInput.dispatchEvent(new Event('input', { bubbles: true }));
     }
     onAIResult?.(newText, action);
@@ -80,40 +68,37 @@ export function AITextarea({
   }
 
   return (
-    <div style={{ position: 'relative', ...wrapperStyle }}>
-      <textarea
-        ref={textareaRef}
+    <div style={{ position: 'relative', ...wrapperStyle }} className={wrapperClassName}>
+      <input
+        ref={inputRef}
         value={value}
         onChange={onChange}
         onKeyDown={handleKeyDown}
-        style={{
-          width: '100%',
-          boxSizing: 'border-box',
-          ...style,
-        }}
+        style={{ width: '100%', boxSizing: 'border-box', ...style }}
         {...props}
       />
 
-      {/* AI hint — visible only when field is empty */}
-      {!value.trim() && (
+      {/* Hint — visible only when field is empty */}
+      {!value.trim() && !aiOpen && (
         <span
           style={{
-            display: 'block',
-            marginTop: '4px',
-            fontSize: '0.7rem',
+            position: 'absolute',
+            right: 8,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            fontSize: '0.65rem',
             color: 'var(--text-muted)',
-            textAlign: 'right',
             pointerEvents: 'none',
             userSelect: 'none',
+            whiteSpace: 'nowrap',
           }}
         >
-          Presiona <strong>Espacio</strong> para IA · <strong>/</strong> para comandos
+          <strong>Espacio</strong> para IA · <strong>/</strong> comandos
         </span>
       )}
 
       <AnimatePresence>
         {aiOpen && (
-          /* Portal-like: fixed positioning so no parent overflow clips it */
           <div
             style={{
               position: 'fixed',

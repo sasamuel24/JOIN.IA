@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Star, Trash2, Pencil, X, ExternalLink, BookOpen, Layout, Video, FileText, Wrench, Upload, ImageIcon } from 'lucide-react';
 import { AITextarea } from '@/components/ui/AITextarea';
+import { AIInput } from '@/components/ui/AIInput';
 import { useAdminRecursos } from '@/hooks/useAdminRecursos';
 import type { AdminResourceItem } from '@/types/admin';
 
@@ -174,7 +175,7 @@ function RecursoModal({ recurso, onClose, onSave }: RecursoModalProps) {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
           <div>
             <label style={labelStyle}>Título *</label>
-            <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Título del recurso..." style={fieldStyle} />
+            <AIInput value={title} onChange={e => setTitle(e.target.value)} onAIResult={text => setTitle(text)} placeholder="Título del recurso..." style={fieldStyle} />
           </div>
 
           <div>
@@ -279,7 +280,7 @@ function RecursoModal({ recurso, onClose, onSave }: RecursoModalProps) {
 
           <div>
             <label style={labelStyle}>Autor</label>
-            <input value={authorName} onChange={e => setAuthorName(e.target.value)} placeholder="JOIN.IA" style={fieldStyle} />
+            <AIInput value={authorName} onChange={e => setAuthorName(e.target.value)} onAIResult={text => setAuthorName(text)} placeholder="JOIN.IA" style={fieldStyle} />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>

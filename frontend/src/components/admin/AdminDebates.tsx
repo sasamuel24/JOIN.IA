@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Star, Trash2, Pencil, X, MessageSquare } from 'lucide-react';
 import { AITextarea } from '@/components/ui/AITextarea';
+import { AIInput } from '@/components/ui/AIInput';
 import { useAdminDebates } from '@/hooks/useAdminDebates';
 import type { AdminDebateItem } from '@/types/admin';
 
@@ -82,9 +83,10 @@ function DebateModal({ debate, onClose, onSave }: DebateModalProps) {
             <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '0.35rem' }}>
               Título *
             </label>
-            <input
+            <AIInput
               value={title}
               onChange={e => setTitle(e.target.value)}
+              onAIResult={text => setTitle(text)}
               placeholder="Escribe el título del debate..."
               style={fieldStyle}
             />

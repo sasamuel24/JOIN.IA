@@ -12,6 +12,7 @@ import { DashboardFooter } from '../shared/DashboardFooter';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { AITextarea } from '@/components/ui/AITextarea';
+import { AIInput } from '@/components/ui/AIInput';
 import { Select } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Chip } from '@/components/ui/chip';
@@ -460,10 +461,12 @@ export function PerfilDashboard() {
                 </div>
                 <div className="mt-4">
                   <FieldGroup label="Título / Descripción">
-                    <Input
+                    <AIInput
                       value={title}
                       onChange={e => setTitle(e.target.value)}
+                      onAIResult={text => setTitle(text)}
                       placeholder="CEO & Fundador"
+                      className="flex h-10 w-full rounded-md border border-border bg-surface-0 px-3 py-2 text-sm text-text-main font-[family-name:var(--font-main)] placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent disabled:cursor-not-allowed disabled:opacity-50"
                     />
                   </FieldGroup>
                   <p className="text-[0.72rem] text-text-secondary mt-1.5">
@@ -496,10 +499,12 @@ export function PerfilDashboard() {
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FieldGroup label="Nombre de la empresa">
-                    <Input
+                    <AIInput
                       value={company}
                       onChange={e => setCompany(e.target.value)}
+                      onAIResult={text => setCompany(text)}
                       placeholder="Mi Empresa SAS"
+                      className="flex h-10 w-full rounded-md border border-border bg-surface-0 px-3 py-2 text-sm text-text-main font-[family-name:var(--font-main)] placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent disabled:cursor-not-allowed disabled:opacity-50"
                     />
                   </FieldGroup>
                   <FieldGroup label="Industria">

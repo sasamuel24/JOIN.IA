@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { MessageSquare, Users, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/ui/avatar';
-import { Input } from '@/components/ui/input';
+import { AIInput } from '@/components/ui/AIInput';
 import { useCommunityDebates, useDebateReplies } from '@/hooks/useCommunity';
 
 interface DebateWithReplies {
@@ -210,11 +210,11 @@ export function TabDebates() {
                     {/* New reply input */}
                     <div className="flex gap-3">
                       <div className="flex-1">
-                        <Input
-                          type="text"
+                        <AIInput
                           placeholder="Escribe tu respuesta..."
                           value={newReply}
                           onChange={e => updateReplyInput(debate.id, e.target.value)}
+                          onAIResult={text => updateReplyInput(debate.id, text)}
                           className="text-sm"
                           disabled={submittingReply}
                           onKeyDown={e => {
