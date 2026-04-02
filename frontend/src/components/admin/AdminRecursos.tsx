@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Star, Trash2, Pencil, X, ExternalLink, BookOpen, Layout, Video, FileText, Wrench, Upload, ImageIcon } from 'lucide-react';
+import { AITextarea } from '@/components/ui/AITextarea';
 import { useAdminRecursos } from '@/hooks/useAdminRecursos';
 import type { AdminResourceItem } from '@/types/admin';
 
@@ -178,9 +179,12 @@ function RecursoModal({ recurso, onClose, onSave }: RecursoModalProps) {
 
           <div>
             <label style={labelStyle}>Descripción *</label>
-            <textarea
-              value={description} onChange={e => setDescription(e.target.value)}
-              placeholder="Describe brevemente el recurso..." rows={3}
+            <AITextarea
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              onAIResult={text => setDescription(text)}
+              placeholder="Describe brevemente el recurso..."
+              rows={3}
               style={{ ...fieldStyle, resize: 'vertical' }}
             />
           </div>

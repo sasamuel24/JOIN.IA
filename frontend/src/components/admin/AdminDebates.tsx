@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Star, Trash2, Pencil, X, MessageSquare } from 'lucide-react';
+import { AITextarea } from '@/components/ui/AITextarea';
 import { useAdminDebates } from '@/hooks/useAdminDebates';
 import type { AdminDebateItem } from '@/types/admin';
 
@@ -93,9 +94,10 @@ function DebateModal({ debate, onClose, onSave }: DebateModalProps) {
             <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '0.35rem' }}>
               Contenido *
             </label>
-            <textarea
+            <AITextarea
               value={content}
               onChange={e => setContent(e.target.value)}
+              onAIResult={text => setContent(text)}
               placeholder="Desarrolla la pregunta o tema del debate..."
               rows={4}
               style={{ ...fieldStyle, resize: 'vertical' }}
