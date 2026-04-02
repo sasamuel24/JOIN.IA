@@ -11,7 +11,7 @@ import { DashboardDivider } from '../shared/DashboardDivider';
 import { DashboardFooter } from '../shared/DashboardFooter';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { AITextarea } from '@/components/ui/AITextarea';
 import { Select } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Chip } from '@/components/ui/chip';
@@ -472,10 +472,12 @@ export function PerfilDashboard() {
                 </div>
                 <div className="mt-4">
                   <FieldGroup label="Sobre mí">
-                    <Textarea
+                    <AITextarea
                       value={bio}
                       onChange={e => setBio(e.target.value)}
+                      onAIResult={text => setBio(text)}
                       placeholder="Describe quién eres, a qué te dedicas y qué esperas de JOIN.IA..."
+                      className="flex w-full min-h-[90px] rounded-md border border-border bg-surface-0 px-3.5 py-2.5 text-sm text-text-main font-[family-name:var(--font-main)] placeholder:text-text-muted resize-y focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
                     />
                   </FieldGroup>
                 </div>

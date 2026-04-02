@@ -42,15 +42,7 @@ export function AITextarea({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      // Space on empty field → open AI in generate mode
-      if (e.key === ' ' && !value.trim() && !aiOpen) {
-        e.preventDefault();
-        setSlashMode(false);
-        setAIOpen(true);
-        return;
-      }
-
-      // "/" at start of text → open command menu
+      // "/" on empty field → open AI command menu
       if (e.key === '/' && !value.trim() && !aiOpen) {
         e.preventDefault();
         setSlashMode(true);
@@ -94,8 +86,8 @@ export function AITextarea({
         {...props}
       />
 
-      {/* AI hint when field is empty and AI is not open */}
-      {!value.trim() && !aiOpen && (
+      {/* AI hint — visible only when field is empty */}
+      {!value.trim() && (
         <span
           style={{
             display: 'block',
@@ -107,7 +99,7 @@ export function AITextarea({
             userSelect: 'none',
           }}
         >
-          Presiona <strong>Espacio</strong> para IA · <strong>/</strong> para comandos
+          Escribe <strong>/</strong> para comandos de IA
         </span>
       )}
 

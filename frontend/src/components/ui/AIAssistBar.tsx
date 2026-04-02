@@ -311,7 +311,7 @@ export function AIAssistBar({ currentText, onResult, onClose, slashMode = false 
           textAlign: 'center',
           marginTop: '5px',
         }}>
-          Escribe <kbd style={{ background: 'var(--bg-neutral)', borderRadius: 3, padding: '0 4px', fontSize: '0.7rem' }}>/</kbd> para ver comandos · <kbd style={{ background: 'var(--bg-neutral)', borderRadius: 3, padding: '0 4px', fontSize: '0.7rem' }}>Esc</kbd> para cerrar
+          <kbd style={{ background: 'var(--bg-neutral)', borderRadius: 3, padding: '0 4px', fontSize: '0.7rem' }}>Esc</kbd> para cerrar
         </p>
       )}
     </motion.div>
