@@ -226,6 +226,7 @@ class AdminResourceItem(BaseModel):
     author_name: str | None
     is_featured: bool
     is_published: bool
+    published_at: datetime | None = None
     created_at: datetime
 
 
@@ -251,6 +252,7 @@ class AdminResourceCreate(BaseModel):
     author_name: str | None = None
     is_featured: bool = False
     is_published: bool = True
+    published_at: datetime | None = None  # admin-defined session date+time
 
 
 class AdminResourceUpdate(BaseModel):
@@ -263,3 +265,4 @@ class AdminResourceUpdate(BaseModel):
     author_name: str | None = None
     is_featured: bool | None = None
     is_published: bool | None = None
+    published_at: datetime | None = None  # admin-defined session date+time

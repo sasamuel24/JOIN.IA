@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
 from app.core.deps import get_current_admin_user, get_db
@@ -251,3 +251,25 @@ def toggle_resource_featured(
     db: Session = Depends(get_db),
 ) -> AdminResourceItem:
     return admin_service.toggle_resource_featured(db, resource_id)
+
+
+@router.post("/resources/upload-thumbnail")
+async def upload_resource_thumbnail(
+    file: UploadFile = File(...),
+    _: User = Depends(get_current_admin_user),
+) -> dict:
+    """Upload a thumbnail image for a resource. Returns the public URL."""
+    from app.services.s3_service import upload_resource_thumbnail as s3_upload
+
+    ALLOWED = {"image/jpeg", "image/png", "image/webp", "image/gif"}
+    MAX_SIZE = 5 * 1024 * 1024  # 5 MB
+
+    if file.content_type not in ALLOWED:
+        raise HTTPException(status_code=400, detail="Formato no permitido. Usa JPG, PNG, WEBP o GIF.")
+
+    file_bytes = await file.read()
+    if len(file_bytes) > MAX_SIZE:
+        raise HTTPException(status_code=400, detail="La imagen no puede superar 5 MB.")
+
+    url = s3_upload(file_bytes, file.content_type)
+    return {"url": url}

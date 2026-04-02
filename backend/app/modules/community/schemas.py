@@ -43,7 +43,7 @@ class MemberSearchParams(BaseModel):
 class CommunityResourceResponse(BaseModel):
     """Response schema for a community resource."""
     model_config = ConfigDict(from_attributes=True)
-    
+
     id: UUID
     title: str
     slug: str
@@ -54,6 +54,7 @@ class CommunityResourceResponse(BaseModel):
     resource_url: str | None = None
     author_name: str | None = None
     is_featured: bool
+    sort_order: int | None = None
     published_at: datetime | None
 
 

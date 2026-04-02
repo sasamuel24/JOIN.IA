@@ -118,6 +118,7 @@ export interface AdminResourceItem {
   author_name: string | null;
   is_featured: boolean;
   is_published: boolean;
+  published_at: string | null;
   created_at: string;
 }
 

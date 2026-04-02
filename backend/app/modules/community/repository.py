@@ -593,11 +593,12 @@ def admin_create_resource(
     thumbnail_url: str | None = None,
     author_name: str | None = None,
     is_featured: bool = False,
-    is_published: bool = True
+    is_published: bool = True,
+    published_at=None,
 ) -> CommunityResource:
     """Admin: Create a new resource."""
     import re as re_module
-    from datetime import timezone
+    from datetime import datetime, timezone
 
     slug_base = re_module.sub(r'[^a-zA-Z0-9\s-]', '', title.lower())
     slug_base = re_module.sub(r'\s+', '-', slug_base.strip())[:80]
@@ -607,7 +608,9 @@ def admin_create_resource(
     ).count()
     slug = f"{slug_base}-{existing + 1}" if existing > 0 else slug_base
 
-    from datetime import datetime
+    if published_at is None and is_published:
+        published_at = datetime.now(timezone.utc)
+
     resource = CommunityResource(
         title=title,
         slug=slug,
@@ -620,7 +623,7 @@ def admin_create_resource(
         created_by_user_id=user_id,
         is_featured=is_featured,
         is_published=is_published,
-        published_at=datetime.now(timezone.utc) if is_published else None
+        published_at=published_at,
     )
     db.add(resource)
     db.commit()
@@ -639,9 +642,12 @@ def admin_update_resource(
     thumbnail_url: str | None = None,
     author_name: str | None = None,
     is_featured: bool | None = None,
-    is_published: bool | None = None
+    is_published: bool | None = None,
+    published_at=None,
 ) -> CommunityResource | None:
     """Admin: Update resource fields."""
+    from datetime import datetime, timezone
+
     resource = admin_get_resource_by_id(db, resource_id)
     if not resource:
         return None
@@ -661,8 +667,9 @@ def admin_update_resource(
         resource.author_name = author_name
     if is_featured is not None:
         resource.is_featured = is_featured
+    if published_at is not None:
+        resource.published_at = published_at
     if is_published is not None:
-        from datetime import datetime, timezone
         resource.is_published = is_published
         if is_published and not resource.published_at:
             resource.published_at = datetime.now(timezone.utc)

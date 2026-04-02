@@ -104,6 +104,13 @@ export interface CommunityResourceUI {
   title: string;
   description: string;
   type: 'guide' | 'template' | 'video' | 'article' | 'tool';
+  category: string | null;
+  thumbnail_url: string | null;
+  resource_url: string | null;
+  author_name: string | null;
+  is_featured: boolean;
+  sort_order: number | null;
+  published_at: string | null;
 }
 
 // Feed Posts Types
@@ -365,12 +372,19 @@ export async function getCommunityResources(
 
   const data: CommunityResourcesResponse = await res.json();
 
-  // Map backend response to UI format - keeping only fields the UI needs
+  // Map backend response to UI format
   const mappedResources = data.resources.map(resource => ({
     id: resource.id,
     title: resource.title,
     description: resource.description,
     type: mapResourceType(resource.type),
+    category: resource.category,
+    thumbnail_url: resource.thumbnail_url,
+    resource_url: resource.resource_url,
+    author_name: resource.author_name,
+    is_featured: resource.is_featured,
+    sort_order: (resource as any).sort_order ?? null,
+    published_at: resource.published_at,
   }));
 
   return {

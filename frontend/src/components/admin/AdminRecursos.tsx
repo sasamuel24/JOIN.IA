@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Star, Trash2, Pencil, X, ExternalLink, BookOpen, Layout, Video, FileText, Wrench } from 'lucide-react';
+import { Plus, Star, Trash2, Pencil, X, ExternalLink, BookOpen, Layout, Video, FileText, Wrench, Upload, ImageIcon } from 'lucide-react';
 import { useAdminRecursos } from '@/hooks/useAdminRecursos';
 import type { AdminResourceItem } from '@/types/admin';
 
@@ -31,7 +31,17 @@ interface RecursoModalProps {
     title: string; description: string; resource_type: string;
     category: string; resource_url: string; thumbnail_url: string;
     author_name: string; is_featured: boolean; is_published: boolean;
+    published_at: string | null;
   }) => Promise<void>;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
+
+function authHeaders(): Record<string, string> {
+  const token = typeof window !== 'undefined'
+    ? localStorage.getItem('access_token') ?? localStorage.getItem('token') ?? ''
+    : '';
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
 function RecursoModal({ recurso, onClose, onSave }: RecursoModalProps) {
@@ -44,8 +54,54 @@ function RecursoModal({ recurso, onClose, onSave }: RecursoModalProps) {
   const [authorName, setAuthorName] = useState(recurso?.author_name ?? 'JOIN.IA');
   const [isFeatured, setIsFeatured] = useState(recurso?.is_featured ?? false);
   const [isPublished, setIsPublished] = useState(recurso?.is_published ?? true);
+  // Descomponer published_at existente en date + time para los inputs
+  const existingDate = recurso?.published_at
+    ? new Date(recurso.published_at).toISOString().slice(0, 10)
+    : '';
+  const existingTime = recurso?.published_at
+    ? new Date(recurso.published_at).toTimeString().slice(0, 5)
+    : '';
+
+  const [sessionDate, setSessionDate] = useState(existingDate);
+  const [sessionTime, setSessionTime] = useState(existingTime);
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [previewSrc, setPreviewSrc] = useState<string | null>(recurso?.thumbnail_url ?? null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Local preview
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewSrc(objectUrl);
+
+    setUploading(true);
+    setErr('');
+    try {
+      const form = new FormData();
+      form.append('file', file);
+      const res = await fetch(`${API_URL}/api/v1/admin/resources/upload-thumbnail`, {
+        method: 'POST',
+        headers: authHeaders(),
+        body: form,
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.detail ?? 'Error al subir la imagen');
+      }
+      const { url } = await res.json();
+      setThumbnailUrl(url);
+    } catch (error) {
+      setErr(error instanceof Error ? error.message : 'Error al subir la imagen');
+      setPreviewSrc(recurso?.thumbnail_url ?? null);
+      setThumbnailUrl(recurso?.thumbnail_url ?? '');
+    } finally {
+      setUploading(false);
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,10 +112,18 @@ function RecursoModal({ recurso, onClose, onSave }: RecursoModalProps) {
     setSaving(true);
     setErr('');
     try {
+      // Combinar fecha y hora en un ISO string (o null si no se indicó)
+      let publishedAt: string | null = null;
+      if (sessionDate) {
+        const time = sessionTime || '00:00';
+        publishedAt = new Date(`${sessionDate}T${time}:00`).toISOString();
+      }
+
       await onSave({
         title: title.trim(), description: description.trim(), resource_type: resourceType,
         category, resource_url: resourceUrl.trim(), thumbnail_url: thumbnailUrl.trim(),
         author_name: authorName.trim(), is_featured: isFeatured, is_published: isPublished,
+        published_at: publishedAt,
       });
       onClose();
     } catch {
@@ -141,14 +205,98 @@ function RecursoModal({ recurso, onClose, onSave }: RecursoModalProps) {
             <input value={resourceUrl} onChange={e => setResourceUrl(e.target.value)} placeholder="https://..." style={fieldStyle} />
           </div>
 
+          {/* Thumbnail upload */}
           <div>
-            <label style={labelStyle}>URL de imagen (opcional)</label>
-            <input value={thumbnailUrl} onChange={e => setThumbnailUrl(e.target.value)} placeholder="https://imagen.com/thumbnail.jpg" style={fieldStyle} />
+            <label style={labelStyle}>Imagen de portada (opcional)</label>
+
+            {/* Preview */}
+            {previewSrc && (
+              <div style={{ position: 'relative', marginBottom: '0.5rem', borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border-color)', aspectRatio: '16/9' }}>
+                <img src={previewSrc} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                <button
+                  type="button"
+                  onClick={() => { setPreviewSrc(null); setThumbnailUrl(''); if (fileInputRef.current) fileInputRef.current.value = ''; }}
+                  style={{
+                    position: 'absolute', top: 6, right: 6, background: 'rgba(0,0,0,0.6)',
+                    border: 'none', borderRadius: '50%', width: 24, height: 24,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', color: '#fff',
+                  }}
+                >
+                  <X size={13} />
+                </button>
+                {uploading && (
+                  <div style={{
+                    position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#fff', fontSize: '0.82rem', gap: '8px',
+                  }}>
+                    <div style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                    Subiendo...
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Upload button */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              style={{
+                width: '100%', padding: '0.55rem 0.8rem', borderRadius: 7,
+                border: '1.5px dashed var(--border-color)', background: 'var(--bg-neutral)',
+                cursor: uploading ? 'not-allowed' : 'pointer', color: 'var(--text-secondary)',
+                fontFamily: 'var(--font-main)', fontSize: '0.83rem',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px',
+              }}
+            >
+              {previewSrc ? <ImageIcon size={15} /> : <Upload size={15} />}
+              {uploading ? 'Subiendo imagen...' : previewSrc ? 'Cambiar imagen' : 'Subir desde mi PC'}
+            </button>
+
+            {/* URL manual como fallback */}
+            <div style={{ marginTop: '0.4rem' }}>
+              <input
+                value={thumbnailUrl}
+                onChange={e => { setThumbnailUrl(e.target.value); setPreviewSrc(e.target.value || null); }}
+                placeholder="O pega una URL de imagen..."
+                style={{ ...fieldStyle, fontSize: '0.8rem' }}
+              />
+            </div>
           </div>
 
           <div>
             <label style={labelStyle}>Autor</label>
             <input value={authorName} onChange={e => setAuthorName(e.target.value)} placeholder="JOIN.IA" style={fieldStyle} />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div>
+              <label style={labelStyle}>Día de la sesión</label>
+              <input
+                type="date"
+                value={sessionDate}
+                onChange={e => setSessionDate(e.target.value)}
+                style={fieldStyle}
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Hora de la sesión</label>
+              <input
+                type="time"
+                value={sessionTime}
+                onChange={e => setSessionTime(e.target.value)}
+                style={fieldStyle}
+              />
+            </div>
           </div>
 
           <div style={{ display: 'flex', gap: '1.5rem' }}>
@@ -204,6 +352,7 @@ export function AdminRecursos() {
     title: string; description: string; resource_type: string;
     category: string; resource_url: string; thumbnail_url: string;
     author_name: string; is_featured: boolean; is_published: boolean;
+    published_at: string | null;
   }) => {
     if (modal === 'create') {
       await createRecurso(data);

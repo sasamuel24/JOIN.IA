@@ -69,6 +69,7 @@ export function useAdminRecursos() {
     title: string; description: string; resource_type: string;
     category?: string; resource_url?: string; thumbnail_url?: string;
     author_name?: string; is_featured: boolean; is_published: boolean;
+    published_at?: string | null;
   }): Promise<AdminResourceItem> => {
     const res = await fetch(`${API}/api/v1/admin/resources`, {
       method: 'POST',
@@ -88,6 +89,7 @@ export function useAdminRecursos() {
       title: string; description: string; resource_type: string;
       category: string; resource_url: string; thumbnail_url: string;
       author_name: string; is_featured: boolean; is_published: boolean;
+      published_at: string | null;
     }>
   ): Promise<AdminResourceItem> => {
     const res = await fetch(`${API}/api/v1/admin/resources/${id}`, {

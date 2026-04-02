@@ -459,7 +459,8 @@ def create_resource_admin(db: Session, user_id: str, request: AdminResourceCreat
         thumbnail_url=request.thumbnail_url,
         author_name=request.author_name,
         is_featured=request.is_featured,
-        is_published=request.is_published
+        is_published=request.is_published,
+        published_at=request.published_at,
     )
 
     # Notify via N8N only when published (fire-and-forget)
@@ -488,6 +489,7 @@ def create_resource_admin(db: Session, user_id: str, request: AdminResourceCreat
         author_name=r.author_name,
         is_featured=r.is_featured,
         is_published=r.is_published,
+        published_at=r.published_at,
         created_at=r.created_at,
     )
 
@@ -504,7 +506,8 @@ def update_resource_admin(db: Session, resource_id: str, request: AdminResourceU
         thumbnail_url=request.thumbnail_url,
         author_name=request.author_name,
         is_featured=request.is_featured,
-        is_published=request.is_published
+        is_published=request.is_published,
+        published_at=request.published_at,
     )
     if not r:
         raise HTTPException(status_code=404, detail="Resource not found")
@@ -519,6 +522,7 @@ def update_resource_admin(db: Session, resource_id: str, request: AdminResourceU
         author_name=r.author_name,
         is_featured=r.is_featured,
         is_published=r.is_published,
+        published_at=r.published_at,
         created_at=r.created_at,
     )
 
