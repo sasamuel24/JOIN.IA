@@ -98,11 +98,11 @@ export function AITextarea({
       {!value.trim() && !aiOpen && (
         <span
           style={{
-            position: 'absolute',
-            bottom: 8,
-            right: 10,
+            display: 'block',
+            marginTop: '4px',
             fontSize: '0.7rem',
             color: 'var(--text-muted)',
+            textAlign: 'right',
             pointerEvents: 'none',
             userSelect: 'none',
           }}
