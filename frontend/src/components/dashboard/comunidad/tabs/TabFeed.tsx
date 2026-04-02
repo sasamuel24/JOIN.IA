@@ -5,6 +5,7 @@ import { Heart, MessageCircle, ChevronDown, ChevronUp, Trash2 } from 'lucide-rea
 import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
+import { AITextarea } from '@/components/ui/AITextarea';
 import { useCommunityFeed, usePostComments } from '@/hooks/useCommunity';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 
@@ -114,14 +115,16 @@ export function TabFeed() {
     <div>
       {/* New post input */}
       <div className="border border-border rounded-[10px] p-4 mb-5">
-        <textarea
+        <AITextarea
           placeholder="Comparte algo con la comunidad"
           value={newPost}
           onChange={e => setNewPost(e.target.value)}
+          onAIResult={text => setNewPost(text)}
           disabled={submitting}
           rows={3}
           className="w-full mb-3 resize-none bg-transparent border-0 border-b-2 border-accent outline-none text-[0.9rem] text-main placeholder:text-secondary font-[family-name:var(--font-main)] leading-relaxed"
           style={{ fieldSizing: 'content' } as React.CSSProperties}
+          wrapperStyle={{ marginBottom: '0.75rem' }}
         />
         <div className="flex items-center justify-between">
           <button

@@ -2,7 +2,7 @@
 
 import type { FeedbackData } from '@/types/dashboard';
 import { Chip } from '@/components/ui/chip';
-import { Textarea } from '@/components/ui/textarea';
+import { AITextarea } from '@/components/ui/AITextarea';
 import { cn } from '@/lib/utils';
 
 const RESULTADOS = [
@@ -52,11 +52,13 @@ export function StepVision({
         Descríbenos el escenario ideal. Imagina que JOIN.IA ya funciona perfectamente para ti.
       </p>
 
-      <Textarea
+      <AITextarea
         placeholder="Ejemplo: llego a la oficina y ya sé exactamente qué pendientes tiene mi equipo..."
         value={text}
         onChange={e => onUpdate({ vision_ia: e.target.value })}
-        className="mb-4"
+        onAIResult={newText => onUpdate({ vision_ia: newText })}
+        wrapperStyle={{ marginBottom: '1rem' }}
+        className="flex w-full min-h-[90px] rounded-md border border-border bg-surface-0 px-3.5 py-2.5 text-sm text-text-main font-[family-name:var(--font-main)] placeholder:text-text-muted resize-y focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
       />
 
       <p className="text-[0.72rem] font-semibold text-text-secondary uppercase tracking-wider mb-2">

@@ -10,6 +10,7 @@ from app.modules.events.router import router as events_router
 from app.modules.community.router import router as community_router
 from app.modules.feedback.router import router as feedback_router
 from app.modules.invitations.router import router as invitations_router
+from app.modules.ai.router import router as ai_router
 from app.modules.password_reset.router import router as password_reset_router
 from app.modules.users.router import router as users_router
 
@@ -37,6 +38,7 @@ def create_application() -> FastAPI:
     application.include_router(feedback_router, prefix=settings.API_V1_STR)
     application.include_router(invitations_router, prefix=settings.API_V1_STR)
     application.include_router(users_router, prefix=settings.API_V1_STR)
+    application.include_router(ai_router, prefix=settings.API_V1_STR)
     application.include_router(password_reset_router, prefix=settings.API_V1_STR)
 
     return application
