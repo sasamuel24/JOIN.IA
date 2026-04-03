@@ -70,10 +70,17 @@ export function AIAssistBar({ currentText, onResult, onClose, slashMode = false 
 
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === 'Escape') onClose();
+    // Enter to submit — desktop only; mobile uses the submit button
     if (e.key === 'Enter' && !e.shiftKey && !showCommands) {
       e.preventDefault();
       void handleSubmit();
     }
+  }
+
+  // Mobile: submit on tap (onPointerDown to fire before blur closes keyboard)
+  function handleSubmitPointer(e: React.PointerEvent) {
+    e.preventDefault();
+    void handleSubmit();
   }
 
   async function handleSubmit(command?: SlashCommand) {
@@ -276,8 +283,9 @@ export function AIAssistBar({ currentText, onResult, onClose, slashMode = false 
           <X size={15} />
         </button>
 
-        {/* Submit */}
+        {/* Submit — onPointerDown for mobile reliability */}
         <button
+          onPointerDown={handleSubmitPointer}
           onClick={() => void handleSubmit()}
           disabled={loading || (!input.trim() && !currentText.trim())}
           style={{
